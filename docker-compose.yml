@@ -1,0 +1,36 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      # Host 3000 is used by another project on this machine, so publish on 3100
+      # (matching PORT in .env).
+      - "3100:3100"
+    env_file:
+      # format: raw is required: the scrypt hash contains `$`, and the default
+      # interpolation would swallow `$<hex>` as an (unset) variable, corrupting
+      # LOGIN_PASSWORD_HASH so login always fails.
+      - path: .env
+        format: raw
+    environment:
+      NODE_ENV: production
+      DATABASE_PATH: /data/app.db
+      PORT: "3100"
+    volumes:
+      # Single persistent volume holds the database and its backups.
+      - app-data:/data
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://localhost:'+(process.env.PORT||3000)+'/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+volumes:
+  app-data:

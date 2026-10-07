@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="UTF-8"?>    <rss version="2.0" 
+	xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/" 
+	xmlns:media="http://search.yahoo.com/mrss/" 
+	xmlns:dc="http://purl.org/dc/elements/1.1/" 
+	xmlns:atom="http://www.w3.org/2005/Atom" 
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" 
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/" 
+	>
+		<channel>
+			<title>EE Times</title>
+			<link>https://www.eetimes.com/</link>
+			<atom:link href="https://www.eetimes.com/feed/" rel="self" type="application/rss+xml" />
+			<description>Connecting The Global Electronics Industry</description>
+			<lastBuildDate>Tue, 06 Oct 2026 15:34:45 +0000</lastBuildDate>
+			<pubDate>Tue, 06 Oct 2026 15:34:45 +0000</pubDate>
+			<language>en-US</language>
+						<image>
+				<title>EE Times</title>
+				<url>https://www.eetimes.com/wp-content/uploads/EE-Times-700x100-1.png</url>
+				<link>https://www.eetimes.com/</link>
+			</image>
+			<sy:updatePeriod>hourly</sy:updatePeriod>
+			<sy:updateFrequency>1</sy:updateFrequency>
+
+			<generator>https://wordpress.org/?v=7.1.2</generator>
+<site xmlns="com-wordpress:feed-additions:1">158136503</site>				<item>
+					<title>Solving the Five Hard Problems of NFC Antenna Integration at 13.56 MHz</title>
+					<link>https://www.eetimes.com/solving-the-five-hard-problems-of-nfc-antenna-integration-at-13-56-mhz/</link>
+
+											<comments>https://www.eetimes.com/solving-the-five-hard-problems-of-nfc-antenna-integration-at-13-56-mhz/#respond</comments>
+					
+					<dc:creator>
+						<![CDATA[Chris Zhong]]>
+					</dc:creator>
+					<pubDate>Tue, 06 Oct 2026 15:34:21 +0000</pubDate>
+							<category><![CDATA[Blog]]></category>
+		<category><![CDATA[Opinion]]></category>
+		<category><![CDATA[NFC antenna]]></category>
+		<category><![CDATA[wireless and networking]]></category>
+					<guid isPermaLink="false">https://www.eetimes.com/?p=101779787</guid>
+					<description>
+						<![CDATA[<p>Avoid NFC failures: plan ferrite shielding, flexible placement, robust connectors, and chipset validation before prototyping.</p>
+<p>The post <a href="https://www.eetimes.com/solving-the-five-hard-problems-of-nfc-antenna-integration-at-13-56-mhz/">Solving the Five Hard Problems of NFC Antenna Integration at 13.56 MHz</a> appeared first on <a href="https://www.eetimes.com">EE Times</a>.</p>
+]]>
+					</description>
+
+					
+																			<content:encoded>
+								<![CDATA[
+<p class="wp-block-paragraph">NFC at 13.56 MHz is one of the most widely deployed short-range wireless technologies in commercial electronics. It underpins contactless payment at point-of-sale, smart access credentials in building</p>]]>
+							</content:encoded>
+											
+					<dc:language>en-US</dc:language>
+
+																<media:thumbnail url="https://www.eetimes.com/wp-content/uploads/AdobeStock_2028579331-e1791300102482.jpeg" />
+					
+											<wfw:commentRss>https://www.eetimes.com/solving-the-five-hard-problems-of-nfc-antenna-integration-at-13-56-mhz/feed/</wfw:commentRss>
+						<slash:comments>0</slash:comments>
+					
+					
+					<post-id xmlns="com-wordpress:feed-additions:1">101779787</post-id>				</item>
+							<item>
+					<title>CXL-Connected MRAM Address AI Storage Latency</title>
+					<link>https://www.eetimes.com/cxl-connected-mram-address-ai-storage-latency/</link>
+
+											<comments>https://www.eetimes.com/cxl-connected-mram-address-ai-storage-latency/#respond</comments>
+					
+					<dc:creator>
+						<![CDATA[Gary Hilson]]>
+					</dc:creator>
+					<pubDate>Tue, 06 Oct 2026 10:24:22 +0000</pubDate>
+							<category><![CDATA[News]]></category>
+		<category><![CDATA[Compute Express Link (CXL)]]></category>
+		<category><![CDATA[data center]]></category>
+		<category><![CDATA[Latency]]></category>
+		<category><![CDATA[MRAM]]></category>
+		<category><![CDATA[NAND flash]]></category>
+		<category><![CDATA[Semiconductors]]></category>
+		<category><![CDATA[Storage]]></category>
+					<guid isPermaLink="false">https://www.eetimes.com/?p=101779731</guid>
+					<description>
+						<![CDATA[<p>Everspin’s demo shows how a 4-GB pool of persistent MRAM can serve as a new tier of storage between DRAM and NAND flash.</p>
+<p>The post <a href="https://www.eetimes.com/cxl-connected-mram-address-ai-storage-latency/">CXL-Connected MRAM Address AI Storage Latency</a> appeared first on <a href="https://www.eetimes.com">EE Times</a>.</p>
+]]>
+					</description>
+
+					
+																			<content:encoded>
+								<![CDATA[
+<p class="wp-block-paragraph">The memory bottleneck in AI systems gets a lot of attention, but storage latency is a growing pain point too. Everspin Technologies thinks it can address it with what it says is the industry’s first</p>]]>
+							</content:encoded>
+											
+					<dc:language>en-US</dc:language>
+
+																<media:thumbnail url="https://www.eetimes.com/wp-content/uploads/CXL-Connected-MRAM-image2.png" />
+					
+											<wfw:commentRss>https://www.eetimes.com/cxl-connected-mram-address-ai-storage-latency/feed/</wfw:commentRss>
+						<slash:comments>0</slash:comments>
+					
+					
+					<post-id xmlns="com-wordpress:feed-additions:1">101779731</post-id>				</item>
+							<item>
+					<title>Kepler Aims to Launch Energy-Saving Replacement for HBM in 2027</title>
+					<link>https://www.eetimes.com/kepler-aims-to-launch-energy-saving-replacement-for-hbm-in-2027/</link>
+
+											<comments>https://www.eetimes.com/kepler-aims-to-launch-energy-saving-replacement-for-hbm-in-2027/#respond</comments>
+					
+					<dc:creator>
+						<![CDATA[Alan Patterson]]>
+					</dc:creator>
+					<pubDate>Mon, 05 Oct 2026 20:00:00 +0000</pubDate>
+							<category><![CDATA[News]]></category>
+		<category><![CDATA[AI and Big Data]]></category>
+		<category><![CDATA[HBM]]></category>
+		<category><![CDATA[Memory]]></category>
+		<category><![CDATA[SRAM]]></category>
+					<guid isPermaLink="false">https://www.eetimes.com/?p=101779545</guid>
+					<description>
+						<![CDATA[<p>Kepler targets 2027 production for 3D ferroelectric memory promising 5–10× better bandwidth per watt than HBM.</p>
+<p>The post <a href="https://www.eetimes.com/kepler-aims-to-launch-energy-saving-replacement-for-hbm-in-2027/">Kepler Aims to Launch Energy-Saving Replacement for HBM in 2027</a> appeared first on <a href="https://www.eetimes.com">EE Times</a>.</p>
+]]>
+					</description>
+
+					
+																			<content:encoded>
+								<![CDATA[
+<p class="wp-block-paragraph">Kepler Computing, founded in 2018, aims to start production of memories that address HBM and SRAM “bottlenecks” in AI chips by next year, company executives told EE Times. The company is ready to work</p>]]>
+							</content:encoded>
+											
+					<dc:language>en-US</dc:language>
+
+																<media:thumbnail url="https://www.eetimes.com/wp-content/uploads/77e050fc-c6a7-4a3f-a0bb-1cefcb9605c0.jpg" />
+					
+											<wfw:commentRss>https://www.eetimes.com/kepler-aims-to-launch-energy-saving-replacement-for-hbm-in-2027/feed/</wfw:commentRss>
+						<slash:comments>0</slash:comments>
+					
+					
+					<post-id xmlns="com-wordpress:feed-additions:1">101779545</post-id>				</item>
+							<item>
+					<title>Trusted AI: Why Intelligence Alone Isn’t Enough</title>
+					<link>https://www.eetimes.com/trusted-ai-why-intelligence-alone-isnt-enough/</link>
+
+											<comments>https://www.eetimes.com/trusted-ai-why-intelligence-alone-isnt-enough/#respond</comments>
+					
+					<dc:creator>
+						<![CDATA[EE Times]]>
+					</dc:creator>
+					<pubDate>Mon, 05 Oct 2026 17:48:56 +0000</pubDate>
+							<category><![CDATA[News]]></category>
+		<category><![CDATA[Sponsored content]]></category>
+		<category><![CDATA[AI and Big Data]]></category>
+					<guid isPermaLink="false">https://www.eetimes.com/?p=101779574</guid>
+					<description>
+						<![CDATA[<p>See how trusted AI combines intelligence, domain expertise, and deterministic verification to boost confidence in semiconductor design.</p>
+<p>The post <a href="https://www.eetimes.com/trusted-ai-why-intelligence-alone-isnt-enough/">Trusted AI: Why Intelligence Alone Isn’t Enough</a> appeared first on <a href="https://www.eetimes.com">EE Times</a>.</p>
+]]>
+					</description>
+
+					
+																			<content:encoded>
+								<![CDATA[
+<p class="wp-block-paragraph">Juan Rey, senior VP and general manager of Calibre and CTO of Siemens EDA, shares his perspective on building trust in artificial intelligence for engineering. In this AI Summit interview, Rey explores how</p>]]>
+							</content:encoded>
+											
+					<dc:language>en-US</dc:language>
+
+																<media:thumbnail url="https://www.eetimes.com/wp-content/uploads/AdobeStock_389483028_Editorial_Use_Only-e1791222508335.jpeg" />
+					
+											<wfw:commentRss>https://www.eetimes.com/trusted-ai-why-intelligence-alone-isnt-enough/feed/</wfw:commentRss>
+						<slash:comments>0</slash:comments>
+					
+					
+					<post-id xmlns="com-wordpress:feed-additions:1">101779574</post-id>				</item>
+							<item>
+					<title>ACCESS GRANTED – Unlocking Building Safety and Security Controls with Audio</title>
+					<link>https://www.eetimes.com/access-granted-unlocking-building-safety-and-security-controls-with-audio/</link>
+
+											<comments>https://www.eetimes.com/access-granted-unlocking-building-safety-and-security-controls-with-audio/#respond</comments>
+					
+					<dc:creator>
+						<![CDATA[Same Sky and Arrow]]>
+					</dc:creator>
+					<pubDate>Mon, 05 Oct 2026 16:08:24 +0000</pubDate>
+							<category><![CDATA[Webinars + Bitcasts]]></category>
+					<guid isPermaLink="false">https://www.eetimes.com/?p=101779562</guid>
+					<description>
+						<![CDATA[<p>This webinar will cover current controls, modern technology selection, application considerations, and tailored audio component choices.</p>
+<p>The post <a href="https://www.eetimes.com/access-granted-unlocking-building-safety-and-security-controls-with-audio/">ACCESS GRANTED – Unlocking Building Safety and Security Controls with Audio</a> appeared first on <a href="https://www.eetimes.com">EE Times</a>.</p>
+]]>
+					</description>
+
+					
+																			<content:encoded>
+								<![CDATA[<div class="wp-block-image">
+<figure class="aligncenter size-full"><a href="https://www.eetimes.com/wp-content/uploads/Same-Sky-EETimes-Banner.png" target="_blank" rel=" noopener"><img data-recalc-dims="1" loading="lazy" width="640" height="148" src="https://www.eetimes.com/wp-content/uploads/Same-Sky-EETimes-Banner.png?resize=640%2C148" alt="" class="wp-image-101779565" /></a></figure>
+</div>
+
+
+<p class="wp-block-paragraph"><strong>Date:  Tuesday, November 17, 2026</strong></p>
+
+
+
+<p class="wp-block-paragraph"><strong>Time:   8:00am PST | 11:00am EST | 17:00 CET</strong></p>
+
+
+
+<p class="wp-block-paragraph">As the world continues to grow and evolve, safety and security systems are becoming an increasingly important part of our everyday</p>]]>
+							</content:encoded>
+											
+					<dc:language>en-US</dc:language>
+
+																<media:thumbnail url="https://www.eetimes.com/wp-content/uploads/Same-Sky-Featured-Image.png" />
+					
+											<wfw:commentRss>https://www.eetimes.com/access-granted-unlocking-building-safety-and-security-controls-with-audio/feed/</wfw:commentRss>
+						<slash:comments>0</slash:comments>
+					
+					
+					<post-id xmlns="com-wordpress:feed-additions:1">101779562</post-id>				</item>
+							<item>
+					<title>GPT-Synopsys Combines IC Design EDA with Agentic AI</title>
+					<link>https://www.eetimes.com/gpt-synopsys-combines-ic-design-eda-with-agentic-ai/</link>
+
+											<comments>https://www.eetimes.com/gpt-synopsys-combines-ic-design-eda-with-agentic-ai/#respond</comments>
+					
+					<dc:creator>
+						<![CDATA[Majeed Ahmad]]>
+					</dc:creator>
+					<pubDate>Mon, 05 Oct 2026 12:00:00 +0000</pubDate>
+							<category><![CDATA[News]]></category>
+		<category><![CDATA[Agentic AI]]></category>
+		<category><![CDATA[AI models]]></category>
+		<category><![CDATA[Chip design]]></category>
+		<category><![CDATA[chip verification]]></category>
+		<category><![CDATA[Design Tools (EDA)]]></category>
+		<category><![CDATA[ICs]]></category>
+		<category><![CDATA[Semiconductors]]></category>
+					<guid isPermaLink="false">https://www.eetimes.com/?p=101779461</guid>
+					<description>
+						<![CDATA[<p>Synopsys joins OpenAI for a leap of faith in AI-native IC design by augmenting frontier models with EDA tools.</p>
+<p>The post <a href="https://www.eetimes.com/gpt-synopsys-combines-ic-design-eda-with-agentic-ai/">GPT-Synopsys Combines IC Design EDA with Agentic AI</a> appeared first on <a href="https://www.eetimes.com">EE Times</a>.</p>
+]]>
+					</description>
+
+					
+																			<content:encoded>
+								<![CDATA[
+<p class="wp-block-paragraph">AI integrations in EDA tools have mostly been internally developed models offered by EDA companies and fabs. In chip design workflows, <a href="https://www.eetimes.com/synopsys-brings-agentic-engineering-into-focus-as-ai-driven-design-tests-productivity-limits/" target="_blank" rel="noreferrer noopener">agentic AI technologies</a> currently connect general-purpose models to EDA</p>]]>
+							</content:encoded>
+											
+					<dc:language>en-US</dc:language>
+
+																<media:thumbnail url="https://www.eetimes.com/wp-content/uploads/Synopsys-OpenAI-EDA.png" />
+					
+											<wfw:commentRss>https://www.eetimes.com/gpt-synopsys-combines-ic-design-eda-with-agentic-ai/feed/</wfw:commentRss>
+						<slash:comments>0</slash:comments>
+					
+					
+					<post-id xmlns="com-wordpress:feed-additions:1">101779461</post-id>				</item>
+							<item>
+					<title>Electric Car Makers Need to Appeal to the ‘Other 90%’</title>
+					<link>https://www.eetimes.com/electric-car-makers-need-to-appeal-to-the-other-90/</link>
+
+											<comments>https://www.eetimes.com/electric-car-makers-need-to-appeal-to-the-other-90/#respond</comments>
+					
+					<dc:creator>
+						<![CDATA[Charles Murray]]>
+					</dc:creator>
+					<pubDate>Mon, 05 Oct 2026 05:30:55 +0000</pubDate>
+							<category><![CDATA[Blog]]></category>
+		<category><![CDATA[Opinion]]></category>
+		<category><![CDATA[automotive industry]]></category>
+		<category><![CDATA[Electric Mobility]]></category>
+		<category><![CDATA[electric vehicles]]></category>
+		<category><![CDATA[EV wireless charging]]></category>
+					<guid isPermaLink="false">https://www.eetimes.com/?p=101779417</guid>
+					<description>
+						<![CDATA[<p>Broader appeal for the electric car is a big challenge. Innovation is still the best solution.</p>
+<p>The post <a href="https://www.eetimes.com/electric-car-makers-need-to-appeal-to-the-other-90/">Electric Car Makers Need to Appeal to the ‘Other 90%’</a> appeared first on <a href="https://www.eetimes.com">EE Times</a>.</p>
+]]>
+					</description>
+
+					
+																			<content:encoded>
+								<![CDATA[
+<p class="wp-block-paragraph">Declining EV sales in the U.S. are triggering fear in the electric car community and panic in the media. The New York Times earlier this year <a href="https://www.nytimes.com/2026/07/15/magazine/electric-cars-american-evs.html" target="_blank" rel="noreferrer noopener">declared</a> that “the American EV has been crushed,” and ABC</p>]]>
+							</content:encoded>
+											
+					<dc:language>en-US</dc:language>
+
+																<media:thumbnail url="https://www.eetimes.com/wp-content/uploads/AdobeStock_725634138-e1785243535998.jpeg" />
+					
+											<wfw:commentRss>https://www.eetimes.com/electric-car-makers-need-to-appeal-to-the-other-90/feed/</wfw:commentRss>
+						<slash:comments>0</slash:comments>
+					
+					
+					<post-id xmlns="com-wordpress:feed-additions:1">101779417</post-id>				</item>
+							<item>
+					<title>AutoSens 2026: Regulation Drives Automotive Sensing Architectures</title>
+					<link>https://www.eetimes.com/autosens-2026-regulations-drive-automotive-sensing-architectures/</link>
+
+											<comments>https://www.eetimes.com/autosens-2026-regulations-drive-automotive-sensing-architectures/#respond</comments>
+					
+					<dc:creator>
+						<![CDATA[Pablo Valerio]]>
+					</dc:creator>
+					<pubDate>Fri, 02 Oct 2026 15:58:50 +0000</pubDate>
+							<category><![CDATA[Blog]]></category>
+		<category><![CDATA[News]]></category>
+		<category><![CDATA[Supply Chain & Distribution]]></category>
+		<category><![CDATA[automotive architecture]]></category>
+		<category><![CDATA[AutoSens]]></category>
+		<category><![CDATA[CNSA 2.0]]></category>
+		<category><![CDATA[Euro NCAP 2026]]></category>
+		<category><![CDATA[IEEE 802.15.4ab]]></category>
+		<category><![CDATA[InCabin]]></category>
+		<category><![CDATA[Lidar]]></category>
+		<category><![CDATA[mmWave]]></category>
+		<category><![CDATA[Radar]]></category>
+		<category><![CDATA[sensor technology]]></category>
+		<category><![CDATA[Uwb]]></category>
+					<guid isPermaLink="false">https://www.eetimes.com/?p=101777496</guid>
+					<description>
+						<![CDATA[<p>At AutoSens Europe, automotive sensing designs reflected tighter safety standards, advances in AI processing, and growing cybersecurity requirements.</p>
+<p>The post <a href="https://www.eetimes.com/autosens-2026-regulations-drive-automotive-sensing-architectures/">AutoSens 2026: Regulation Drives Automotive Sensing Architectures</a> appeared first on <a href="https://www.eetimes.com">EE Times</a>.</p>
+]]>
+					</description>
+
+					
+																			<content:encoded>
+								<![CDATA[
+<p class="wp-block-paragraph">BARCELONA, Spain — At <a href="https://auto-sens.com/europe/" target="_blank" rel="noreferrer noopener">AutoSens and InCabin Europe 2026</a> in Barcelona, more than 1,000 engineers, executives, and semiconductor experts gathered to examine how evolving safety, perception, and computing</p>]]>
+							</content:encoded>
+											
+					<dc:language>en-US</dc:language>
+
+																<media:thumbnail url="https://www.eetimes.com/wp-content/uploads/image_14cb35.jpeg" />
+					
+											<wfw:commentRss>https://www.eetimes.com/autosens-2026-regulations-drive-automotive-sensing-architectures/feed/</wfw:commentRss>
+						<slash:comments>0</slash:comments>
+					
+					
+					<post-id xmlns="com-wordpress:feed-additions:1">101777496</post-id>				</item>
+							<item>
+					<title>Continuous Health Monitoring Drives Integrated Wearable System Design</title>
+					<link>https://www.eetimes.com/continuous-health-monitoring-drives-integrated-wearable-system-design/</link>
+
+											<comments>https://www.eetimes.com/continuous-health-monitoring-drives-integrated-wearable-system-design/#respond</comments>
+					
+					<dc:creator>
+						<![CDATA[Yashasvini Razdan]]>
+					</dc:creator>
+					<pubDate>Fri, 02 Oct 2026 11:29:26 +0000</pubDate>
+							<category><![CDATA[News]]></category>
+		<category><![CDATA[Accelerometer]]></category>
+		<category><![CDATA[Continuous health monitoring]]></category>
+		<category><![CDATA[data processing]]></category>
+		<category><![CDATA[IMUs]]></category>
+		<category><![CDATA[Semiconductors]]></category>
+		<category><![CDATA[sensor]]></category>
+		<category><![CDATA[Wearables]]></category>
+					<guid isPermaLink="false">https://www.eetimes.com/?p=101778978</guid>
+					<description>
+						<![CDATA[<p>Analog Devices India’s Praveen Jose said device miniaturization is driving higher performance and quality in smaller form factors.</p>
+<p>The post <a href="https://www.eetimes.com/continuous-health-monitoring-drives-integrated-wearable-system-design/">Continuous Health Monitoring Drives Integrated Wearable System Design</a> appeared first on <a href="https://www.eetimes.com">EE Times</a>.</p>
+]]>
+					</description>
+
+					
+																			<content:encoded>
+								<![CDATA[
+<p class="wp-block-paragraph">The smaller a wearable electronics gadget gets, the more it has to do. A device that once tracked steps and heart rate now has to continuously capture physiological signals while making room for more</p>]]>
+							</content:encoded>
+											
+					<dc:language>en-US</dc:language>
+
+																<media:thumbnail url="https://www.eetimes.com/wp-content/uploads/Sensio-smart-ring-2025.jpg" />
+					
+											<wfw:commentRss>https://www.eetimes.com/continuous-health-monitoring-drives-integrated-wearable-system-design/feed/</wfw:commentRss>
+						<slash:comments>0</slash:comments>
+					
+					
+					<post-id xmlns="com-wordpress:feed-additions:1">101778978</post-id>				</item>
+							<item>
+					<title>Qualcomm Doubles Down on Agentic AI at Snapdragon Summit 2026</title>
+					<link>https://www.eetimes.com/qualcomm-doubles-down-on-agentic-ai-at-snapdragon-summit-2026/</link>
+
+											<comments>https://www.eetimes.com/qualcomm-doubles-down-on-agentic-ai-at-snapdragon-summit-2026/#respond</comments>
+					
+					<dc:creator>
+						<![CDATA[Jim McGregor, Francis Sideco]]>
+					</dc:creator>
+					<pubDate>Thu, 01 Oct 2026 17:31:45 +0000</pubDate>
+							<category><![CDATA[News]]></category>
+		<category><![CDATA[Agentic AI]]></category>
+		<category><![CDATA[AI and Big Data]]></category>
+					<guid isPermaLink="false">https://www.eetimes.com/?p=101778831</guid>
+					<description>
+						<![CDATA[<p>Qualcomm introduced two distinct Snapdragon 8 Elite Gen 6 SoCs for high-end smartphones as it expands personal agentic AI across mobile, wearables, and PCs.</p>
+<p>The post <a href="https://www.eetimes.com/qualcomm-doubles-down-on-agentic-ai-at-snapdragon-summit-2026/">Qualcomm Doubles Down on Agentic AI at Snapdragon Summit 2026</a> appeared first on <a href="https://www.eetimes.com">EE Times</a>.</p>
+]]>
+					</description>
+
+					
+																			<content:encoded>
+								<![CDATA[
+<p class="wp-block-paragraph">Tirias Research principal analysts Jim McGregor and Francis Sideco were on the ground in Maui, Hawaii, for Qualcomm’s annual Snapdragon Summit. This year’s event was all about personal agentic AI, with</p>]]>
+							</content:encoded>
+											
+					<dc:language>en-US</dc:language>
+
+																<media:thumbnail url="https://www.eetimes.com/wp-content/uploads/image_e13038.jpg" />
+					
+											<wfw:commentRss>https://www.eetimes.com/qualcomm-doubles-down-on-agentic-ai-at-snapdragon-summit-2026/feed/</wfw:commentRss>
+						<slash:comments>0</slash:comments>
+					
+					
+					<post-id xmlns="com-wordpress:feed-additions:1">101778831</post-id>				</item>
+					</channel>
+	</rss>
+    

@@ -1,0 +1,25 @@
+# Never send host artifacts into the image: the deps stage installs its own
+# node_modules, and copying the host's macOS-native better-sqlite3 over it
+# would break the build.
+node_modules
+**/node_modules
+
+# Local secrets and data must not be baked into the image.
+.env
+.env.*
+!.env.example
+data
+**/*.db
+**/*.db-wal
+**/*.db-shm
+
+# Rebuilt inside the image.
+dist
+**/dist
+
+.git
+.gitignore
+.claude
+.scratch
+*.log
+.DS_Store

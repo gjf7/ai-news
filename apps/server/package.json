@@ -1,0 +1,35 @@
+{
+  "name": "@ai-news/server",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "start": "tsx src/main.ts",
+    "probe-sources": "tsx scripts/probe-sources.ts",
+    "e2e": "tsx scripts/e2e.ts",
+    "calibrate": "tsx scripts/calibrate.ts",
+    "stub-model": "tsx scripts/stub-model.ts",
+    "hash-password": "tsx scripts/hash-password.ts",
+    "test": "vp test",
+    "check": "vp check",
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@ai-news/contracts": "workspace:*",
+    "@fastify/cookie": "^11.0.2",
+    "@fastify/static": "^8.3.0",
+    "better-sqlite3": "^12.4.1",
+    "drizzle-orm": "^0.44.6",
+    "fast-xml-parser": "catalog:",
+    "fastify": "^5.6.1",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "catalog:",
+    "tsx": "^4.20.6",
+    "typescript": "catalog:",
+    "vite-plus": "catalog:"
+  }
+}

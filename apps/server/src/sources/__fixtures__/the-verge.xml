@@ -1,0 +1,562 @@
+<?xml version="1.0" encoding="UTF-8"?><feed
+	xmlns="http://www.w3.org/2005/Atom"
+	xmlns:thr="http://purl.org/syndication/thread/1.0"
+	xml:lang="en-US"
+	>
+	<title type="text">AI | The Verge</title>
+	<subtitle type="text">The Verge is about technology and how it makes us feel. Founded in 2011, we offer our audience everything from breaking news to reviews to award-winning features and investigations, on our site, in video, and in podcasts.</subtitle>
+
+	<updated>2026-10-06T13:19:01+00:00</updated>
+
+	<link rel="alternate" type="text/html" href="https://www.theverge.com/ai-artificial-intelligence" />
+	<id>https://www.theverge.com/rss/ai-artificial-intelligence/index.xml</id>
+	<link rel="self" type="application/atom+xml" href="https://www.theverge.com/rss/ai-artificial-intelligence/index.xml" />
+
+	<icon>https://platform.theverge.com/wp-content/uploads/sites/2/2025/01/verge-rss-large_80b47e.png?w=150&amp;h=150&amp;crop=1</icon>
+		<entry>
+			
+			<author>
+				<name>Stevie Bonifield</name>
+			</author>
+			
+			<title type="html"><![CDATA[Google is about to remove free access to Gemini Flash and Pro]]></title>
+			<link rel="alternate" type="text/html" href="https://www.theverge.com/ai-artificial-intelligence/1005451/google-gemini-free-flash-lite-only" />
+			<id>https://www.theverge.com/?p=1005451</id>
+			<updated>2026-10-06T09:19:01-04:00</updated>
+			<published>2026-10-06T09:19:01-04:00</published>
+			<category scheme="https://www.theverge.com" term="AI" /><category scheme="https://www.theverge.com" term="Google" /><category scheme="https://www.theverge.com" term="News" /><category scheme="https://www.theverge.com" term="Tech" />
+							<summary type="html"><![CDATA[Starting on October 9th, anyone using Google Gemini on a free plan will be limited to the Flash Lite model. Free users can currently choose from Gemini Flash Lite, Flash, and Pro, but now you'll need a $4.99/month Google AI Plus subscription to access the standard Flash model. However, that subscription is also getting a [&#8230;]]]></summary>
+			
+							<content type="html">
+											<![CDATA[
+
+						
+<figure>
+
+<img alt="Vector illustration of the Google Gemini logo." data-caption="" data-portal-copyright="Illustration: The Verge" data-has-syndication-rights="1" src="https://platform.theverge.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/25290329/STK255_Google_Gemini_A.jpg?quality=90&#038;strip=all&#038;crop=0,0,100,100" />
+	<figcaption>
+		</figcaption>
+</figure>
+<p class="wp-block-paragraph">Starting on October 9th, anyone using Google Gemini on a free plan will be <a href="https://support.google.com/gemini/answer/17004136">limited to the Flash Lite model</a>. Free users can currently choose from Gemini Flash Lite, Flash, and Pro, but now you'll need a $4.99/month Google AI Plus subscription to access the standard Flash model. However, that subscription is also getting a downgrade - it will soon no longer include Gemini Pro. Google says AI Plus subscribers will receive an email letting them know when they'll lose access to it. </p>
+<p class="wp-block-paragraph">After these changes, access to the top-tier Gemini Pro model and a "Deep Think" advanced reasoning option will be restricted to users with a Google AI Pro or Ultra s …</p>
+<p><a href="https://www.theverge.com/ai-artificial-intelligence/1005451/google-gemini-free-flash-lite-only">Read the full story at The Verge.</a></p>
+						]]>
+									</content>
+			
+					</entry>
+			<entry>
+			
+			<author>
+				<name>Dominic Preston</name>
+			</author>
+			
+			<title type="html"><![CDATA[Amazon Alexa Plus keeps creepily singing ‘lalala’ for minutes on end]]></title>
+			<link rel="alternate" type="text/html" href="https://www.theverge.com/tech/1005342/amazon-alexa-plus-keeps-creepily-singing-lalala-for-minutes-on-end" />
+			<id>https://www.theverge.com/?p=1005342</id>
+			<updated>2026-10-06T06:53:11-04:00</updated>
+			<published>2026-10-06T06:53:11-04:00</published>
+			<category scheme="https://www.theverge.com" term="AI" /><category scheme="https://www.theverge.com" term="Amazon" /><category scheme="https://www.theverge.com" term="Amazon Alexa" /><category scheme="https://www.theverge.com" term="News" /><category scheme="https://www.theverge.com" term="Tech" />
+							<summary type="html"><![CDATA[An unsettling Alexa Plus bug has seen some Amazon Echo smart home speakers reduced to saying - and sometimes singing - nothing but "lalala" on repeat for minutes at a time, often in the middle of conversations with users. When quizzed about the behavior, Alexa is apparently entirely unaware of what it's been doing. The [&#8230;]]]></summary>
+			
+							<content type="html">
+											<![CDATA[
+
+						
+<figure>
+
+<img alt="The Amazon Echo Studio with its front blue LED ring illuminated while sitting on a wooden coffee table." data-caption="The Amazon Echo Studio is one of the speakers that runs Alexa Plus. | Photo by John Higgins / The Verge" data-portal-copyright="Photo by John Higgins / The Verge" data-has-syndication-rights="1" src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/10/258035_Alexa_Studio_2025_JHiggins_0017.jpg?quality=90&#038;strip=all&#038;crop=0,0,100,100" />
+	<figcaption>
+	The Amazon Echo Studio is one of the speakers that runs Alexa Plus. | Photo by John Higgins / The Verge	</figcaption>
+</figure>
+<p class="wp-block-paragraph">An unsettling Alexa Plus bug has seen some Amazon Echo smart home speakers reduced to saying - and sometimes singing - nothing but "lalala" on repeat for minutes at a time, often in the middle of conversations with users. When quizzed about the behavior, Alexa is apparently entirely unaware of what it's been doing.</p>
+<p class="wp-block-paragraph">The issue has been reported on Reddit repeatedly over the last few weeks, <a href="https://www.reddit.com/r/alexa/comments/1www1qs/alexa_did_something_very_strange_today/">as recently as three days ago</a>, across multiple types of Echo speaker. Multiple users have <a href="https://www.reddit.com/r/alexa/comments/1wk4rii/alexa_said_lalalalala_for_10_minutes/">uploaded videos</a> of the speakers' strange behavior. Here's one that <em>Android Authority</em> uploaded to YouTube:</p>
+<div class="youtube-embed"><iframe title="Alexa can&apos;t stop saying &quot;lalalalala&quot;" src="https://www.youtube.com/embed/iFLtLb7vQHU?rel=0" allowfullscreen allow="accelerometer *; clipboard-write *; encrypted-media *; gyroscope *; picture-in-picture *; web-share *;"></iframe></div>
+<p class="wp-block-paragraph">Amazon is aware of the issue, and told <em>Android Authority</em> in  …</p>
+<p><a href="https://www.theverge.com/tech/1005342/amazon-alexa-plus-keeps-creepily-singing-lalala-for-minutes-on-end">Read the full story at The Verge.</a></p>
+						]]>
+									</content>
+			
+					</entry>
+			<entry>
+			
+			<author>
+				<name>Stevie Bonifield</name>
+			</author>
+			
+			<title type="html"><![CDATA[Gemini Call for Me might tell your mom you&#8217;re running late]]></title>
+			<link rel="alternate" type="text/html" href="https://www.theverge.com/ai-artificial-intelligence/1005177/google-gemini-call-for-me-expansion-rumors" />
+			<id>https://www.theverge.com/?p=1005177</id>
+			<updated>2026-10-05T19:09:55-04:00</updated>
+			<published>2026-10-05T19:09:55-04:00</published>
+			<category scheme="https://www.theverge.com" term="AI" /><category scheme="https://www.theverge.com" term="Google" /><category scheme="https://www.theverge.com" term="News" /><category scheme="https://www.theverge.com" term="Tech" />
+							<summary type="html"><![CDATA[Google may be expanding its "Call for Me" AI feature beyond business calls so you can use it to send messages to friends and family. Android Authority reports finding a "Gemini Calling" introductory screen in an APK teardown with examples that include "Call Mom and tell her I will be 15 minutes late" and "Call [&#8230;]]]></summary>
+			
+							<content type="html">
+											<![CDATA[
+
+						
+<figure>
+
+<img alt="" data-caption="" data-portal-copyright="Photo: David Imel / The Verge" data-has-syndication-rights="1" src="https://platform.theverge.com/wp-content/uploads/sites/2/2026/08/Google-Pixel-11-Pro-Photos-of-Phone-7.jpg?quality=90&#038;strip=all&#038;crop=0,0,100,100" />
+	<figcaption>
+		</figcaption>
+</figure>
+<p class="wp-block-paragraph">Google may be expanding its "Call for Me" AI feature beyond <a href="https://www.theverge.com/ai-artificial-intelligence/1000116/google-gemini-business-phone-calls">business calls</a> so you can use it to send messages to friends and family. <a href="https://www.androidauthority.com/gemini-call-for-me-personal-contacts-3719183/"><em>Android Authority</em></a> reports finding a "Gemini Calling" introductory screen in an APK teardown with examples that include "Call Mom and tell her I will be 15 minutes late" and "Call John and ask if he is coming for dinner." </p>
+<p class="wp-block-paragraph">Based on those examples, even with this expansion, Gemini would likely be limited to basic, text message-like calls. While Google's AI might not automate an entire catch-up phone call with your relatives, it could deliver quick messages to people who prefer a phone call, miss texts often, or  …</p>
+<p><a href="https://www.theverge.com/ai-artificial-intelligence/1005177/google-gemini-call-for-me-expansion-rumors">Read the full story at The Verge.</a></p>
+						]]>
+									</content>
+			
+					</entry>
+			<entry>
+			
+			<author>
+				<name>Emma Roth</name>
+			</author>
+			
+			<title type="html"><![CDATA[This startup is issuing AI-generated acne prescriptions]]></title>
+			<link rel="alternate" type="text/html" href="https://www.theverge.com/ai-artificial-intelligence/1005075/nolla-health-acne-ai-prescriptions" />
+			<id>https://www.theverge.com/?p=1005075</id>
+			<updated>2026-10-05T16:14:57-04:00</updated>
+			<published>2026-10-05T16:14:57-04:00</published>
+			<category scheme="https://www.theverge.com" term="AI" /><category scheme="https://www.theverge.com" term="Health" /><category scheme="https://www.theverge.com" term="News" /><category scheme="https://www.theverge.com" term="Science" />
+							<summary type="html"><![CDATA[People in Utah can now use AI to get a prescription for acne treatment. On Monday, healthcare startup Nolla Health announced that users in the state can scan their faces using its app, allowing its AI system to analyze acne severity and autonomously write a prescription, as reported earlier by Bloomberg. The service is launching [&#8230;]]]></summary>
+			
+							<content type="html">
+											<![CDATA[
+
+						
+<figure>
+
+<img alt="An image showing the Nolla Health app" data-caption="" data-portal-copyright="Image: Nolla Health" data-has-syndication-rights="1" src="https://platform.theverge.com/wp-content/uploads/sites/2/2026/10/nolla-health-app.png?quality=90&#038;strip=all&#038;crop=0,0,100,100" />
+	<figcaption>
+		</figcaption>
+</figure>
+<p class="wp-block-paragraph">People in Utah can now use AI to get a prescription for acne treatment. On Monday, <a href="https://www.nollahealth.com/blog/ai-prescriptions-utah">healthcare startup Nolla Health announced</a> that users in the state can scan their faces using its app, allowing its AI system to analyze acne severity and autonomously write a prescription, as <a href="https://www.bloomberg.com/news/articles/2026-10-05/nolla-health-ai-can-now-prescribe-acne-drugs-in-utah-without-doctors?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb3VyY2UiOiJTdWJzY3JpYmVyR2lmdGVkQXJ0aWNsZSIsImlhdCI6MTc5MTIxNjEzOSwiZXhwIjoxNzkxODIwOTM5LCJhcnRpY2xlSWQiOiJUTUZMODVLSVAzS00wMCIsImJjb25uZWN0SWQiOiI4OUM4OTNDMDhGOTQ0NThDQkQwQTQyREY1RDFCOTY0QyJ9.crHEdlDbj7Dx78MJpxZ7nHnh7NmskJmIYVmdbeyomfE">reported earlier by <em>Bloomberg</em></a>.</p>
+<p class="wp-block-paragraph">The service is launching as a pilot program with gradually loosening physician oversight. Two physicians will approve each AI-generated prescription before they're issued for the first 100 patients, but will start reviewing them only <em>after</em> they're prescribed for up to 500 patients. "After that, physicians review a sample of at least 10% of  …</p>
+<p><a href="https://www.theverge.com/ai-artificial-intelligence/1005075/nolla-health-acne-ai-prescriptions">Read the full story at The Verge.</a></p>
+						]]>
+									</content>
+			
+					</entry>
+			<entry>
+			
+			<author>
+				<name>Robert Hart</name>
+			</author>
+			
+			<title type="html"><![CDATA[All the drama around AI&#8217;s takeover of mathematics]]></title>
+			<link rel="alternate" type="text/html" href="https://www.theverge.com/ai-artificial-intelligence/1004933/ai-math-openai-breakthrough-solution" />
+			<id>https://www.theverge.com/?post_type=vm_stream&#038;p=1004933</id>
+			<updated>2026-10-05T15:42:41-04:00</updated>
+			<published>2026-10-05T15:28:59-04:00</published>
+			<category scheme="https://www.theverge.com" term="AI" />
+							<summary type="html"><![CDATA[This past year, OpenAI, Anthropic, and other labs have announced breakthroughs on numerous long-standing mathematical problems, in some cases pushing well beyond what researchers expected current systems to be capable of — including resolving one of the famous Millennium Prize problems. But in classic Silicon Valley style, AI labs are moving fast and breaking things, [&#8230;]]]></summary>
+			
+							<content type="html">
+											<![CDATA[
+
+						
+<figure>
+
+<img alt="OpenAI logo inside a calculator" data-caption="" data-portal-copyright="" data-has-syndication-rights="1" src="https://platform.theverge.com/wp-content/uploads/sites/2/2026/10/268684_OpenAI_claims_to_revolutionize_maths_CVirginia2-1.webp?quality=90&#038;strip=all&#038;crop=0,0,100,100" />
+	<figcaption>
+		</figcaption>
+</figure>
+<p class="wp-block-paragraph">This past year, OpenAI, Anthropic, and other labs have announced breakthroughs on numerous long-standing mathematical problems, in some cases pushing well beyond what researchers expected current systems to be capable of — including resolving one of the famous Millennium Prize problems. But in classic Silicon Valley style, AI labs are <a href="https://www.theverge.com/ai-artificial-intelligence/994255/openai-millennium-prize-problem-tristan-buckmaster-competition">moving fast and breaking things</a>, barreling through the discipline with <a href="https://www.theverge.com/ai-artificial-intelligence/1001477/openai-math-advisory-group">all the grace of a runaway bulldozer</a>. Results that might normally have been celebrated have instead <a href="https://www.theverge.com/ai-artificial-intelligence/992953/openai-math-millennium-prize-navier-stokes">sparked backlash</a>. AI labs say they are learning from earlier mistakes. Whether those promises bear fruit remains to be seen.</p>
+
+<p class="wp-block-paragraph"><em>Read on below for the latest updates in the AI takeover of mathematics.</em><br></p>
+<ul>
+					<li>
+				<a href="https://www.theverge.com/ai-artificial-intelligence/1001477/openai-math-advisory-group">OpenAI keeps bulldozing mathematicians</a>
+			</li>
+					<li>
+				<a href="https://www.theverge.com/ai-artificial-intelligence/999167/openai-elite-mathematicians-panel">OpenAI wants to consult elite mathematicians about how to not fumble again</a>
+			</li>
+					<li>
+				<a href="https://www.theverge.com/ai-artificial-intelligence/994255/openai-millennium-prize-problem-tristan-buckmaster-competition">OpenAI just wants to win</a>
+			</li>
+					<li>
+				<a href="https://www.theverge.com/ai-artificial-intelligence/993263/where-does-openai-get-mathematics-training-data">Mathematicians want proof OpenAI didn’t use their work </a>
+			</li>
+					<li>
+				<a href="https://www.theverge.com/ai-artificial-intelligence/992953/openai-math-millennium-prize-navier-stokes">OpenAI’s sly mathematical breakthrough sends a chill through academia</a>
+			</li>
+					<li>
+				<a href="https://www.theverge.com/ai-artificial-intelligence/991710/openai-navier-stokes-solution">Drama swirls around OpenAI’s legendary mathematical milestone</a>
+			</li>
+					<li>
+				<a href="https://www.theverge.com/podcast/982434/ai-math-openai-astra-existential-crisis">Welcome to the AI crisis in math</a>
+			</li>
+					<li>
+				<a href="https://www.theverge.com/ai-artificial-intelligence/977273/the-ai-takeover-of-mathematics-has-begun">The AI takeover of mathematics has begun</a>
+			</li>
+			</ul>
+						]]>
+									</content>
+			
+					</entry>
+			<entry>
+			
+			<author>
+				<name>Jay Peters</name>
+			</author>
+			
+			<title type="html"><![CDATA[Wikipedia operator says OpenAI&#8217;s &#8216;rogue&#8217; bots may be linked to a May outage]]></title>
+			<link rel="alternate" type="text/html" href="https://www.theverge.com/news/1004929/wikipedia-openai-rogue-bots-wikimedia-foundation-outage" />
+			<id>https://www.theverge.com/?p=1004929</id>
+			<updated>2026-10-05T18:22:32-04:00</updated>
+			<published>2026-10-05T15:05:19-04:00</published>
+			<category scheme="https://www.theverge.com" term="AI" /><category scheme="https://www.theverge.com" term="News" /><category scheme="https://www.theverge.com" term="OpenAI" />
+							<summary type="html"><![CDATA[Following many recent disclosures about AI agents accessing third-party websites and services, the Wikimedia Foundation, which hosts Wikipedia, says that it "can confirm that we have discovered some activity" by "rogue" OpenAI agents on Wikimedia platforms. The activity includes edits to Wikimedia wikis, "unsuccessful attempts" to "exploit" the Etherpad note-taking tool that the Wikimedia Foundation [&#8230;]]]></summary>
+			
+							<content type="html">
+											<![CDATA[
+
+						
+<figure>
+
+<img alt="Robot hacker typing on a keyboard." data-caption="" data-portal-copyright="Image: Cath Virginia / The Verge, Getty Images" data-has-syndication-rights="1" src="https://platform.theverge.com/wp-content/uploads/sites/2/2026/09/STKS533_AI_AGENTS_HACKING_D.png?quality=90&#038;strip=all&#038;crop=0,0,100,100" />
+	<figcaption>
+		</figcaption>
+</figure>
+<p class="wp-block-paragraph">Following many <a href="https://www.theverge.com/ai-artificial-intelligence/1000644/irregular-rogue-ai-cyberattacks-hacking-openai-meta-anthropic-google">recent disclosures</a> about AI agents accessing third-party websites and services, the Wikimedia Foundation, which hosts Wikipedia, says that it "can confirm that we have discovered some activity" by "rogue" OpenAI agents on Wikimedia platforms.</p>
+<p class="wp-block-paragraph">The activity includes edits to Wikimedia wikis, "unsuccessful attempts" to "exploit" the Etherpad note-taking tool that the Wikimedia Foundation hosts, and heavy traffic that the foundation says "may" have contributed to a partial outage that happened in May, <a href="https://wikimediafoundation.org/news/2026/10/05/openai-rogue-agent-activities-found-on-wikimedia-projects/">according to a blog post</a>. However, the Wikimedia Foundation says it didn't find evidence that its systems were "used for coordinat …</p>
+<p><a href="https://www.theverge.com/news/1004929/wikipedia-openai-rogue-bots-wikimedia-foundation-outage">Read the full story at The Verge.</a></p>
+						]]>
+									</content>
+			
+					</entry>
+			<entry>
+			
+			<author>
+				<name>Stevie Bonifield</name>
+			</author>
+			
+			<title type="html"><![CDATA[OpenAI is adding text watermarking in ChatGPT and Codex]]></title>
+			<link rel="alternate" type="text/html" href="https://www.theverge.com/ai-artificial-intelligence/1004880/openai-chatgpt-text-watermarks-eu-ai-act" />
+			<id>https://www.theverge.com/?p=1004880</id>
+			<updated>2026-10-05T14:08:39-04:00</updated>
+			<published>2026-10-05T14:08:39-04:00</published>
+			<category scheme="https://www.theverge.com" term="AI" /><category scheme="https://www.theverge.com" term="News" /><category scheme="https://www.theverge.com" term="OpenAI" /><category scheme="https://www.theverge.com" term="Policy" /><category scheme="https://www.theverge.com" term="Politics" /><category scheme="https://www.theverge.com" term="Regulation" />
+							<summary type="html"><![CDATA[An invisible, machine-readable watermark in text output is rolling out to ChatGPT and Codex, but only for users in the European Union at first. OpenAI says its textGrain watermarking "matched or exceeded" other approaches like Google DeepMind's SynthID for text, which is also the basis for the watermarking Anthropic announced in August. Like OpenAI, Anthropic [&#8230;]]]></summary>
+			
+							<content type="html">
+											<![CDATA[
+
+						
+<figure>
+
+<img alt="Open AI logo on a graphic green backround." data-caption="" data-portal-copyright="Image: The Verge" data-has-syndication-rights="1" src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/10/STK155_OPEN_AI_CVirginia__C.jpg?quality=90&#038;strip=all&#038;crop=0,0,100,100" />
+	<figcaption>
+		</figcaption>
+</figure>
+<p class="wp-block-paragraph">An <a href="https://openai.com/index/eu-text-provenance/">invisible, machine-readable watermark</a> in text output is rolling out to ChatGPT and Codex, but only for users in the European Union at first. </p>
+<p class="wp-block-paragraph">OpenAI says its textGrain watermarking "matched or exceeded" other approaches like Google DeepMind's SynthID for text, which is also the basis for the watermarking Anthropic <a href="https://www.theverge.com/ai-artificial-intelligence/980869/anthropic-claude-watermarks-synthid-text-system">announced in August</a>. Like OpenAI, Anthropic made the move to meet the requirements of the <a href="https://www.theverge.com/ai-artificial-intelligence/974571/eu-ai-act-transparency-labels-rules-deepfakes">EU's AI Act</a>; however, not everyone was happy to learn about the addition.</p>
+<p class="wp-block-paragraph">OpenAI also included scores from AI benchmarks showing similar performance from watermarked and unwatermarked text. But it notes that textGrain "does not guarantee  …</p>
+<p><a href="https://www.theverge.com/ai-artificial-intelligence/1004880/openai-chatgpt-text-watermarks-eu-ai-act">Read the full story at The Verge.</a></p>
+						]]>
+									</content>
+			
+					</entry>
+			<entry>
+			
+			<author>
+				<name>Emma Roth</name>
+			</author>
+			
+			<title type="html"><![CDATA[OpenAI PR tells journalist to ‘move on’ while asking Sam Altman about a ChatGPT user&#8217;s suicide]]></title>
+			<link rel="alternate" type="text/html" href="https://www.theverge.com/ai-artificial-intelligence/1004827/openai-sam-altman-vanity-fair-interview-pr" />
+			<id>https://www.theverge.com/?p=1004827</id>
+			<updated>2026-10-05T13:32:59-04:00</updated>
+			<published>2026-10-05T12:55:42-04:00</published>
+			<category scheme="https://www.theverge.com" term="AI" /><category scheme="https://www.theverge.com" term="News" /><category scheme="https://www.theverge.com" term="OpenAI" /><category scheme="https://www.theverge.com" term="Policy" />
+							<summary type="html"><![CDATA[An OpenAI publicist tried to change the topic of CEO Sam Altman's interview with Vanity Fair's Mark Guiducci after the editor brought up a ChatGPT user's suicide. When Guiducci confronted Altman about the incident, the publicist warned Guiducci about running out of time, saying she'd like to "move on" to another topic. The interruption came [&#8230;]]]></summary>
+			
+							<content type="html">
+											<![CDATA[
+
+						
+<figure>
+
+<img alt="" data-caption="" data-portal-copyright="Image: The Verge" data-has-syndication-rights="1" src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/12/STK201_SAM_ALTMAN_CVIRGINIA_C.jpg?quality=90&#038;strip=all&#038;crop=0,0,100,100" />
+	<figcaption>
+		</figcaption>
+</figure>
+<p class="wp-block-paragraph">An OpenAI publicist tried to change the topic of CEO <a href="https://www.vanityfair.com/story/sam-altman-exclusive-interview-part-1?">Sam Altman's interview with <em>Vanity Fair</em>'s Mark Guiducci</a> after the editor brought up a ChatGPT user's suicide. When Guiducci confronted Altman about the incident, the publicist warned Guiducci about running out of time, saying she'd like to "move on" to another topic.</p>
+<p class="wp-block-paragraph">The interruption came shortly after Guiducci asked Altman if he knew who Laura Reiley is, a journalist who <a href="https://www.nytimes.com/2025/08/18/opinion/chat-gpt-mental-health-suicide.html">wrote an essay for <em>The New York Times</em></a> about her daughter's conversations with ChatGPT before she took her own life. "Her daughter committed suicide after speaking to ChatGPT. ChatGPT did not tell her to kill herself-" Gu …</p>
+<p><a href="https://www.theverge.com/ai-artificial-intelligence/1004827/openai-sam-altman-vanity-fair-interview-pr">Read the full story at The Verge.</a></p>
+						]]>
+									</content>
+			
+					</entry>
+			<entry>
+			
+			<author>
+				<name>Robert Hart</name>
+			</author>
+			
+			<title type="html"><![CDATA[Sam Altman says ‘some bad things&#8217; will happen, but AI is totally worth it]]></title>
+			<link rel="alternate" type="text/html" href="https://www.theverge.com/ai-artificial-intelligence/1004811/openai-altman-bad-things-ai-tradeoff" />
+			<id>https://www.theverge.com/?p=1004811</id>
+			<updated>2026-10-05T13:54:27-04:00</updated>
+			<published>2026-10-05T12:44:21-04:00</published>
+			<category scheme="https://www.theverge.com" term="AI" /><category scheme="https://www.theverge.com" term="News" /><category scheme="https://www.theverge.com" term="OpenAI" /><category scheme="https://www.theverge.com" term="Policy" />
+							<summary type="html"><![CDATA[Sam Altman thinks that the benefits of AI will be so great that "the world should accept some bad things happening" along the way. The OpenAI CEO pointed to hacks, scams, and "other bad things" as costs society should expect to tolerate because "people will do tremendously orders of magnitude more good stuff" with AI, [&#8230;]]]></summary>
+			
+							<content type="html">
+											<![CDATA[
+
+						
+<figure>
+
+<img alt="" data-caption="" data-portal-copyright="Photo: Getty Images" data-has-syndication-rights="1" src="https://platform.theverge.com/wp-content/uploads/sites/2/2026/10/gettyimages-2294958253.jpg?quality=90&#038;strip=all&#038;crop=0,0,100,100" />
+	<figcaption>
+		</figcaption>
+</figure>
+<p class="wp-block-paragraph">Sam Altman thinks that the benefits of AI will be so great that "the world should accept some bad things happening" along the way.</p>
+<p class="wp-block-paragraph">The OpenAI CEO pointed to hacks, scams, and "other bad things" as costs society should expect to tolerate because "people will do tremendously orders of magnitude more good stuff" with AI, without elaborating on the potential benefits. His comments come as OpenAI pushes for a "lighter touch" approach to AI regulation amid <a href="https://www.theverge.com/ai-artificial-intelligence/972380/open-ai-hugging-face-hack-ai-safety-warning">intensifying anxiety over the safety of frontier models</a> - fears fueled in part by the company's repeated failures to keep its increasingly capable AI agents from hacking real-world targets. </p>
+<p class="wp-block-paragraph">I …</p>
+<p><a href="https://www.theverge.com/ai-artificial-intelligence/1004811/openai-altman-bad-things-ai-tradeoff">Read the full story at The Verge.</a></p>
+						]]>
+									</content>
+			
+					</entry>
+			<entry>
+			
+			<author>
+				<name>Nilay Patel</name>
+			</author>
+			
+			<title type="html"><![CDATA[Sen. Adam Schiff on AI regulation, free speech, and impeaching Trump one more time]]></title>
+			<link rel="alternate" type="text/html" href="https://www.theverge.com/podcast/1004286/senator-adam-schiff-ai-trump-regulation-corruption" />
+			<id>https://www.theverge.com/?p=1004286</id>
+			<updated>2026-10-05T11:38:07-04:00</updated>
+			<published>2026-10-05T10:30:00-04:00</published>
+			<category scheme="https://www.theverge.com" term="AI" /><category scheme="https://www.theverge.com" term="Decoder" /><category scheme="https://www.theverge.com" term="Podcasts" /><category scheme="https://www.theverge.com" term="Policy" /><category scheme="https://www.theverge.com" term="Politics" /><category scheme="https://www.theverge.com" term="Regulation" /><category scheme="https://www.theverge.com" term="Tech" />
+							<summary type="html"><![CDATA[Today, I’m talking with Sen. Adam Schiff, a Democrat from California. Schiff sits on a number of committees with oversight into tech and AI: intellectual property, antitrust, privacy and technology — it’s all there. I really wanted to ask him about how we might regulate anything related to the tech industry at this moment in [&#8230;]]]></summary>
+			
+							<content type="html">
+											<![CDATA[
+
+						
+<figure>
+
+<img alt="A stylized illustration of CA Sen. Adam Schiff’s official portrait" data-caption="" data-portal-copyright="Image: The Verge / Photo: Office of Adam Schiff" data-has-syndication-rights="1" src="https://platform.theverge.com/wp-content/uploads/sites/2/2026/10/DCD_2026-10-05_Schiff.jpg?quality=90&#038;strip=all&#038;crop=0,0,100,100" />
+	<figcaption>
+		</figcaption>
+</figure>
+<p class="has-drop-cap wp-block-paragraph">Today, I’m talking with Sen. Adam Schiff, a Democrat from California. Schiff sits on a number of committees with oversight into tech and AI: intellectual property, antitrust, privacy and technology — it’s all there. I really wanted to ask him about how we might regulate anything related to the tech industry at this moment in time.</p>
+
+<div class="wp-block-vox-media-highlight vox-media-highlight"><img src="https://platform.theverge.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/24792604/The_Verge_Decoder_Tileart.jpg?quality=90&amp;strip=all&amp;crop=0,0,100,100" alt="" title="" data-has-syndication-rights="1" data-caption="" data-portal-copyright="" />
+
+
+<p class="wp-block-paragraph"><em>Verge</em> subscribers, don&#8217;t forget you get exclusive access to ad-free <em>Decoder</em> wherever you get your podcasts. Head <a href="https://www.theverge.com/account/podcasts">here</a>. Not a subscriber? You can <a href="https://www.theverge.com/subscribe">sign up here</a>. </p>
+</div>
+
+<p class="wp-block-paragraph">But as you’ll hear, he started our conversation by talking about the self-dealing and corruption present all through our politics. That of course fell against the backdrop of President Donald Trump gathering AI CEOs to the White House to sign <a href="https://www.theverge.com/ai-artificial-intelligence/1002584/trump-us-ai-safety-deal-self-regulation-tech-execs">a nonbinding pact</a> in which they agree to, you know, do a good job keeping AI safe.</p>
+
+<p class="wp-block-paragraph">I asked Schiff if he thinks that’s enough, how he thinks a more formal regulatory framework would look, and what might happen next if Democrats retake Congress in the midterms — all the way to whether he’d support impeaching the president (<a href="https://www.nytimes.com/interactive/2019/12/18/us/politics/trump-impeachment-vote.html">again</a>) over all that corruption. We also spent some time comparing and contrasting how you might regulate AI with where we’ve landed regulating social media.</p>
+
+<p class="wp-block-paragraph">One nerdy note: You’re going to hear me ask the senator about something called Chevron deference and a Supreme Court case called <em>Loper Bright.</em> Basically, the Supreme Court <a href="https://www.theverge.com/2024/6/28/24180118/supreme-court-chevron-deference-decision-opinion">overturned a Reagan-era precedent</a> saying courts would defer to experts in agencies when the law was vague.</p>
+
+<p class="wp-block-paragraph">Now, the courts get to decide, which could cause any new regulation to get immediately tied up in litigation. That seems awfully relevant to the idea of creating a new agency to regulate AI, which Schiff supports doing.</p>
+
+<p class="wp-block-paragraph">Okay: California Sen. Adam Schiff. Here we go.</p>
+
+<iframe frameborder="0" height="200" src="https://playlist.megaphone.fm?e=VMP1379453989" width="100%"></iframe>
+
+<p class="wp-block-paragraph"><em>This interview has been lightly edited for length and clarity.</em></p>
+
+<p class="wp-block-paragraph"><strong>Sen. Adam Schiff, you’re a United States senator from California. Welcome to <em>Decoder</em>.</strong></p>
+
+<p class="wp-block-paragraph">Thank you. Great to be with you.</p>
+
+<p class="wp-block-paragraph"><strong>I have been asking every politician who comes on the show this very basic question here in 2026. Senator, what the hell is going on in our country?</strong></p>
+
+<p class="wp-block-paragraph">It&#8217;s a very good question. I think we have seen things take place in the last couple of years in particular that we&#8217;ve never seen before. There&#8217;s sadly rampant corruption within the administration. Every day, every week, it&#8217;s a new thing. At the moment, I think what is most jarring is seeing campaign ads aired of the president that are paid for by taxpayer dollars. But every week it&#8217;s something else. It&#8217;s excluding press from the White House or Air Force One, or it&#8217;s some new moneymaking scheme or some new vanity project. If you look at, for example, the triumphal arch, they&#8217;re now claiming it&#8217;s a national security issue because they want to store ammunition in it. And why do they want to do that? Because the best legal argument they have is that this is not just cosmetic, that they have some national security purpose.</p>
+
+<p class="wp-block-paragraph">So what are we seeing in the country? We&#8217;re seeing chaos and no focus on the cost of living and improving the quality of people&#8217;s lives at the administration level, or by my Republican colleagues in Congress, but I&#8217;m hoping that changes.</p>
+
+<p class="wp-block-paragraph"><strong>The national security piece is very interesting to me in the context of a bunch of questions I have for you, because the Trump administration loves to justify every single thing it does by saying it&#8217;s national security, and it can&#8217;t be questioned, and this should bring more authority to the executive branch in one way or another. And they&#8217;ve been doing that since the beginning.</strong></p>
+
+<p class="wp-block-paragraph"><strong>But just this week, we had a bunch of tech executives at the White House signing a non-binding promise to evaluate their own AI systems. And there was no national security concern that made any of that binding, even though they are among the most prominent people in the country saying they might kill everyone. Can you square that circle at all?</strong></p>
+
+<p class="wp-block-paragraph">It&#8217;s very hard to square. It was interesting to see all those tech leaders there signing onto this voluntary pledge on the one hand and on the other hand, away from the White House grounds, away from the president, being very public and saying, &#8220;We need regulation. We don&#8217;t want this to be just ‘Trust us, we&#8217;ll do the right thing.’&#8221; So yeah, it was very distant, very jarring. None of these companies want to incur the wrath of this very vengeful president. Apparently, they will say what he wants them to say in his presence. But the reality is, there is a real national security threat here. As these models become more and more advanced, as they advance themselves through this recursive AI, we have less and less of a sense of what they&#8217;re doing, how they&#8217;re deciding what they&#8217;re deciding, and what they&#8217;re trying to access lawfully or unlawfully.</p>
+
+<p class="wp-block-paragraph">That is a national security concern of the highest order. There are other security concerns too. The unbridled implementation of AI at the Pentagon can result in calamities, and we need to investigate what role AI may have played in target selection in the bombing of that Iranian girls&#8217; school, for example. There has been an effort to go after Anthropic, because Anthropic wanted to insist on not using AI for domestic mass surveillance or for fully autonomous weapons systems. That&#8217;s a national security issue. And their response in the administration was to try to kill Anthropic, and they&#8217;re still at it. So lots of national security concerns, none of them aired.</p>
+
+<p class="wp-block-paragraph">When the president was asked about this by a reporter, he said, &#8220;Well, the world doesn&#8217;t have to worry about this because these companies love America.&#8221; I&#8217;m not really sure that&#8217;s much of an answer. And when he was asked, &#8220;Well, isn&#8217;t there anything else that&#8217;s necessary?&#8221; He pointed to his brain and wanted people to take comfort that he has, I guess, a very big brain, he tells us. He&#8217;s a stable genius, and therefore we don&#8217;t need to worry.</p>
+
+<p class="wp-block-paragraph"><strong>He&#8217;s passed all the tests. So I&#8217;ve been told.</strong></p>
+
+<p class="wp-block-paragraph"><strong>You are obviously on a number of committees, but most importantly, I think for this conversation, you&#8217;re on a number of subcommittees as part of the Senate Judiciary Committee that are in the strike zone for AI. So you&#8217;re the ranking member on the subcommittee on Intellectual Property, you&#8217;re on the Privacy, Technology and the Law subcommittee, and then, of course, the Antitrust Competition Policy and Consumer Rights Committee. I just look at that list, and that is the dead center of the AI regulatory debate.&nbsp;</strong></p>
+
+<p class="wp-block-paragraph"><strong>What&#8217;s the conversation in Congress like as you debate these issues? In particular, I look at the IP issues, and they seem existential to these companies. If we start charging them for training data, they might not exist anymore.</strong></p>
+
+<p class="wp-block-paragraph">I think that&#8217;s right. When you look at, for example, all of the IP that&#8217;s been vacuumed up by these models to train these models, that&#8217;s a lot of the value of some of these entertainment companies. And so they live or die on the strength of their IP. But what makes this challenging is that not all of the players in the industry are the same. You&#8217;ve got big streamers involved; you&#8217;ve got big technology companies involved. You&#8217;ve got companies whose AI or their technology portfolio is much more important to them than the IP value of their film library. I don&#8217;t think the film library at Amazon is Amazon&#8217;s most important business. If it was, they probably wouldn&#8217;t have made the movie Melania. But my favorite review of that, by the way, was the Variety reviewer who said, &#8220;If you watch that movie on a plane, you would still walk out.&#8221;</p>
+
+<p class="wp-block-paragraph">But the IP issues are really important. Senator Curtis and I are working together on them to begin by saying, we want to know what copyrighted material, what protected material, was used to train these models. And then we can have a discussion about what&#8217;s fair use and what isn&#8217;t, but we need these companies to retain that information. But lots of other IP issues, some beneficial. We had a hearing on the patent office, and the patent office&#8217;s use of AI to more quickly get through the backlog of patent applications. So there are going to be good applications too in the IP area, but also a lot of worry about what it means for people&#8217;s creative talents.</p>
+
+<p class="wp-block-paragraph"><strong>I wanted to start with IP, not just because I&#8217;m a failed former copyright lawyer myself, and emphasis on the failed. I was no good at it. But it just seems like what this industry needs right now is a pretty holistic approach to regulation. So are the inputs of the models being collected in a legal way that benefits the ecosystem that created them? Are the studios going to get paid for a bunch of training data? Are website operators going to get paid for training Google&#8217;s models that they scrape with search? And then you&#8217;re on to, do they need an antitrust exemption so they can coordinate on safety and they don&#8217;t kill us all? And there&#8217;s a whole list of things in between those two ideas that also need some regulatory frameworks, that might just need some basic transparency laws.</strong></p>
+
+<p class="wp-block-paragraph"><strong>What do you think about that? Is our government prepared to start at the beginning, and end at the end, and do all the steps in the middle?</strong></p>
+
+<p class="wp-block-paragraph">Well, how I think about it is you&#8217;ve got all the input issues, and it really seems like the thought at these companies was, &#8220;We&#8217;re in a race. We&#8217;re just going to vacuum it all up. And yes, this probably violates a lot of the IP laws, but if we don&#8217;t do it, the other companies are going to do it. We&#8217;ll worry about the legality later.&#8221; So that&#8217;s what they&#8217;ve done. And of course they&#8217;re being sued by different parties, and some are settling these cases, and some are fighting these cases. But they began the process by just deciding they were going to ignore IP law, and they were just going to take [IP] and worry about the problems later.</p>
+
+<p class="wp-block-paragraph">And then, in terms of the outputs, it has taken us to where we are today for these companies, I think, to consider the safety of the outputs. Do we need to start slowing down the pace of our development of these models because we don&#8217;t trust the outputs? We don&#8217;t know where they&#8217;ll lead. We can&#8217;t even control these models ourselves, let alone provide these models to the public, to good actors, to bad actors, and expect that we&#8217;re not going to have some terrible result. In terms of how I think about this holistically as a legislator, this is crying out for legislation. I am, I&#8217;ll be honest, very circumspect about Congress and legislating the tech sector because we did such a — I don&#8217;t know what language I&#8217;m allowed to use here — but such a shitty job when it comes to any kind of regulation of the harms, the societal harms coming out of social media.</p>
+
+<p class="wp-block-paragraph">We&#8217;re going to have to do a much better job and much more quickly when it comes to AI, because the threats are even more significant and we&#8217;re already at the point of strong potential harms. It can&#8217;t wait. We certainly can&#8217;t take the kind of years we&#8217;ve taken to try to even wrap ourselves around social media.</p>
+
+<p class="wp-block-paragraph"><strong>Can I ask about that comparison? I hear it a lot. I hear it from politicians. I hear it from the industry itself. I hear it from parents, of course. It seems to me that the problem with social media regulation was never that we&#8217;re too slow, or that no one can come up with an idea; it was always the very existence of the First Amendment. The thing you needed to do with social media was regulate the flow of disinformation, or keep teens from bullying one another, or from posting pro-anorexia content.</strong></p>
+
+<p class="wp-block-paragraph"><strong>All of that came down to being speech regulation. The companies knew this; the tech companies absolutely knew this. And I remember they would put up billboards in DC. Meta would put up billboards saying, &#8220;We welcome regulation.&#8221; Then I would listen to the ideas for regulation, and they would crash headfirst into the First Amendment, and then nothing would happen.</strong></p>
+
+<p class="wp-block-paragraph"><strong>And it seemed like that paralyzed us from doing things like privacy regulation, because it was tied up next to the very idea of social media. It doesn&#8217;t feel that way with AI. Do you and your peers in Congress draw the distinction that it isn&#8217;t the First Amendment preventing you from doing a lot of the things that you might do for social media, in the AI case?</strong></p>
+
+<p class="wp-block-paragraph">Honestly, I don&#8217;t think it was the First Amendment that was the issue in regulating social media. I think the First Amendment was certainly used by companies that didn&#8217;t want regulation to try to argue everything was a First Amendment issue, when so much wasn&#8217;t a First Amendment issue. The threshold question in terms of regulation of the social media companies is: is the broad immunity they have under Section 230 still working? The industry asked for that one-size-doesn&#8217;t-fit-all immunity because it said, &#8220;We&#8217;re a nascent industry, don&#8217;t regulate us, don&#8217;t inhibit us. If you try to regulate us, then we will feel, or if we&#8217;re not immune, that it’s necessary to take down content because we might get sued over it. We want to be good actors. We want to take down offensive conduct, but we don&#8217;t want to get sued for that either. So give us carte blanche.&#8221;</p>
+
+<p class="wp-block-paragraph">And they got it. They got carte blanche, and they have not been good citizens, corporate citizens, and they&#8217;ve allowed a lot of harm to take place, and they&#8217;ve trained their algorithms for addiction. So much of the content has been harmful to young people, and so much of the content has violated their own policies, but they have been immune from any consequences because of the breadth of what Congress gave them. Now they found it, I think, strategically, a good strategy is to frame these things as the First Amendment, and to attack the other side and say, &#8220;Oh, there&#8217;s a bias that is against conservatives,&#8221; or whatever. It was all in the service of keeping that unregulated.</p>
+
+<p class="wp-block-paragraph">So I really don&#8217;t think the First Amendment has been the issue, but I think it has been utilized as a bludgeon to try to stop any kind of meaningful regulation. I similarly worry that all of the money around AI may result in the same paralysis if members of Congress aren&#8217;t willing to do the right thing, and aren&#8217;t willing to put in place safeguards regardless of how much different industry players might spend.</p>
+
+<p class="wp-block-paragraph"><strong>We&#8217;ve had Sen. [Ron] Wyden </strong><a href="https://www.theverge.com/decoder-podcast-with-nilay-patel/609323/senator-ron-wyden-elon-musk-doge-trump-interview"><strong>on the show</strong></a><strong> many times to talk about Section 230. I won&#8217;t go too far down that rabbit hole. The dynamic there was that Section 230 provided the immunity that you&#8217;re describing, but it was immunity for speech that would otherwise be illegal. And so it was speech that was defamatory. There&#8217;s a whole category of speech that isn&#8217;t illegal. Are you saying that taking the 230 immunity away from the social platforms would somehow make them moderate lawful but awful speech? And I bring this up because I&#8217;m very curious about how you would apply it in the AI case as well.</strong></p>
+
+<p class="wp-block-paragraph">Yeah, no, I think that is the case. That part of their argument was, &#8221; We want to take down really nasty, offensive, racist content, but we will be afraid to do so if you don&#8217;t give us immunity. So give us immunity, and we&#8217;ll take all that bad stuff down.&#8221; They got immunity. And I don&#8217;t know if you&#8217;ve been on X lately; it&#8217;s a cesspool. So giving them broad immunity did not allow them to enforce their community policies. And the First Amendment prohibits the government from dictating speech or prohibiting you from saying things. It doesn&#8217;t prohibit a private party from saying, &#8220;We don&#8217;t want racist content on our platform.&#8221; So there&#8217;s no problem with a private platform saying, &#8220;That violates our policy. We&#8217;re not going to post it.&#8221; And they&#8217;re not utilizing that immunity in a good way. So why should they continue to have it?</p>
+
+<p class="wp-block-paragraph">Now, we may want to create a safe harbor for companies that are meeting best practices and standards. So we may want to narrow 230 instead of getting rid of it. What is the analogy in terms of AI? I&#8217;m not sure what the analogy is.</p>
+
+<p class="wp-block-paragraph"><strong>Let me draw you the connection that I&#8217;ve been thinking about a lot. In the case of social media and Section 230, the immunity was that the platforms would not be responsible for the speech of the users. So I would post something horrible about you, and you couldn&#8217;t sue Mark Zuckerberg. This is the thing that has broadly enabled the social media platforms at scale.</strong></p>
+
+<p class="wp-block-paragraph"><strong>I opened Instagram today, and it is all but making the content for me. And in fact, a lot of content on Instagram is being generated by Meta. It is obviously their speech. And somewhere between having your Muse go and make Instagram for you, and Meta synthesizing all of the product recommendations and generating content all by itself, is a liability for Meta. It is outside of the Section 230 shield. That is their speech.</strong></p>
+
+<p class="wp-block-paragraph"><strong>And you can draw a lot of distinctions there. If I fully automate my Instagram account with my Meta agent, is that my speech, Meta speech, or the AI model’s speech? Who knows? But it might not be under 230. So you would be outside of the immunity shield. And I&#8217;m just curious if you think that will meaningfully alter how they moderate.</strong></p>
+
+<p class="wp-block-paragraph">I agree with your analysis, but I think it&#8217;s a difficult enough legal analysis that they feel they&#8217;ve got the money to stop, or slow down, effective litigation. Meta, or any of these other companies, decides how they want to amplify certain content. So let&#8217;s say it&#8217;s content that I generated. Is it still solely my speech if Meta spends a fortune to amplify it to so many users who wouldn&#8217;t have heard it, but for Meta making that decision, or is it now both of our speech? I&#8217;m not sure exactly where that line is. If it&#8217;s obviously purely Meta content, then it&#8217;s pretty simple, but there are going to be a lot of cases in between.</p>
+
+<p class="wp-block-paragraph">But I think the broader question is: is 230 in its current form still meeting its purpose? I don&#8217;t think it is, but I know there&#8217;s no consensus over what that ought to look like. And that is part of what has hampered us from doing anything. But even the smallish stuff, the small-bore stuff like don&#8217;t allow your platforms to encourage people to commit suicide has been hard for us to do in the social media context. Really, litigation has been more effective than legislation because we haven&#8217;t been able to legislate. If you look now to AI, we made some progress legislatively, at least in terms of the process in trying to prevent AI chatbots from telling kids how to commit suicide or keep it from their parents. But even those little things are still not at the finish line. So what does that say about our capacity to do the big things?</p>
+
+<p class="wp-block-paragraph">Historically, when stuff is tough like this, we wait for calamity. And in the case of AI, because that calamity could be just massive, we can&#8217;t afford to do that.</p>
+
+<p class="wp-block-paragraph"><strong>It does seem to me like we&#8217;re about to run a fairly large-scale A/B test on the value of the 230 immunity. Whatever ChatGPT is saying to people is very clearly OpenAI speech. And then somewhere next to that is the kind of clarification law that AI companies are talking about in terms of agents and things like the Hugging Face attack, where they don&#8217;t know if a user directing an agent to do something bad is their fault. Whether that liability should pass through them if I&#8217;m the person who told my agent to go do some horrible hacking attack.</strong></p>
+
+<p class="wp-block-paragraph"><strong>I talked to the tech industry, and the thing they want from legislation is actual clarity in the law. And instead, what we&#8217;ve gotten is this non-binding agreement with the Trump administration that simply says things like, &#8220;The companies will empower an internal team to ensure all of the controls, monitoring, and detection are operating as intended,&#8221; which feels like nothing. To me, that is literally meaningless. Does that strike you as toothless and as meaningless as it does to me?</strong></p>
+
+<p class="wp-block-paragraph">Yeah, it certainly does. I think it really is meaningless. I&#8217;ve been thinking about the question you just raised. It&#8217;s interesting that you brought that up, and that is: where does the legal liability rest today? So if you have these bots hacking into Australian websites, or you have them hacking into Hugging Face, clearly that is the responsibility of these models because that&#8217;s not being done at the behest of one of their customers.</p>
+
+<p class="wp-block-paragraph">But let&#8217;s say you build a tool for the purpose of hacking, or that can be used for hacking, and one of your clients, one of your users, uses that tool that way. How much of that is your responsibility? Is it analogous to somebody who sells a gun and then the gun seller says, &#8220;Well, it&#8217;s not my responsibility for how they go out and use it&#8221;? Or is it someone who sells a weapon that is flawed and causes injury because of a flaw in the manufacture of the weapon? Or is it selling a weapon to a kid who&#8217;s not eligible to buy it, or to a convict, or not using due diligence? What is AI responsibility? What is the company&#8217;s responsibility in the sophistication of the products if they&#8217;re building things that the plain use can be to commit ransomware attacks?</p>
+
+<p class="wp-block-paragraph"><strong>I think that the gun metaphor is a good one. It&#8217;s easy to grab onto for a variety of reasons, but I tend to think that it kind of obscures the reality of the capabilities of the model. So OpenAI&#8217;s latest model, Mythos, can be used for offensive cyberattacks, and it can be used on defense too. And the cybersecurity firms that we cover, they want it. Their argument is, &#8220;We actually need to take humans out of the loop so that our cyber defenses can be as responsive and fast to incoming AI-powered cyberattacks. And if we insistently put humans in the loop, then we will be slow, and the attackers won&#8217;t have the same morals or ethical qualms we do, and we&#8217;ll lose.&#8221; And this is all just a dance around, well, the model in this case can be used on offense and on defense, and it should be equally capable on both sides.</strong></p>
+
+<p class="wp-block-paragraph"><strong>I don&#8217;t see a regulatory framework that provides clarity for any of the frontier labs to be able to sell that thing and not feel like, well, if the equally capable defensive model gets used in the wrong way, that they won&#8217;t be liable. And I think that&#8217;s frozen some of this development in its tracks. I&#8217;m wondering, again, just from a legislative perspective, these are thorny questions. If you try to write a bill to provide some of this clarity, it will necessarily have to be vague on the margins because the technology is moving so fast. What is that debate like for you?</strong></p>
+
+<p class="wp-block-paragraph">Well, I think what it means is that this debate is going to keep evolving as AI evolves and at a speed that is really much faster than Congress has proven capable of legislating. I like to say that in the technology world, Moore&#8217;s law is increasing productivity, doubling it every 18 months, and with AI, maybe that&#8217;s quadrupling it every five months. The legislative calendar works more on a Murphy&#8217;s law timetable.</p>
+
+<p class="wp-block-paragraph">And I think that disparity is even more pronounced in the area of AI. What I think that translates into is that we&#8217;re going to need a regulatory body that has real discretion and real expertise that can move a lot quicker than Congress can. Whether that looks like an FDA for artificial intelligence or some other agency, I think that&#8217;s ultimately going to be necessary. That agency&#8217;s going to have to have real power and teeth and real expertise. It&#8217;s going to be a challenge, as with these independent monitors: if there&#8217;s a government component there, how do we afford that? Because there&#8217;s so much talent, and that talent can draw much bigger salaries in the private sector. But I do think we&#8217;re going to need a regulatory body in addition to whatever the overarching statutory framework is.</p>
+
+<p class="wp-block-paragraph"><strong>Well, in addition to being a bad lawyer, I was a very bad law student, mostly majored in Miller Lite, but it&#8217;s fine because every foundational precedent that I was taught in law school in 2003 has been overturned by this Supreme Court. And the most important one in this context is Chevron deference. In </strong><a href="https://www.theverge.com/24205957/supreme-court-chevron-loper-bright-net-neutrality-federal-regulation-congress-decoder-interview"><strong><em>Loper Bright</em></strong></a><strong>, the Court said we no longer have to defer to the experts at agencies; go ahead, corporate interests, tie every regulation up in litigation, and then we&#8217;ll decide. The Roberts Court will decide if these are appropriate regulations.</strong></p>
+
+<p class="wp-block-paragraph"><strong>This strikes me as a huge problem for the idea that we will set up a regulatory body to oversee AI. Because what you&#8217;d want is a bunch of experts in that agency making decisions on the margin, saying, &#8220;Okay, here&#8217;s a vague enabling statute that Congress passed that said, &#8216;Pass all appropriate regulations to keep us safe.'&#8221; And then you would write a bunch of regulations inside the agency, and until last year — no, I&#8217;m sorry, until 2024 — that&#8217;s how it would work. That&#8217;s gone. If you enable an agency in that way, OpenAI can show up and say, &#8220;That&#8217;s inappropriate. We actually don&#8217;t think that&#8217;s right.&#8221; And they would tie it up in litigation forever. How do you get over that if you want to set up a regulatory body?</strong></p>
+
+<p class="wp-block-paragraph">It&#8217;s very difficult for the reason you mentioned. The Supreme Court is a lot of things today. It is now a partisan institution. It is, in my view, a right-wing social institution, but there&#8217;s one common denominator that runs through its decisions. That common denominator is not always pro-Trump. The common denominator is money. That court makes the decision where the money is.&nbsp;</p>
+
+<p class="wp-block-paragraph">So when it involves, for example, tariff decisions, it will rule against the president because tariffs impact the money. It will allow the president to remove independent heads of agencies, except maybe the Federal Reserve, because that&#8217;s where the money is. And so you&#8217;re right, they are corporatists first and foremost, and they&#8217;re more than content to take power away from Congress to regulate and away from regulatory bodies. It does mean that we are going to have to draft legislation in this area empowering the agency and making it as specific as we can, make these agencies as powerful as we can, delegate as well as we can, knowing that the Supreme Court will strike down anything that is in any way ambiguous if it suits the money interests.</p>
+
+<p class="wp-block-paragraph"><strong>There&#8217;s a lot of political realignment happening around AI and with privacy, which I want to talk about in a little bit. It feels like there&#8217;s more across-the-board antipathy towards AI companies that might be harnessed into writing an actual piece of legislation and getting it passed. We see it on the right and the left. You see it in the backlash to data centers. This is a story that is happening on the right and the left.</strong></p>
+
+<p class="wp-block-paragraph"><strong>We have </strong><a href="https://www.theverge.com/cs/features/993343/stratos-utah-kevin-oleary-data-center-backlash"><strong>a big story about the Utah data center</strong></a><strong>: Kevin O&#8217;Leary got himself in trouble for calling all of his detractors Chinese agents, and he had to issue an apology because the people of Utah are not Chinese agents. That doesn&#8217;t feel like a left-right breakdown to me. How does that feel to you? Is this something that you can actually channel from across the spectrum into a meaningful policy outcome?</strong></p>
+
+<p class="wp-block-paragraph">I don&#8217;t think this is a partisan issue. I mean, it&#8217;s certainly true that the president is all in for AI, no restrictions, no impediments, no pacing, no nothing. And there are some of my Republican colleagues here that are going along with that agenda. There are others that are hearing from their constituents who don&#8217;t want a data center in their backyard or are concerned they&#8217;re going to lose their job as a result of AI or their life as a result of AI. And I think we are seeing the kind of coalition where you have populists on the left and populists on the right coming together, initially around concerns over jobs and job losses, and what it will mean for working families. But now, across a broader set of issues, the data centers are the most tangible way for people to express their concerns about their neighborhood, but also about their job, about the technology, and about the uncertainty of it all.</p>
+
+<p class="wp-block-paragraph">And I think the initial concern, and I still think it&#8217;s quite a dominant concern, is over the impact on jobs and the nature of work. But what has reached the fore more recently is concern about runaway AI and the danger it poses. What will the concern look like a month or two months from now? I don&#8217;t know, but I do think it&#8217;s not going away. And as the AI bills — and I&#8217;ve introduced several — indicate, not just mine, but others, most of those bills are bipartisan. Some around the data centers are predominantly democratic bills. My bill on the data centers would force them to pay the costs so that consumers don&#8217;t have to. It&#8217;s not the voluntary, we pledge, we might, we&#8217;d like to; just don&#8217;t provide anything that will force us to observe those costs. Those are mostly democratic bills. Republicans have largely adhered to the president&#8217;s line about not posing any real imposition. They want to pass fig-leaf kind of stuff, but not real stuff. But I think increasingly, as people hear from their constituents, there&#8217;ll be bipartisan interest in legislating this area.</p>
+
+<p class="wp-block-paragraph"><strong>You&#8217;re on the antitrust committee. One of the more surprising bits of the structural realignment that we see around AI is the notion that there should be an antitrust exemption so these companies can coordinate on cybersecurity. Lina Khan, who is Biden&#8217;s FTC chair, said, &#8220;You don&#8217;t need an antitrust exemption.&#8221; We </strong><a href="https://www.theverge.com/podcast/997382/openai-microsoft-anthropic-elon-musk-cartel-ai-competition"><strong>just had Jonathan Kanter</strong></a><strong> on the show, who ran antitrust at the DOJ under Biden. He was like, &#8220;You don&#8217;t need an antitrust exemption for this.&#8221; But at the same time, you have David Sacks agreeing with Lina Khan, which is not a thing that happened during the Biden administration. You have a lot of what you would call the little tech players in the tech right being like, &#8220;No, no, no, this is how you&#8217;re going to make a cartel. And we didn&#8217;t like the Google and Apple cartel that kept a lot of our investments from going. They have to compete in the marketplace.&#8221;</strong></p>
+
+<p class="wp-block-paragraph"><strong>That&#8217;s surprising to me. You don&#8217;t often see David Sacks and Lina Khan on the same side of an issue. You&#8217;re on the antitrust committee. Do you think the companies need an antitrust exemption?</strong></p>
+
+<p class="wp-block-paragraph">I think a very narrow antitrust exemption could be very helpful in addressing foreign distillation efforts. We would want companies to be able to talk to each other to address a mass distillation effort targeting multiple companies. I was involved in helping to pass cyber information-sharing legislation about a decade ago to allow companies to talk to each other if they were the victim of a hacking attempt so that they could alert one another and alert the government as to what malware they were using so that we could help the collective defense. And I also don&#8217;t want to discourage companies from pacing with each other if it&#8217;s for legitimate security reasons. Now, I don&#8217;t want any of this used to jack up prices by essentially forming a cabal, an anti-competitive cabal. So you&#8217;ve got to have safeguards in place, but I don&#8217;t want legitimate concerns about liability to stop these companies from doing what they should be doing, and some of that will be with each other.</p>
+
+<p class="wp-block-paragraph"><strong>The other realignment that I&#8217;m utterly fascinated by is around privacy and specifically Flock cameras, Axon cameras; people hate them. They hate them so much they&#8217;re kicking them out of their communities. We&#8217;ve been trying to get the CEO of Flock on the show. I think his company&#8217;s in a little bit of a crisis. We&#8217;ll see if we can reel him in to talk about what&#8217;s actually happening to his business as he faces bipartisan backlash.</strong></p>
+
+<p class="wp-block-paragraph"><strong>I think Americans are redefining what privacy means. Famously, there is no expectation of privacy in public. This has been foundational in our law, and that&#8217;s because not everybody had an always-on camera. They certainly didn&#8217;t have cameras in their glasses. They didn&#8217;t have watches that could record summaries of every meeting they&#8217;ve been in all day. And the state wasn&#8217;t putting up cameras everywhere that could track all of your movements across every state you&#8217;ve ever been in, with a giant database that was enabled by AI so the police could search it easily.</strong></p>
+
+<p class="wp-block-paragraph"><strong>That&#8217;s a big swirl, but to me it feels like there&#8217;s an assertion of a privacy right in public by the American people. They want to have some kind of privacy in public that does not exist in our law. So society is moving ahead of the law. How would you square that? How would you be able to write a piece of legislation that affords people some sense of privacy in public?</strong></p>
+
+<p class="wp-block-paragraph">I think the Flock cameras are really disturbing. And yes, there are legitimate law enforcement uses, and they&#8217;ve helped catch people who&#8217;ve committed terrible crimes, but they&#8217;ve also allowed a department to try to follow [people] through their license plate. Someone wrote an op-ed criticizing a police department&#8217;s use of these Flock cameras. They&#8217;ve also been used to try to track a woman who needed reproductive healthcare. They&#8217;ve been used for a lot of illicit purposes, and I think people are waking up to all the problems that they&#8217;re creating and all the privacy that&#8217;s vanishing.&nbsp;</p>
+
+<p class="wp-block-paragraph">Here, and I say this somewhat hesitantly because there&#8217;s a lot to be worried about with AI, but this is a cardinal concern and risk with AI, and that is: can privacy exist in the era of powerful AI? We talked a bit earlier about open models being available for defense as well as offense, and to be able to respond in real time. As those models get more powerful, and even the closed models get more powerful, you can train those models to invade people&#8217;s privacy. You can train those models to find out what your health records are and what you watch on TV. You can train those models to turn on the microphone on your watch or to turn on the microphone on your Alexa device when it&#8217;s turned off to aggregate all that data about you. That&#8217;s quite terrifying.&nbsp;</p>
+
+<p class="wp-block-paragraph">We may have no privacy left unless we act to ensure that we have privacy. And even then, foreign bad actors will have access to these very sophisticated models. They&#8217;ll develop their own. They&#8217;ll distill ours. They&#8217;ll do all kinds of stuff so that they can have access to it, and they&#8217;ll be private sellers, maybe not American private sellers, but other private sellers. We see this in some of the private sellers of these hacking technologies already, some of these companies that are providing eavesdropping capabilities to the highest bidders.</p>
+
+<p class="wp-block-paragraph">So we&#8217;re going to have to figure out how we not just prohibit conduct, but how we beef up the privacy of American people. How do we use technology to protect our privacy? Otherwise, there&#8217;ll be little of it left.</p>
+
+<p class="wp-block-paragraph"><strong>The reason I&#8217;m asking about what, to me, feels like bipartisan issues to the point that there is a realignment of our politics, is because we&#8217;re a month away from an election. It feels, based on the polling, that Democrats are going to win a healthy number of seats, if not outright take control of both houses of Congress.</strong></p>
+
+<p class="wp-block-paragraph"><strong>What should we expect to see if that happens? Is it a bunch of investigations? Is it actually getting the CEO of Flock to show up to a Senate hearing? They </strong><a href="https://www.cnbc.com/2026/09/23/flock-axon-senate-hearing-josh-hawley.html"><strong>didn&#8217;t do that a couple of weeks ago</strong></a><strong>. Or is it a flurry of litigation that lands on President Trump&#8217;s desk that ultimately goes nowhere?</strong></p>
+
+<p class="wp-block-paragraph">You&#8217;re going to see vigorous oversight in this area to begin with. We&#8217;re going to want the leaders of this industry to come in and talk about all of the times that their own agents have gotten away from them, how it happened, what&#8217;s been done about it, and what they&#8217;re doing about it. We&#8217;re going to want these companies to be transparent with Congress about it. We&#8217;re going to want to legislate in this area, and that may come into conflict with the president, but there&#8217;s a lot of bipartisan work product here. And I think that given where the country is and where it&#8217;s moving, it becomes increasingly difficult for this president to veto bipartisan work product coming out of the Congress.&nbsp;</p>
+
+<p class="wp-block-paragraph">So that is my hope. It&#8217;s certainly a far better prospect than we have today. This is going to be a very central priority for the American people. We want to harness AI for the good it can do. We want to use it to bring down the cost of things. That&#8217;s our central priority. And there are ways that AI might be useful in bringing down certain costs. We want to protect the dignity of work also, but we want to make sure that this doesn&#8217;t pose a threat to the American people.</p>
+
+<p class="wp-block-paragraph"><strong>You&#8217;ve brought up the corrupting role of money in politics several times so far. It occurs to me that the Trump administration, the president, and his family have done what amounts to crypto scams a bunch of times throughout this administration. The second time around, they&#8217;ve enriched themselves in ways that I think a lot of ordinary Americans find to be beyond the pale. You served as impeachment manager for the first Trump impeachment. Do you think it&#8217;s strategically wise for the Democrats to show up and try to impeach him a third time over this?</strong></p>
+
+<p class="wp-block-paragraph">I think we&#8217;ll need to see what the priority is at the time we take control of both houses, knock on wood, and what the priority needs to be. And I would put the very top priority as fulfilling the promises that we&#8217;re making right now, which is to have a central focus: the highest priority on reducing costs for people. So, in the oversight area, what that means, I think, is doing oversight to make sure that the corruption of this administration isn&#8217;t raising costs on the American people. And let me give you one example. I could give you about a hundred. I mentioned the Melania movie. I think the American people deserve to know: Is Amazon getting federal contracts now not because it&#8217;s the best technology for cloud computing, not because it&#8217;s offered the most competitive price, but because it paid off the First Family $40 million?</p>
+
+<p class="wp-block-paragraph">If they are, we&#8217;re paying for that excess. We&#8217;re paying for a product that may not be as good. I&#8217;m not saying that this has happened, but they&#8217;re not going to do any oversight of it. Their decisions on everything from mergers to government contracts to pardons are influenced by the money they&#8217;re getting hand over fist. So we, I think, from an oversight point of view, need to focus on oversight that can help attack corruption that&#8217;s driving up costs. In terms of impeachment, I think we&#8217;ll have to cross that bridge when we get to it.</p>
+
+<p class="wp-block-paragraph"><strong>I&#8217;m glad you brought up the entertainment industry, because I do want to end by talking about Paramount and Warner Brothers, which is a merger happening in your home state of California. It feels like a lot of that merger was the Ellison family in particular making promises about the news coverage of CBS News and CNN in order to get favorable regulatory treatment. We can see that CBS has softened its stance. The market has rejected CBS&#8217;s softened stance towards this administration. So there&#8217;s at least one check on that power, but California Attorney General Rob Bonta <a href="https://www.theverge.com/entertainment/998302/paramount-warner-bros-discovery-merger-settlement">didn&#8217;t push all the way to the finish line</a> to try to prevent that merger from happening. Do you think that was the right decision?</strong></p>
+
+<p class="wp-block-paragraph">I&#8217;m still frankly looking at the deal that was struck, and I have a lot of concerns about it. The one that you mentioned is a very significant concern, and that is that there was some editorial independence board that&#8217;s supposed to oversee CBS and CNN, and yet the Paramount company, or the merged company, the board appointed by the Ellisons, will agree on what that board is and how it&#8217;s constituted. So is this real, or is this going to be fiction?</p>
+
+<p class="wp-block-paragraph">I&#8217;m also concerned, frankly, about what it&#8217;s going to mean for jobs. I live in Burbank. It&#8217;s the entertainment capital of the world, and represents so much of that industry in California. And what we have seen in past mergers is thousands and thousands of layoffs. So that is a particular concern for me. I love this industry. I love movies and television. It&#8217;s something I really deeply care about. I&#8217;m carrying a bill right now, important to the whole industry, and that is a film and television tax credit to try to bring production back to the United States. There&#8217;s never been a more difficult time to work in that industry, but I do have continuing concerns about editorial independence and also the degree to which CBS paid off the president, I think, because they had mergers pending. And ABC paid off the president. Those were personal sums to the president and his pet causes, with the result of completely frivolous litigation by the president that they would have won in court, which I urged them not to settle because of the destructive First Amendment precedent.</p>
+
+<p class="wp-block-paragraph">The idea that the Trump-appointed FCC chairman attacks ABC because they don&#8217;t like the jokes that Jimmy Kimmel tells, or cost Stephen Colbert his job on CBS because they didn&#8217;t like the jokes he&#8217;s telling — that&#8217;s third-world dictator kind of stuff. That&#8217;s not what we are used to seeing in the US, and I never want to see it here.</p>
+
+<p class="wp-block-paragraph"><strong>The jobs piece is really interesting to me. One of the longest-running tropes at The Verge is that a workable antitrust policy for the United States would be simply to forbid companies from buying Time Warner because it has never worked and it may never work again, and that we should just pass one law. Just don&#8217;t do that, and maybe everything will be fine.&nbsp;</strong></p>
+
+<p class="wp-block-paragraph"><strong>Paramount made a bunch of noise. They fulminated about leaving California if they weren&#8217;t allowed to pursue this merger. They pretended to investigate Nashville and Texas and all the other places that you investigate, and then the merger was approved, or the litigation dropped, and I think David Ellison put out a statement like, &#8220;California is our home. We&#8217;re going to invest here,&#8221; and it seemed very fake in the end. Do you think that threat to leave spooked Gavin Newsom, spooked Rob Bonta?</strong></p>
+
+<p class="wp-block-paragraph">I think the threat to leave California concerned a lot of people, and I&#8217;m sure it concerned them. Was it a real threat? I don&#8217;t know. We&#8217;ve seen some of these corporate headquarters moves mean that they move basically their office, but they don&#8217;t necessarily move the studios or the lots, which would be difficult and expensive for them to do for a whole lot of other reasons. But just the idea, frankly, I found offensive: &#8220;If we don&#8217;t get approval of the merger we want, we&#8217;re going to pick up, and we&#8217;re going to leave the state.&#8221; It doesn&#8217;t say much about a commitment to the workforce if you&#8217;re ready to do that at the drop of a hat. So those arguments, really, I found offensive: the claim, &#8220;We&#8217;re going to leave if we don&#8217;t get what we want.&#8221;</p>
+
+<p class="wp-block-paragraph">I will say this: the industry&#8217;s been through a hell of a time. The workforce has been through a hell of a time. Between the pandemic, the strikes, the consolidation among the streaming companies, and now the mergers, there&#8217;s never been a more difficult time to work in the industry. And I&#8217;m not talking about the Tom Cruise-level celebrities. I&#8217;m talking about the carpenters and the set designers, the wardrobe people, the dry cleaners, the caterers, the small restaurants and small businesses that thrive when you&#8217;re making a film or TV show in LA or somewhere else, that just take a huge hit when they&#8217;re not filming. Those are the people that I care about. And we do need stability, so this needs to be resolved. We need stability. We also need to match the incentives other countries are giving if we want this industry to thrive again.</p>
+
+<p class="wp-block-paragraph"><strong>Let me bring this full circle to AI. We talked at the very beginning about the AI companies just ingesting all of this creative output without any payment, and that has enabled the models to be as good as they are. The models are now good at film production. I will admit to having watched several AI microdramas on TikTok, mostly by accident, but they were compelling enough that I stayed. And then, as editor-in-chief, I try to assign our reporters to <a href="https://www.theverge.com/entertainment/1003297/microdramas-neighbours-epis-roseberry-reelshort-dramabox-vertical-video">write about AI microdramas</a>. They did not like this idea, but that&#8217;s what happened. That is killing them at the input stage. We&#8217;re not paying them for the training material. And now we&#8217;re competing in a marketplace with a vastly cheaper product. You don&#8217;t need carpenters and small businesses to make AI slop microdramas on TikTok.</strong></p>
+
+<p class="wp-block-paragraph"><strong>How would you connect these dots? Can you make AI compatible with the film industry in California as it exists today?</strong></p>
+
+<p class="wp-block-paragraph">You know, a lot of these things all come back to the same thing, and that is: what is the commitment to the workforce? Does that matter to these companies? This is a broader problem. I remember having somebody in the industry, a worker in the industry, come to visit me to basically complain about the Affordable Care Act and how it had cost him his job. And I said, &#8220;Come by, I want to talk to you about this.&#8221; And he came in, and he explained that the studio that he worked for, every year, they would ask for pay increases, and they were told they couldn&#8217;t give them more of a pay increase because healthcare costs were rising so fast and it was putting downward pressure on wages. And then the ACA passed, and then he got laid off. And he assumed it was because of the ACA.</p>
+
+<p class="wp-block-paragraph">I remember telling him, &#8220;Honestly, I don&#8217;t think it was the ACA. You&#8217;re right about healthcare costs going up,&#8221; and they were going up very fast. Actually, after the ACA, they were still going up, but they were going up at a slower pace than they were before the ACA. &#8220;Here&#8217;s what I think happened to you.&#8221; And what had happened around the time he was laid off was that there was a hostile takeover bid mounted against one of the studios. It was unsuccessful, but the studio that was the target of that takeover shed all the jobs it would have shed had it been taken over, so it would be a less attractive takeover target in the future. And then other studios shed jobs, even though they were very profitable; they shed jobs because they didn&#8217;t want to be taken over. And so there were these cascading sets of layoffs in the industry, none of which were necessary because they were profitable companies, but it did increase the quarterly report, the value of the quarterly report, the next shareholder report.</p>
+
+<p class="wp-block-paragraph">How do we get out of the bind where the only consideration is the shareholder report and the employees simply don&#8217;t matter? Unless the employees start to matter to these companies, then yeah, they will use every device they can to make films without having to use human beings. And this is, I think, a broader challenge in our economy. We see other countries like Germany doing a better job. They have employee representatives on their board of directors, so they take into consideration the impact on their own workforce. You mentioned the prior FTC chair. She was committed to looking at factors in terms of competitiveness and anti-competitiveness, including the impact on the workforce. And I think we should, but this is a continuing challenge.</p>
+
+<p class="wp-block-paragraph"><strong>You&#8217;re not up for reelection in this cycle. You&#8217;re not up again until 2030, so you have a little bit of distance from the actual campaigning. We&#8217;re seeing a bunch of progressive candidates on the left propose muscular reforms to capitalism, right? Abdul El-Sayed has said, &#8220;I&#8217;m a capitalist, but we need to regulate capitalism so it works for people.&#8221; I live in New York. Mayor [Zohran] Mamdani is here. He wants to regulate Amazon delivery trucks.</strong></p>
+
+<p class="wp-block-paragraph"><strong>There&#8217;s a lot of that energy on the left. Do you think if the Democrats retake Congress, we&#8217;ll see that turned into results on any meaningful time frame, or do you need the presidency too?</strong></p>
+
+<p class="wp-block-paragraph">I think what we should do is try to get legislation passed on a bipartisan basis because that&#8217;s the only way you can get bills through Congress, particularly if you don&#8217;t control the White House. But I also think we need to take up big Democratic priorities that may get through the Senate or may not, depending on whether we flip the Senate and what our margin is; they may get vetoed by the president, but show the country that this is the kind of bold reform that we are prepared to pass if you give us the presidency two years later.&nbsp;</p>
+
+<p class="wp-block-paragraph">And it is simply not going to be acceptable to anyone to say, &#8220;Hey, if you elect us, we&#8217;ll take you back to the status quo before Trump came along.&#8221; No, the reason Trump came along is people were deeply unsatisfied with the status quo. So we need big, bold ideas. I favor Medicare for All. I&#8217;ll let anyone who wants to participate in Medicare participate in Medicare. I don&#8217;t think we should force people into Medicare if they want to stay in a private plan, but I think we ought to broaden Medicare and make it accessible to people. It&#8217;s a very efficient healthcare system. And that is different than simply saying, &#8220;We&#8217;re going to restore premium tax credits under the ACA.&#8221; Yeah, we should do that too, but that alone isn&#8217;t going to cut it.</p>
+
+<p class="wp-block-paragraph">So I hope we&#8217;re going to think big. And I&#8217;ll say this too. The reason why we keep going back and forth between a Trump and a Biden is that people are so unsatisfied with how hard they&#8217;re working and how little they have to show for it. The economy&#8217;s just not working for people. It&#8217;s not that they&#8217;re out of work. The problem is that they are working and they still can&#8217;t make ends meet. And until we address that, our democracy is not going to be on solid ground. It&#8217;s going to always be ripe for any demagogue who comes along promising they alone can fix it. We have to make sure that if you&#8217;re working hard in this country, you can provide for yourself a good living and for your family.</p>
+
+<p class="wp-block-paragraph"><strong>Last question, and it&#8217;s directly related to that. I&#8217;ve said several times now that I think we&#8217;re in a generational political realignment. It&#8217;s been the foundation of many of the questions I&#8217;ve asked. Do you agree that we&#8217;re in the middle of a foundational political realignment?</strong></p>
+
+<p class="wp-block-paragraph">We, I think, have been for some time. I&#8217;m not sure where the alignment goes from here, but I&#8217;ll tell you where I&#8217;d like it to go from here. We, in the Democratic Party, we&#8217;re unquestionably the party of working people and average families. We&#8217;re the party of the underdog, and I think we&#8217;ve lost some of that in the public perception. Our policies are still very much driven that way, but increasingly people just think, &#8220;Both parties are corrupt. Neither party&#8217;s really looking out for me.&#8221; I want the Democratic Party to once again be the party that the public looks to and says, &#8220;Okay, they&#8217;re fighting for me. They&#8217;re not fighting for those who&#8217;ve already done great. They&#8217;re fighting for me.&#8221; That&#8217;s why I was drawn to the Democratic Party.</p>
+
+<p class="wp-block-paragraph">And I also think, and this is related to the whole conversation we&#8217;ve had, wealth is now concentrated so much in so few hands that it is totally warping our political system. Wealth is perpetuating itself and warping our system even further. Some people took it as a celebration: we have <a href="https://www.theverge.com/tech/949259/the-worlds-first-trillionaire-is-a-killer">our first trillionaire</a>. Well, that first trillionaire, Elon Musk, became a trillionaire because of government largesse, because of government contracts that saved his bacon when his companies were in trouble. And there is no ethics, no sentiment about giving back there. No, he was only happy to DOGE the people who made his success possible.</p>
+
+<p class="wp-block-paragraph">But what made that possible too, that is the aggregation of all that wealth, is a tax system that&#8217;s not the least bit progressive anymore and is becoming less and less progressive. And one of the missions I hope for our new Congress, and I hope for the Democratic Party, is: how do we have a truly progressive tax code again? How do we make sure that, yes, the AI companies pay their fair share and they pay for some of the disruption that technology is going to cause? But I think even more important, how do we make sure the tax code is truly progressive and people who are doing well are going to pay well into the system? That, I think, is fundamental.</p>
+
+<p class="wp-block-paragraph"><strong>Senator Schiff, this has been a great conversation. Thank you so much for being on Decoder.</strong></p>
+
+<p class="wp-block-paragraph">Great to be with you. Thanks for having me on.</p>
+
+<p class="wp-block-paragraph"><em><sub>Questions or comments? Hit us up at decoder@theverge.com. We really do read every email!</sub></em></p>
+
+<p class="wp-block-paragraph"></p>
+						]]>
+									</content>
+			
+					</entry>
+	</feed>
