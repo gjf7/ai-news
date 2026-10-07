@@ -27,7 +27,7 @@ export type ModelClient = {
 };
 
 export type ModelError = {
-  kind: "http" | "network" | "malformed";
+  kind: "http" | "network" | "malformed" | "truncated";
   message: string;
   status?: number;
 };
@@ -117,9 +117,23 @@ export function createModelClient(
         }
 
         const payload = (await response.json()) as {
-          choices?: { message?: { content?: string } }[];
+          choices?: { message?: { content?: string }; finish_reason?: string }[];
         };
-        const content = payload.choices?.[0]?.message?.content;
+        const choice = payload.choices?.[0];
+
+        // Reasoning models bill their reasoning tokens against max_tokens, so a
+        // budget that is too small truncates the answer: finish_reason is
+        // "length" and the content is empty or half-written JSON. Report that
+        // distinctly instead of letting it surface as an empty or malformed
+        // reply, which is indistinguishable from a genuine model fault.
+        if (choice?.finish_reason === "length") {
+          throw new ModelRequestError({
+            kind: "truncated",
+            message: `response truncated at max_tokens=${maxTokens}`,
+          });
+        }
+
+        const content = choice?.message?.content;
         if (typeof content !== "string" || content.length === 0) {
           throw new ModelRequestError({ kind: "malformed", message: "empty completion" });
         }

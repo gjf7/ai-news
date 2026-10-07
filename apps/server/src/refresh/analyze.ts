@@ -145,7 +145,9 @@ export async function runAnalysis({
       const content = await model.complete({
         signal,
         temperature: 0.2,
-        maxTokens: 1200,
+        // Generous headroom: a reasoning model spends part of this budget on its
+        // reasoning tokens before writing the JSON answer.
+        maxTokens: 8000,
         messages: [
           { role: "system", content: prompt.system },
           { role: "user", content: prompt.user },

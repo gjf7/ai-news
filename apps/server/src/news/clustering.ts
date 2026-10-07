@@ -207,7 +207,9 @@ async function adjudicateBatch(
     const content = await model.complete({
       signal,
       temperature: 0,
-      maxTokens: 64,
+      // The answer itself is tiny ({"index": n}), but a reasoning model spends
+      // most of the budget reasoning first; 64 truncated before any output.
+      maxTokens: 1024,
       messages: [
         { role: "system", content: ADJUDICATE_SYSTEM },
         {

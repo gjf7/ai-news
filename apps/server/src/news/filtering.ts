@@ -276,7 +276,9 @@ async function classifyBatch(
   const content = await model.complete({
     signal,
     temperature: 0,
-    maxTokens: 2048,
+    // 50 items with per-item JSON already need ~1.5k, and a reasoning model
+    // adds its reasoning tokens on top of that.
+    maxTokens: 4096,
     messages: [
       { role: "system", content: CLASSIFY_SYSTEM },
       { role: "user", content: listing },

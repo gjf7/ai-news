@@ -14,7 +14,7 @@ import {
   refreshRuns,
   sourceRuns,
 } from "../src/db/schema.ts";
-import { createModelClient, type ModelClient } from "../src/insights/model.ts";
+import { createModelClient, ModelRequestError, type ModelClient } from "../src/insights/model.ts";
 import { createRunner } from "../src/refresh/runner.ts";
 import { requestRefresh } from "../src/refresh/request.ts";
 import { createSourceRegistry } from "../src/sources/registry.ts";
@@ -385,6 +385,50 @@ test("model client is unavailable without an API key and analysis defers", async
     globalThis.fetch,
   );
   expect(model.available).toBe(false);
+});
+
+test("a length-truncated completion is reported as truncated, not empty", async () => {
+  // Reasoning models bill reasoning tokens against max_tokens, so a small budget
+  // yields finish_reason "length" with empty content. That must be reported
+  // distinctly rather than as an empty completion.
+  const config = testConfig();
+  const model = createModelClient(
+    { ...config, model: { baseUrl: "https://x", name: "m", apiKey: "k" } },
+    (async () =>
+      Response.json({
+        choices: [{ message: { content: "" }, finish_reason: "length" }],
+      })) as unknown as typeof globalThis.fetch,
+  );
+
+  const error = await model
+    .complete({
+      messages: [{ role: "user", content: "hi" }],
+      maxTokens: 64,
+      signal: AbortSignal.timeout(1000),
+    })
+    .catch((caught: unknown) => caught);
+
+  expect(error).toBeInstanceOf(ModelRequestError);
+  expect((error as ModelRequestError).kind).toBe("truncated");
+  expect((error as ModelRequestError).message).toContain("max_tokens=64");
+});
+
+test("a completion that stops normally is returned as-is", async () => {
+  const config = testConfig();
+  const model = createModelClient(
+    { ...config, model: { baseUrl: "https://x", name: "m", apiKey: "k" } },
+    (async () =>
+      Response.json({
+        choices: [{ message: { content: '{"index":-1}' }, finish_reason: "stop" }],
+      })) as unknown as typeof globalThis.fetch,
+  );
+
+  await expect(
+    model.complete({
+      messages: [{ role: "user", content: "hi" }],
+      signal: AbortSignal.timeout(1000),
+    }),
+  ).resolves.toBe('{"index":-1}');
 });
 
 test("password hashing round-trips for the configured login", async () => {
