@@ -1,0 +1,39 @@
+# Production stack for the us server. It only pulls the prebuilt image; the
+# build happens in CI (see .github/workflows/publish.yml) because the host is
+# memory constrained.
+#
+# Secrets live in ./app.env, which is mounted at /app/.env. The server loads it
+# with process.loadEnvFile, so values are read as-is: this sidesteps compose's
+# `$` interpolation (which would corrupt the scrypt LOGIN_PASSWORD_HASH) and
+# keeps secrets out of `docker inspect`. app.env is never committed.
+services:
+  app:
+    image: ghcr.io/gjf7/ai-news:latest
+    restart: unless-stopped
+    # Bound to loopback only: nginx terminates TLS and proxies to it.
+    ports:
+      - "127.0.0.1:3100:3100"
+    environment:
+      # Non-secret settings. These take precedence over app.env, so production
+      # values are enforced regardless of what the mounted file contains.
+      NODE_ENV: production
+      DATABASE_PATH: /data/app.db
+      PORT: "3100"
+    volumes:
+      - ./app.env:/app/.env:ro
+      - app-data:/data
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://localhost:'+(process.env.PORT||3000)+'/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+volumes:
+  app-data:
