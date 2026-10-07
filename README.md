@@ -17,6 +17,10 @@ pnpm exec vp run server#hash-password -- 'your-password'
 
 设置 `SESSION_SECRET`（至少 16 字符，例如 `openssl rand -base64 32`）。模型和 Telegram 是可选的：不配置模型密钥时洞察降级、不影响采集；不配置 Telegram 时不推送。
 
+> 服务启动时会自动读取仓库根目录的 `.env`（见 `apps/server/src/main.ts`），无需 `source` 或 `--env-file`。**不要给值加引号**：哈希和密钥含 `$`，加引号会把引号本身带进值里。
+>
+> 若 `OPENAI_BASE_URL` / `OPENAI_API_KEY` 与编辑器注入的同名变量冲突（例如 Cursor 会注入本地代理地址），以 `.env` 为准，避免模型请求被静默重定向。
+
 启动开发环境（前端 5173，API 3000，Vite 代理 `/api`）：
 
 ```bash
@@ -28,11 +32,60 @@ pnpm exec vp -C apps/web dev  # 另一个终端
 
 ## 部署
 
+生产部署分两步：CI 构建镜像推送到 GHCR，服务器只拉取运行（服务器内存有限，不适合本地构建）。
+
+### 1. CI 构建镜像
+
+推送到 `main` 即触发 [.github/workflows/publish.yml](.github/workflows/publish.yml)，构建 `linux/amd64` 镜像并推送：
+
+- `ghcr.io/gjf7/ai-news:latest`
+- `ghcr.io/gjf7/ai-news:<commit-sha>`
+
+首次发布后，把 GHCR 包设为 public（公开仓库的包默认 public），服务器无需登录凭据即可拉取。
+
+### 2. 服务器部署
+
+生产编排文件是 [deploy/docker-compose.yml](deploy/docker-compose.yml)：
+
+```bash
+mkdir -p /opt/ai-news && cd /opt/ai-news
+# 放入 deploy/docker-compose.yml 和 app.env（内容同 .env，权限 600，不入库）
+docker compose pull && docker compose up -d
+```
+
+要点：
+
+- 只有一个 `app` 服务和一个数据卷，启动时自动执行迁移；数据（数据库与备份）位于 `/data`。
+- 端口绑定 `127.0.0.1:3100`，只给反向代理用，不直接暴露公网。
+- **密钥通过挂载注入**（`./app.env:/app/.env:ro`），而非 compose 的 `env_file`：后者会对值做 `$` 插值，把 scrypt 哈希截断导致登录永远失败；挂载方式由应用自身的 `process.loadEnvFile` 读取，且密钥不出现在 `docker inspect` 中。
+- `NODE_ENV`/`DATABASE_PATH`/`PORT` 在 compose 的 `environment` 里显式声明，优先级高于 `app.env`。
+
+### 3. 反向代理与证书
+
+nginx 反代到 `127.0.0.1:3100`，用 certbot 签发证书：
+
+```bash
+certbot --nginx -d ai-news.haochen.me --redirect
+```
+
+域名需先指向服务器公网 IP。**Cloudflare 上必须是「仅 DNS」（灰云）**：橙云会把 HTTP 请求 301 到 HTTPS，导致 Let's Encrypt 的 HTTP-01 校验失败。
+
+### 更新
+
+```bash
+git push                                  # 触发 CI
+ssh root@<host> 'cd /opt/ai-news && docker compose pull && docker compose up -d'
+```
+
+### 本地验证（可选）
+
+想在本地跑完整容器而不依赖 CI：
+
 ```bash
 docker compose up -d --build
 ```
 
-只有一个 `app` 服务和一个数据卷。启动时自动执行迁移。数据（数据库与备份）位于 `/data`。
+`Dockerfile` 为多阶段构建，运行阶段直接调用工作区内的 `tsx` 二进制（`./node_modules/.bin/tsx`），不走 `pnpm exec`——后者会因运行时缺少 pnpm store 元数据而触发联网重装。仓库根目录的 `.dockerignore` 排除了宿主的 `node_modules`，避免原生模块（better-sqlite3）被跨平台覆盖。
 
 ## 常用命令
 
