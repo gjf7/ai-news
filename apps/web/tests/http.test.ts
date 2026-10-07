@@ -19,15 +19,27 @@ test("request returns parsed JSON on success", async () => {
   await expect(request("/api/session")).resolves.toEqual({ authenticated: true });
 });
 
-test("request always sends JSON content-type and same-origin credentials", async () => {
+test("request sends JSON content-type and same-origin credentials when it has a body", async () => {
   let seen: RequestInit | undefined;
   mockFetch((_url, init) => {
     seen = init;
     return Response.json({});
   });
-  await request("/api/session");
+  await request("/api/session", { method: "POST", body: JSON.stringify({ password: "x" }) });
   expect(new Headers(seen?.headers).get("content-type")).toBe("application/json");
   expect(seen?.credentials).toBe("same-origin");
+});
+
+test("request omits JSON content-type when there is no body", async () => {
+  // A JSON content-type with an empty body is rejected by Fastify, so bodyless
+  // writes (manual refresh, logout) must not declare one.
+  let seen: RequestInit | undefined;
+  mockFetch((_url, init) => {
+    seen = init;
+    return Response.json({});
+  });
+  await request("/api/refresh-runs", { method: "POST" });
+  expect(new Headers(seen?.headers).get("content-type")).toBeNull();
 });
 
 test("a non-2xx response becomes an HttpError carrying the API error", async () => {

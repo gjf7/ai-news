@@ -66,6 +66,19 @@ export async function buildApp(options: BuildOptions = {}): Promise<BuiltApp> {
       });
     }
 
+    // Fastify raises this for a JSON content-type with an empty body. It is a
+    // malformed client request, not a server fault, so answer 400 rather than
+    // letting the generic branch report a 500.
+    if ((error as { code?: string }).code === "FST_ERR_CTP_EMPTY_JSON_BODY") {
+      return reply.code(400).send({
+        error: {
+          code: "invalid_request",
+          message: "Request body is required",
+          requestId: request.id,
+        },
+      });
+    }
+
     const status = (error as { statusCode?: number }).statusCode;
     if (status === 401) {
       return reply.code(401).send({

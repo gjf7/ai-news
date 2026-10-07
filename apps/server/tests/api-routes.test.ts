@@ -131,6 +131,19 @@ test("POST /refresh-runs reuses the active run and reports 200", async () => {
   expect(second.json()).toMatchObject({ disposition: "reused" });
 });
 
+test("a JSON content-type with an empty body is a 400, not a 500", async () => {
+  // The browser sends this shape for bodyless writes (manual refresh, logout);
+  // Fastify raises FST_ERR_CTP_EMPTY_JSON_BODY for it.
+  const response = await built.app.inject({
+    method: "POST",
+    url: "/api/refresh-runs",
+    headers: { "content-type": "application/json" },
+    ...auth(),
+  });
+  expect(response.statusCode).toBe(400);
+  expect(response.json().error.code).toBe("invalid_request");
+});
+
 test("GET /refresh-runs/:id returns per-source results", async () => {
   const created = await built.app.inject({ method: "POST", url: "/api/refresh-runs", ...auth() });
   const { runId } = created.json();

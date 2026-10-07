@@ -24,7 +24,10 @@ export class HttpError extends Error {
  */
 export async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const headers = new Headers(init?.headers);
-  headers.set("content-type", "application/json");
+  // Only declare a JSON body when one is actually sent. A JSON content-type
+  // with an empty body is rejected by Fastify (FST_ERR_CTP_EMPTY_JSON_BODY),
+  // which would break bodyless writes such as manual refresh and logout.
+  if (init?.body != null) headers.set("content-type", "application/json");
 
   const response = await fetch(path, {
     ...init,
