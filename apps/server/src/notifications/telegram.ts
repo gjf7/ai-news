@@ -32,6 +32,12 @@ export type NotifyDeps = {
   /** True when no run has ever finished; the first run stays silent. */
   firstRun: boolean;
   now?: Date;
+  /**
+   * Event ids to keep out of this delivery because the chat already received
+   * the same development from a different event (see notifications/dedup.ts).
+   * Their revisions are still advanced, so nothing accumulates.
+   */
+  suppressed?: ReadonlySet<string>;
 };
 
 export type NotifyResult = {
@@ -40,7 +46,7 @@ export type NotifyResult = {
   reason?: string;
 };
 
-type Candidate = {
+export type Candidate = {
   id: string;
   title: string;
   importance: number | null;
@@ -50,15 +56,9 @@ type Candidate = {
   hotScore: number;
 };
 
-export function runNotificationFreeze({
-  handle,
-  runId,
-  config,
-  firstRun,
-  now = new Date(),
-}: NotifyDeps): NotifyResult {
-  // Every event whose version increased in this run.
-  const bumped = handle.db
+/** Every event whose version increased in this run and is still unsent. */
+export function bumpedNotificationCandidates(handle: DbHandle, runId: string): Candidate[] {
+  return handle.db
     .select()
     .from(events)
     .where(
@@ -68,6 +68,18 @@ export function runNotificationFreeze({
       ),
     )
     .all() as Candidate[];
+}
+
+export function runNotificationFreeze({
+  handle,
+  runId,
+  config,
+  firstRun,
+  now = new Date(),
+  suppressed,
+}: NotifyDeps): NotifyResult {
+  // Every event whose version increased in this run.
+  const bumped = bumpedNotificationCandidates(handle, runId);
 
   if (bumped.length === 0) {
     return { created: 0, frozen: 0 };
@@ -106,7 +118,9 @@ export function runNotificationFreeze({
   }
 
   const selected = bumped
-    .filter((event) => (event.importance ?? 0) >= config.minImportance)
+    .filter(
+      (event) => (event.importance ?? 0) >= config.minImportance && !suppressed?.has(event.id),
+    )
     .sort((a, b) => (b.importance ?? 0) - (a.importance ?? 0) || b.hotScore - a.hotScore)
     .slice(0, config.maxItems);
 

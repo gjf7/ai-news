@@ -9,6 +9,7 @@ import { runClustering } from "../news/clustering.ts";
 import { runFiltering } from "../news/filtering.ts";
 import { allEventIds, refreshEventScores } from "../news/scoring.ts";
 import { deliverDue, runNotificationFreeze, type SendFn } from "../notifications/telegram.ts";
+import { suppressDuplicateNotifications } from "../notifications/dedup.ts";
 import { beginSourceRuns, runIngest, syncSources } from "./ingest.ts";
 import { latestFinishedRun, pruneRuns, requestRefresh } from "./request.ts";
 import type { SourceDefinition } from "../sources/registry.ts";
@@ -212,15 +213,27 @@ export function createRunner(deps: RunnerDeps): Runner {
         analysesTotal: analysis.analyzed + analysis.reused,
       });
       const firstRun = !latestFinishedRun(handle);
+      const notifyConfig = {
+        ...config.notify,
+        chatId: config.notify.telegram.chatId,
+        botToken: config.notify.telegram.botToken,
+      };
+      // Drop candidates that only re-report what the chat recently received.
+      // Runs before the freeze so a suppressed item cannot occupy a slot.
+      const suppressed = await suppressDuplicateNotifications({
+        handle,
+        model,
+        signal: controller.signal,
+        runId: run.id,
+        config: notifyConfig,
+        firstRun,
+      });
       const notify = runNotificationFreeze({
         handle,
         runId: run.id,
-        config: {
-          ...config.notify,
-          chatId: config.notify.telegram.chatId,
-          botToken: config.notify.telegram.botToken,
-        },
+        config: notifyConfig,
         firstRun,
+        suppressed,
       });
       if (send) await deliverDue(handle, send);
 

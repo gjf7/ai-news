@@ -84,6 +84,52 @@ test("same-company-different-event is never an auto-merge", () => {
   }
 });
 
+/**
+ * The paraphrase cases that produced duplicate SpaceX notifications in
+ * production. Their titles share almost no character trigrams, so a
+ * trigram-only candidate filter never asked the model and each headline became
+ * its own event. Word/amount overlap must recall them as candidates, while
+ * still never reaching the direct-merge band on its own.
+ */
+const SPACEX_FINANCING_CASES = [
+  "SpaceX seeks $40bn to buy Nvidia chips",
+  "SpaceX Reported to Be in $40 Billion Nvidia Chip-Financing Talks",
+  "SpaceX Seeks $40B for Nvidia Chips as AI Megadeals Loom",
+  "SpaceX Seeks To Join AI Borrowing Bonanza",
+];
+
+test("paraphrases of one financing story are recalled as candidates", () => {
+  const existing = {
+    id: "e1",
+    titles: ["SpaceX in Talks to Borrow $40 Billion to Buy Nvidia Chips"],
+  };
+  for (const incoming of SPACEX_FINANCING_CASES) {
+    const ranked = rankCandidates(incoming, [existing], { threshold: CANDIDATE, limit: 5 });
+    expect(
+      ranked.map((entry) => entry.item.id),
+      incoming,
+    ).toEqual(["e1"]);
+    // Recall only: the model must still make the merge decision.
+    expect(ranked[0]!.similarity, incoming).toBeLessThan(DIRECT_MERGE);
+  }
+});
+
+test("a new development is recalled but never auto-merged", () => {
+  // The credit-risk reaction is a materially different story; it must reach the
+  // model (so the notification guard can judge novelty) without merging blindly.
+  const existing = {
+    id: "e1",
+    titles: ["SpaceX in Talks to Borrow $40 Billion to Buy Nvidia Chips"],
+  };
+  const ranked = rankCandidates(
+    "SpaceX credit risk jumps on its $40 billion Nvidia chip borrowing",
+    [existing],
+    { threshold: CANDIDATE, limit: 5 },
+  );
+  expect(ranked.map((entry) => entry.item.id)).toEqual(["e1"]);
+  expect(ranked[0]!.similarity).toBeLessThan(DIRECT_MERGE);
+});
+
 for (const title of KEYWORD_RELEVANT) {
   test(`keyword rules mark relevant: ${title.slice(0, 48)}`, () => {
     expect(classifyByKeywords(title, null)).toBe("relevant");
