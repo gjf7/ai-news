@@ -1,5 +1,6 @@
 import { expect, test } from "vite-plus/test";
-import { rankCandidates, trigramSimilarity } from "../src/news/similarity.ts";
+import { trigramSimilarity } from "../src/news/similarity.ts";
+import { createRecallIndex, RECALL_MIN_RATIO } from "../src/news/recall.ts";
 import { classifyByKeywords, parseClassification } from "../src/news/filtering.ts";
 import { computeHotScore, normalizeCommunity, topicsFor } from "../src/news/scoring.ts";
 import {
@@ -36,19 +37,26 @@ test("unrelated titles score low", () => {
   expect(trigramSimilarity("nvidia earnings beat", "olympic opening ceremony")).toBeLessThan(0.3);
 });
 
-test("candidates are ranked and filtered by threshold", () => {
+test("candidates are recalled and the unrelated one is filtered out", () => {
   const candidates = [
     { id: "e1", titles: ["nvidia unveils new data center gpu"] },
     { id: "e2", titles: ["completely unrelated story about cooking"] },
     { id: "e3", titles: ["nvidia unveils new data center gpu for training"] },
   ];
-  const ranked = rankCandidates("nvidia unveils new data center gpu", candidates, {
-    threshold: 0.3,
-    limit: 5,
-  });
-  expect(ranked.length).toBeGreaterThan(0);
-  expect(ranked.every((entry) => entry.item.id !== "e2")).toBe(true);
-  expect(ranked[0]!.similarity).toBeGreaterThanOrEqual(ranked[ranked.length - 1]!.similarity);
+  const index = createRecallIndex(candidates);
+  try {
+    const hits = index.rank("nvidia unveils new data center gpu", {
+      limit: 5,
+      minRatio: RECALL_MIN_RATIO,
+    });
+    expect(hits.length).toBeGreaterThan(0);
+    expect(hits.every((hit) => hit.id !== "e2")).toBe(true);
+    for (let position = 1; position < hits.length; position += 1) {
+      expect(hits[position - 1]!.ratio).toBeGreaterThanOrEqual(hits[position]!.ratio);
+    }
+  } finally {
+    index.close();
+  }
 });
 
 test("keyword rules mark obvious AI and chip stories relevant", () => {

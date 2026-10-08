@@ -3,26 +3,27 @@ import type { DbHandle } from "../db/connection.ts";
 import { newId } from "../db/ids.ts";
 import { articles, events } from "../db/schema.ts";
 import type { ModelClient } from "../insights/model.ts";
-import { rankCandidates } from "./similarity.ts";
+import { createRecallIndex, RECALL_MIN_RATIO, type RecallIndex } from "./recall.ts";
+import { isReprint } from "./similarity.ts";
 
 /**
  * Event clustering: merge multi-source coverage of the same concrete event,
  * while preferring a missed merge over a wrong one.
  *
- * 1. Candidates: events with an article in the last 72 hours, ranked by
- *    trigram similarity of their titles.
- * 2. Direct: no candidate -> new event. Highest similarity >= 0.85 with a
- *    single candidate -> treated as a reprint and attached without the model.
+ * 1. Candidates: events with an article in the last 72 hours, recalled by an
+ *    FTS5 index (see recall.ts) so paraphrases are found without a synonym
+ *    table.
+ * 2. Direct: no candidate -> new event. A single candidate whose title is a
+ *    near-exact reprint -> attached without the model.
  * 3. Otherwise the model decides, restricted to the candidate set; an id
  *    outside that set is treated as "new".
  *
- * The 72-hour window is a deliberate bound: it keeps the in-memory candidate
- * set small and accepts that a long-dormant event starts a new one.
+ * The 72-hour window is a deliberate bound: it keeps the candidate set small
+ * and accepts that a long-dormant event starts a new one.
  */
 
 const CANDIDATE_WINDOW_HOURS = 72;
-const DIRECT_MERGE_SIMILARITY = 0.85;
-const CANDIDATE_THRESHOLD = 0.3;
+const CANDIDATE_THRESHOLD = RECALL_MIN_RATIO;
 const MAX_CANDIDATES = 5;
 const MODEL_BATCH_SIZE = 20;
 
@@ -75,71 +76,89 @@ export async function runClustering({
   let modelBatches = 0;
   const undecided: { articleId: string; candidates: CandidateEvent[] }[] = [];
 
-  for (const article of pending) {
-    if (signal.aborted) break;
+  // One index per run, seeded with every event active in the window and then
+  // extended as this run creates or grows events, so a paraphrase published
+  // later in the same pass can still see them.
+  const known = loadCandidates(handle, "");
+  const index = createRecallIndex(known);
+  const byId = new Map(known.map((candidate) => [candidate.id, candidate]));
 
-    const candidates = loadCandidates(handle, article.id);
-    const ranked = rankCandidates(article.title, candidates, {
-      threshold: CANDIDATE_THRESHOLD,
-      limit: MAX_CANDIDATES,
-    });
+  try {
+    for (const article of pending) {
+      if (signal.aborted) break;
 
-    if (ranked.length === 0) {
-      attachToNewEvent(handle, article.id, article.title);
-      result.newEvents += 1;
-      continue;
-    }
+      const ranked = index
+        .rank(article.title, { limit: MAX_CANDIDATES, minRatio: CANDIDATE_THRESHOLD })
+        .map((hit) => byId.get(hit.id))
+        .filter((candidate): candidate is CandidateEvent => candidate !== undefined);
 
-    if (ranked.length === 1 && ranked[0]!.similarity >= DIRECT_MERGE_SIMILARITY) {
-      attachToEvent(handle, article.id, ranked[0]!.item.id, article.title);
-      result.attachedToExisting += 1;
-      continue;
-    }
-
-    undecided.push({ articleId: article.id, candidates: ranked.map((entry) => entry.item) });
-  }
-
-  if (undecided.length === 0 || !model.available) {
-    result.deferred += undecided.length;
-    return result;
-  }
-
-  const batches = Math.min(Math.ceil(undecided.length / MODEL_BATCH_SIZE), maxModelBatches);
-  for (let index = 0; index < batches; index += 1) {
-    if (signal.aborted) break;
-    const batch = undecided.slice(index * MODEL_BATCH_SIZE, (index + 1) * MODEL_BATCH_SIZE);
-    modelBatches += 1;
-
-    try {
-      const decisions = await adjudicateBatch(handle, model, batch, signal);
-      for (const [position, entry] of batch.entries()) {
-        const chosen = decisions.get(position);
-        const article = handle.db
-          .select()
-          .from(articles)
-          .where(eq(articles.id, entry.articleId))
-          .get();
-        if (!article) continue;
-
-        const target = chosen === undefined ? undefined : entry.candidates[chosen];
-        if (target) {
-          attachToEvent(handle, article.id, target.id, article.title);
-          result.attachedToExisting += 1;
-        } else {
-          // "new" is also the fallback for an out-of-range answer.
-          attachToNewEvent(handle, article.id, article.title);
-          result.newEvents += 1;
-        }
+      if (ranked.length === 0) {
+        const created = attachToNewEvent(handle, article.id, article.title);
+        registerEvent(index, byId, created);
+        result.newEvents += 1;
+        continue;
       }
-    } catch {
-      // Any model failure defers this batch rather than aborting the run.
-      result.deferred += batch.length;
-      continue;
-    }
-  }
 
-  result.deferred += Math.max(0, undecided.length - modelBatches * MODEL_BATCH_SIZE);
-  return result;
+      // A near-exact reprint skips the model; anything less waits for it.
+      if (
+        ranked.length === 1 &&
+        ranked[0]!.titles.some((title) => isReprint(article.title, title))
+      ) {
+        const eventId = attachToEvent(handle, article.id, ranked[0]!.id, article.title);
+        index.add({ id: eventId, titles: [article.title] });
+        result.attachedToExisting += 1;
+        continue;
+      }
+
+      undecided.push({ articleId: article.id, candidates: ranked });
+    }
+
+    if (undecided.length === 0 || !model.available) {
+      result.deferred += undecided.length;
+      return result;
+    }
+
+    const batches = Math.min(Math.ceil(undecided.length / MODEL_BATCH_SIZE), maxModelBatches);
+    for (let index_ = 0; index_ < batches; index_ += 1) {
+      if (signal.aborted) break;
+      const batch = undecided.slice(index_ * MODEL_BATCH_SIZE, (index_ + 1) * MODEL_BATCH_SIZE);
+      modelBatches += 1;
+
+      try {
+        const decisions = await adjudicateBatch(handle, model, batch, signal);
+        for (const [position, entry] of batch.entries()) {
+          const chosen = decisions.get(position);
+          const article = handle.db
+            .select()
+            .from(articles)
+            .where(eq(articles.id, entry.articleId))
+            .get();
+          if (!article) continue;
+
+          const target = chosen === undefined ? undefined : entry.candidates[chosen];
+          if (target) {
+            const eventId = attachToEvent(handle, article.id, target.id, article.title);
+            index.add({ id: eventId, titles: [article.title] });
+            result.attachedToExisting += 1;
+          } else {
+            // "new" is also the fallback for an out-of-range answer.
+            const created = attachToNewEvent(handle, article.id, article.title);
+            registerEvent(index, byId, created);
+            result.newEvents += 1;
+          }
+        }
+      } catch {
+        // Any model failure defers this batch rather than aborting the run.
+        result.deferred += batch.length;
+        continue;
+      }
+    }
+
+    result.deferred += Math.max(0, undecided.length - modelBatches * MODEL_BATCH_SIZE);
+    return result;
+  } finally {
+    index.close();
+  }
 }
 
 /** Events with activity in the window, each with the titles of its articles. */
@@ -221,8 +240,8 @@ async function adjudicateBatch(
       ],
     });
 
-    const index = parseDecision(content, entry.candidates.length);
-    if (index !== null) decisions.set(position, index);
+    const decision = parseDecision(content, entry.candidates.length);
+    if (decision !== null) decisions.set(position, decision);
   }
 
   return decisions;
@@ -238,7 +257,7 @@ export function parseDecision(content: string, candidateCount: number): number |
   return index;
 }
 
-function attachToNewEvent(handle: DbHandle, articleId: string, title: string): void {
+function attachToNewEvent(handle: DbHandle, articleId: string, title: string): CandidateEvent {
   const now = new Date();
   const eventId = newId();
   const article = handle.db.select().from(articles).where(eq(articles.id, articleId)).get();
@@ -266,17 +285,32 @@ function attachToNewEvent(handle: DbHandle, articleId: string, title: string): v
     })
     .run();
   handle.db.update(articles).set({ eventId }).where(eq(articles.id, articleId)).run();
+  return { id: eventId, title, titles: [title] };
 }
 
-function attachToEvent(handle: DbHandle, articleId: string, eventId: string, title: string): void {
+/** Keeps the recall index in step when a run creates an event. */
+function registerEvent(
+  index: RecallIndex,
+  byId: Map<string, CandidateEvent>,
+  event: CandidateEvent,
+): void {
+  index.add({ id: event.id, titles: event.titles });
+  byId.set(event.id, event);
+}
+
+function attachToEvent(
+  handle: DbHandle,
+  articleId: string,
+  eventId: string,
+  title: string,
+): string {
   const article = handle.db.select().from(articles).where(eq(articles.id, articleId)).get();
   const now = new Date();
   const published = article?.publishedAt;
 
   const event = handle.db.select().from(events).where(eq(events.id, eventId)).get();
   if (!event) {
-    attachToNewEvent(handle, articleId, title);
-    return;
+    return attachToNewEvent(handle, articleId, title).id;
   }
 
   handle.db.update(articles).set({ eventId }).where(eq(articles.id, articleId)).run();
@@ -300,4 +334,6 @@ function attachToEvent(handle: DbHandle, articleId: string, eventId: string, tit
     })
     .where(eq(events.id, eventId))
     .run();
+
+  return eventId;
 }

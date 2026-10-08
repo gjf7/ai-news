@@ -3,7 +3,7 @@ import { z } from "zod";
 import type { DbHandle } from "../db/connection.ts";
 import { deliveries, insights } from "../db/schema.ts";
 import type { ModelClient } from "../insights/model.ts";
-import { rankCandidates } from "../news/similarity.ts";
+import { createRecallIndex, RECALL_MIN_RATIO } from "../news/recall.ts";
 import { bumpedNotificationCandidates, type Candidate, type NotifyConfig } from "./telegram.ts";
 
 /**
@@ -15,6 +15,9 @@ import { bumpedNotificationCandidates, type Candidate, type NotifyConfig } from 
  * model whether a candidate merely re-reports something the chat recently
  * received, dropping it when so.
  *
+ * Candidate recall uses the same FTS5 index as clustering (recall.ts), so word
+ * forms do not need a synonym table.
+ *
  * Bias: fail open. A model error, an unusable answer, an exhausted budget or an
  * aborted run all keep the item, because sending a duplicate is a much smaller
  * mistake than silently withholding news. Suppressed events still have their
@@ -25,8 +28,6 @@ const WINDOW_HOURS = 72;
 /** Consider more candidates than a batch can hold so a drop can be backfilled. */
 const LOOKAHEAD_FACTOR = 2;
 const MAX_REFERENCES = 6;
-/** Recall floor for "worth asking the model"; the model decides precision. */
-const REFERENCE_THRESHOLD = 0.2;
 const MAX_MODEL_CALLS = 8;
 
 const outputSchema = z.array(
@@ -97,55 +98,45 @@ export async function suppressDuplicateNotifications({
   if (candidates.length === 0) return new Set();
 
   const recent = recentReferences(handle, config.chatId, now);
+  const index = createRecallIndex(recent.map((entry) => ({ id: entry.id, titles: entry.titles })));
+  const byId = new Map(recent.map((entry) => [entry.id, entry]));
 
   const suppressed = new Set<string>();
-  const accepted: Reference[] = [];
   let calls = 0;
 
-  for (const candidate of candidates) {
-    if (signal.aborted || !model.available) break;
+  const keep = (reference: Reference) => {
+    index.add({ id: reference.id, titles: reference.titles });
+    byId.set(reference.id, reference);
+  };
 
-    const reference = candidateReference(handle, candidate);
-    const pool = [...recent, ...accepted];
-    const similar = similarReferences(reference, pool);
+  try {
+    for (const candidate of candidates) {
+      if (signal.aborted || !model.available) break;
 
-    if (similar.length === 0) {
+      const reference = candidateReference(handle, candidate);
+      const similar = index
+        .rankAny(reference.titles, { limit: MAX_REFERENCES, minRatio: RECALL_MIN_RATIO })
+        .map((hit) => byId.get(hit.id))
+        .filter((entry): entry is Reference => entry !== undefined);
+
       // Nothing lexically close: no reason to spend a call, keep the item.
-      accepted.push(reference);
-      continue;
-    }
-    if (calls >= MAX_MODEL_CALLS) {
-      accepted.push(reference);
-      continue;
+      if (similar.length === 0 || calls >= MAX_MODEL_CALLS) {
+        keep(reference);
+        continue;
+      }
+
+      calls += 1;
+      if (await isDuplicate(model, signal, reference, similar)) {
+        suppressed.add(candidate.id);
+      } else {
+        keep(reference);
+      }
     }
 
-    calls += 1;
-    if (await isDuplicate(model, signal, reference, similar)) {
-      suppressed.add(candidate.id);
-    } else {
-      accepted.push(reference);
-    }
+    return suppressed;
+  } finally {
+    index.close();
   }
-
-  return suppressed;
-}
-
-function similarReferences(reference: Reference, pool: Reference[]): Reference[] {
-  const best = new Map<string, number>();
-  for (const title of reference.titles) {
-    for (const match of rankCandidates(title, pool, {
-      threshold: REFERENCE_THRESHOLD,
-      limit: MAX_REFERENCES,
-    })) {
-      if (match.similarity > (best.get(match.item.id) ?? -1))
-        best.set(match.item.id, match.similarity);
-    }
-  }
-  return [...best.entries()]
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, MAX_REFERENCES)
-    .map(([id]) => pool.find((entry) => entry.id === id)!)
-    .filter(Boolean);
 }
 
 async function isDuplicate(
@@ -204,8 +195,8 @@ function recentReferences(handle: DbHandle, chatId: string, now: Date): Referenc
   for (const row of rows) {
     const items = itemsSchema.safeParse(row.items);
     if (!items.success) continue;
-    for (const [index, item] of items.data.entries()) {
-      const id = `${row.id}:${index}`;
+    for (const [position, item] of items.data.entries()) {
+      const id = `${row.id}:${position}`;
       if (seen.has(id)) continue;
       seen.add(id);
       references.push(referenceFromInsight(handle, item.insightId, id));
