@@ -64,7 +64,7 @@ export function createSourceRegistry({
     {
       key: "arxiv",
       adapter: createArxivAdapter({ fetch }),
-      // Papers show title + abstract only, never insights. See decisions.md D13.
+      // Papers show title + abstract only, never insights.
       analyze: false,
       topics: ["ai"],
       kind: "paper",

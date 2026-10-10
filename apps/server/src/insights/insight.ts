@@ -6,7 +6,7 @@ import { z } from "zod";
  * and the notification-version rule.
  *
  * Evidence is only ever what the source provided (title and RSS excerpt) —
- * the article body is never fetched. See decisions.md D15.
+ * the article body is never fetched.
  */
 
 export const PROMPT_VERSION = "insight-v1";

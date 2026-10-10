@@ -3,7 +3,7 @@ import { z } from "zod";
 /**
  * Content available for a piece of evidence. There is no `fulltext` scope:
  * insights only ever use what the source provided (title and RSS excerpt),
- * so the original article body is never fetched. See decisions.md D15.
+ * so the original article body is never fetched.
  */
 export const Evidence = z.discriminatedUnion("scope", [
   z.object({ scope: z.literal("headline"), title: z.string() }),

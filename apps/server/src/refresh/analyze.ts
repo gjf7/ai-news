@@ -70,7 +70,7 @@ export async function runAnalysis({
   // Events built only from sources that opt out of analysis (arXiv) are
   // skipped: they show title and abstract, cost no model calls, and never
   // notify. If a analysable source later joins, clustering resets them to
-  // pending. See decisions.md D13.
+  // pending.
   const skippedIds: string[] = [];
   const analyzable: typeof candidates = [];
   for (const event of candidates) {

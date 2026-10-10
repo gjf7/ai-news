@@ -1,5 +1,5 @@
 -- Initial schema. Timestamps are UTC milliseconds (INTEGER).
--- See docs/architecture.md "数据模型" and decisions.md D14/D15.
+-- See docs/architecture.md "数据模型" for the shape and rationale.
 
 CREATE TABLE sources (
   id TEXT PRIMARY KEY,

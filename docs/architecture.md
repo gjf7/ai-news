@@ -1,6 +1,6 @@
 # 架构与接口设计
 
-状态：第二版设计，尚未实现。依赖具体版本在初始化时核验并锁定。上一版的取舍及废弃原因见 [decisions.md](decisions.md)。
+状态：第二版设计，已实现。依赖具体版本在初始化时核验并锁定。
 
 ## 设计原则
 
@@ -130,7 +130,7 @@ SQLite 约定：
 - `events.notified_revision <= notification_revision` CHECK。
 - 索引：events `(effective_time DESC, id DESC)`、events `(updated_at)`、articles `(event_id)`、articles `(discovered_at)`、deliveries `(state, next_attempt_at)`。
 
-相比上一版删除了 run_events、delivery_events、feed_state、app_settings 和 telegram 投递的多状态模型，原因见 decisions.md。
+相比上一版删除了 run_events、delivery_events、feed_state、app_settings 和 telegram 投递的多状态模型：这些表要么是可由现有字段推导的冗余，要么服务于单用户场景下不存在的并发需求。
 
 ## 运行配置
 

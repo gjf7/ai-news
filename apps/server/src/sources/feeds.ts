@@ -83,7 +83,7 @@ export const FEED_SOURCES: Record<string, FeedConfig> = {
     // rules for Feedly and other readers), so no account or paywall workaround
     // is involved. The technology feed is the AI/chip-relevant one; industries
     // adds semiconductor and hardware coverage; markets carries US equity
-    // coverage (S&P 500, Fed, Treasuries). See decisions.md D19.
+    // coverage (S&P 500, Fed, Treasuries).
     feeds: [
       "https://www.bloomberg.com/feeds/technology/news.rss",
       "https://www.bloomberg.com/feeds/industries/news.rss",

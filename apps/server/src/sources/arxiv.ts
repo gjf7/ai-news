@@ -8,8 +8,7 @@ import { canonicalizeUrl, toExcerpt } from "./url.ts";
  * the API (which always lists the latest submissions) is used instead.
  *
  * Papers get an excerpt (the abstract) but no insights: `analyze = false` for
- * this source, so the pipeline marks their events as skipped. See decisions.md
- * D13.
+ * this source, so the pipeline marks their events as skipped.
  */
 
 const API_URL = "https://export.arxiv.org/api/query";

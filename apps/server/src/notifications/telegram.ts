@@ -14,7 +14,6 @@ import { articles, deliveries, events, insights } from "../db/schema.ts";
  *
  * Semantics are at-least-once: a crash after sending but before recording the
  * message can repeat one message, which is harmless in a personal chat.
- * See decisions.md D4/D12.
  */
 
 export type NotifyConfig = {
