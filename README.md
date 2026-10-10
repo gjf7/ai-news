@@ -1,6 +1,6 @@
 # AI 与半导体情报站
 
-个人使用的英文新闻聚合与中文洞察工具。默认每 30 分钟采集，支持网站手动刷新和 Telegram 精选推送。
+个人使用的英文新闻聚合与中文洞察工具。默认每 30 分钟采集，支持网站手动刷新、Telegram 精选推送，以及可选的每日摘要。
 
 ## 快速开始
 
@@ -133,8 +133,10 @@ Google News、Hacker News、Reddit、arXiv、TechCrunch、The Verge、MIT Techno
 ## 运维
 
 - **备份**：每天 03:00 UTC 用 better-sqlite3 的在线 backup API 生成快照到 `/data/backups`，保留最近 14 份。异地备份即同步该目录。
+- **保留**：每天 03:30 UTC 删除 `RETENTION_DAYS`（默认 180）天未被改动的事件及其洞察、无归属的旧文章与终态推送记录；pending 推送永不删除。设为 0 关闭。备份是安全网。
 - **恢复**：停止 app → 用快照替换 `/data/app.db` → 启动 app。`-wal`/`-shm` 会自动重建，无需恢复。
 - **配置**：全部通过环境变量，修改后重启生效；网页只读展示非敏感配置。来源开关是唯一可在网页修改的配置。
+- **每日摘要**：`DIGEST_ENABLED=true` 后，在 `DIGEST_HOUR_UTC`（默认 0，即北京时间 08:00）汇总最近 24 小时中重要性达到 `DIGEST_MIN_IMPORTANCE`（默认 50）的事件。它与每轮推送相互独立，不读写推送版本，因此同一条重大新闻可能既被即时推送、又出现在次日摘要里。一天最多一条，重启不会重复。
 - **日志**：记录 requestId/runId/sourceId，不记录密钥、Cookie 或文章内容。
 
 ## 语义说明

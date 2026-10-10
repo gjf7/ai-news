@@ -80,6 +80,18 @@ function SourcesPage() {
             <Row label="推送" value={config.data.notify.enabled ? "已启用" : "已停用"} />
             <Row label="每轮最多" value={`${config.data.notify.maxItems} 条`} />
             <Row label="重要性阈值" value={String(config.data.notify.minImportance)} />
+            <Row
+              label="每日摘要"
+              value={
+                config.data.notify.digest.enabled
+                  ? `已启用 · ${String(config.data.notify.digest.hourUtc).padStart(2, "0")}:00 UTC`
+                  : "已停用"
+              }
+            />
+            <Row
+              label="数据保留"
+              value={config.data.retentionDays > 0 ? `${config.data.retentionDays} 天` : "不清理"}
+            />
             <Row label="模型" value={config.data.model.name} />
             <Row
               label="模型密钥"

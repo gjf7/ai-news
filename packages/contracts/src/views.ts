@@ -145,6 +145,8 @@ export type SourceList = z.infer<typeof SourceList>;
 
 export const DeliveryView = z.object({
   id: z.string(),
+  /** "refresh" for the per-run push, "digest" for the daily summary. */
+  kind: z.string(),
   state: z.string(),
   attempts: z.number(),
   createdAt: z.string(),
@@ -168,7 +170,18 @@ export type DeliveryList = z.infer<typeof DeliveryList>;
 export const ConfigView = z.object({
   nodeEnv: z.string(),
   refreshIntervalMinutes: z.number(),
-  notify: z.object({ enabled: z.boolean(), maxItems: z.number(), minImportance: z.number() }),
+  retentionDays: z.number(),
+  notify: z.object({
+    enabled: z.boolean(),
+    maxItems: z.number(),
+    minImportance: z.number(),
+    digest: z.object({
+      enabled: z.boolean(),
+      hourUtc: z.number(),
+      maxItems: z.number(),
+      minImportance: z.number(),
+    }),
+  }),
   model: z.object({ baseUrl: z.string(), name: z.string() }),
   configured: z.object({ modelApiKey: z.boolean(), telegram: z.boolean() }),
 });
@@ -180,7 +193,7 @@ export const EventQuery = z.object({
   topic: z.string().optional(),
   source: z.string().optional(),
   kind: EventKind.optional(),
-  sort: z.enum(["hot", "latest"]).default("latest"),
+  sort: z.enum(["hot", "importance", "latest"]).default("latest"),
   from: z.string().optional(),
   to: z.string().optional(),
   page: z.coerce.number().int().min(1).default(1),
@@ -196,7 +209,7 @@ export type EventQuery = z.infer<typeof EventQuery>;
 export const EventSearchParams = z.object({
   topic: z.string().optional(),
   kind: EventKind.optional(),
-  sort: z.enum(["hot", "latest"]).optional(),
+  sort: z.enum(["hot", "importance", "latest"]).optional(),
   page: z.coerce.number().int().min(1).optional(),
 });
 

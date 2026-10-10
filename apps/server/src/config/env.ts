@@ -39,6 +39,27 @@ const EnvSchema = z.object({
   NOTIFY_MAX_ITEMS: z.coerce.number().int().positive().default(5),
   NOTIFY_MIN_IMPORTANCE: z.coerce.number().int().min(0).max(100).default(70),
 
+  /**
+   * Daily digest: one summary of the last 24 hours at a fixed UTC hour. Off by
+   * default so enabling it is a deliberate choice (it is a new outbound message
+   * on a fixed schedule). Its threshold is lower than the per-run push so it can
+   * surface the day's notable-but-not-urgent items.
+   */
+  DIGEST_ENABLED: z
+    .enum(["true", "false"])
+    .default("false")
+    .transform((value) => value === "true"),
+  DIGEST_HOUR_UTC: z.coerce.number().int().min(0).max(23).default(0),
+  DIGEST_MAX_ITEMS: z.coerce.number().int().positive().default(10),
+  DIGEST_MIN_IMPORTANCE: z.coerce.number().int().min(0).max(100).default(50),
+
+  /**
+   * Retention: delete events (and their insights) and orphaned articles older
+   * than this many days, plus terminal deliveries. 0 disables pruning. The
+   * daily snapshot is the safety net.
+   */
+  RETENTION_DAYS: z.coerce.number().int().min(0).default(180),
+
   TELEGRAM_BOT_TOKEN: z.string().min(1).optional(),
   TELEGRAM_CHAT_ID: z.string().min(1).optional(),
 
@@ -54,6 +75,8 @@ export type AppConfig = {
   port: number;
   databasePath: string;
   backup: { directory?: string; keep: number };
+  /** Age at which events/articles are pruned; 0 disables pruning. */
+  retention: { days: number };
   session: {
     secret: string;
     ttlHours: number;
@@ -71,6 +94,12 @@ export type AppConfig = {
     enabled: boolean;
     maxItems: number;
     minImportance: number;
+    digest: {
+      enabled: boolean;
+      hourUtc: number;
+      maxItems: number;
+      minImportance: number;
+    };
     telegram: { botToken?: string; chatId?: string };
   };
   model: {
@@ -95,6 +124,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     port: value.PORT,
     databasePath: value.DATABASE_PATH,
     backup: { directory: value.BACKUP_DIR, keep: value.BACKUP_KEEP },
+    retention: { days: value.RETENTION_DAYS },
     session: {
       secret: value.SESSION_SECRET,
       ttlHours: value.SESSION_TTL_HOURS,
@@ -112,6 +142,12 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
       enabled: value.NOTIFY_ENABLED,
       maxItems: value.NOTIFY_MAX_ITEMS,
       minImportance: value.NOTIFY_MIN_IMPORTANCE,
+      digest: {
+        enabled: value.DIGEST_ENABLED,
+        hourUtc: value.DIGEST_HOUR_UTC,
+        maxItems: value.DIGEST_MAX_ITEMS,
+        minImportance: value.DIGEST_MIN_IMPORTANCE,
+      },
       telegram: {
         botToken: value.TELEGRAM_BOT_TOKEN,
         chatId: value.TELEGRAM_CHAT_ID,
@@ -133,10 +169,17 @@ export function publicConfig(config: AppConfig) {
   return {
     nodeEnv: config.nodeEnv,
     refreshIntervalMinutes: config.refresh.intervalMinutes,
+    retentionDays: config.retention.days,
     notify: {
       enabled: config.notify.enabled,
       maxItems: config.notify.maxItems,
       minImportance: config.notify.minImportance,
+      digest: {
+        enabled: config.notify.digest.enabled,
+        hourUtc: config.notify.digest.hourUtc,
+        maxItems: config.notify.digest.maxItems,
+        minImportance: config.notify.digest.minImportance,
+      },
     },
     model: {
       baseUrl: config.model.baseUrl,

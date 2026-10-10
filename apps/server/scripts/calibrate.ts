@@ -59,6 +59,7 @@ const config: AppConfig = {
   port: 0,
   databasePath: join(dir, "app.db"),
   backup: { keep: 14 },
+  retention: { days: 0 },
   session: {
     secret: "calibration-secret-value",
     ttlHours: 1,
@@ -73,7 +74,13 @@ const config: AppConfig = {
     filterMaxBatches: Number(process.env.FILTER_MAX_BATCHES ?? 8),
     clusterMaxBatches: Number(process.env.CLUSTER_MAX_BATCHES ?? 4),
   },
-  notify: { enabled: false, maxItems: 5, minImportance: 70, telegram: {} },
+  notify: {
+    enabled: false,
+    maxItems: 5,
+    minImportance: 70,
+    digest: { enabled: false, hourUtc: 0, maxItems: 10, minImportance: 50 },
+    telegram: {},
+  },
   model: { baseUrl: "https://stub", apiKey: "stub", name: "stub" },
 };
 

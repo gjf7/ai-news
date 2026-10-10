@@ -202,6 +202,8 @@ export const deliveries = sqliteTable(
       .notNull()
       .references(() => refreshRuns.id, { onDelete: "cascade" }),
     chatId: text("chat_id").notNull(),
+    /** "refresh" (per-run threshold push) or "digest" (daily summary). */
+    kind: text("kind").notNull().default("refresh"),
     /** [{ eventId, revision, insightId }] frozen at delivery time. */
     items: text("items", { mode: "json" }).notNull(),
     text: text("text").notNull(),
@@ -215,6 +217,7 @@ export const deliveries = sqliteTable(
   },
   (table) => [
     index("deliveries_state_next_attempt_idx").on(table.state, table.nextAttemptAt),
+    index("deliveries_kind_created_idx").on(table.kind, table.createdAt),
     check("deliveries_state_check", sql`${table.state} in ('pending','sent','failed')`),
   ],
 );

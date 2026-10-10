@@ -164,24 +164,28 @@ export function runNotificationFreeze({
 
 /** Renders the message text from the selected events and their insights. */
 export function renderMessage(handle: DbHandle, selected: Candidate[]): string {
-  const blocks = selected.map((event) => {
-    const insight = event.latestInsightId
-      ? handle.db.select().from(insights).where(eq(insights.id, event.latestInsightId)).get()
-      : undefined;
+  return selected.map((event) => renderEventBlock(handle, event)).join("\n\n---\n\n");
+}
 
-    const output = insight?.output as
-      | { title?: string; facts?: { text: string; citations?: string[] }[] }
-      | undefined;
+/**
+ * One event block: score, Chinese heading, first fact and the original link.
+ * Shared by the per-run push and the daily digest so both read identically.
+ */
+export function renderEventBlock(handle: DbHandle, event: Candidate): string {
+  const insight = event.latestInsightId
+    ? handle.db.select().from(insights).where(eq(insights.id, event.latestInsightId)).get()
+    : undefined;
 
-    const heading = output?.title ?? event.title;
-    const summary = output?.facts?.[0]?.text ?? "";
-    const score = event.importance ?? 0;
-    const url = eventArticleUrl(handle, event.id, output?.facts?.[0]?.citations);
+  const output = insight?.output as
+    | { title?: string; facts?: { text: string; citations?: string[] }[] }
+    | undefined;
 
-    return [`【${score}】${heading}`, summary, url].filter(Boolean).join("\n");
-  });
+  const heading = output?.title ?? event.title;
+  const summary = output?.facts?.[0]?.text ?? "";
+  const score = event.importance ?? 0;
+  const url = eventArticleUrl(handle, event.id, output?.facts?.[0]?.citations);
 
-  return blocks.join("\n\n---\n\n");
+  return [`【${score}】${heading}`, summary, url].filter(Boolean).join("\n");
 }
 
 /**

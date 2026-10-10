@@ -161,11 +161,3 @@ export function refreshEventScores(handle: DbHandle, eventIds: string[]): void {
       .run();
   }
 }
-
-/** All event ids currently attached to an article, used to refresh scores. */
-export function allEventIds(handle: DbHandle): string[] {
-  const rows = handle.sqlite
-    .prepare("SELECT DISTINCT event_id AS id FROM articles WHERE event_id IS NOT NULL")
-    .all() as { id: string }[];
-  return rows.map((row) => row.id);
-}

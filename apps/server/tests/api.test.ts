@@ -16,6 +16,7 @@ beforeEach(async () => {
     port: 0,
     databasePath: join(dir, "app.db"),
     backup: { keep: 14 },
+    retention: { days: 0 },
     session: {
       secret: "test-secret-value-that-is-long-enough",
       ttlHours: 1,
@@ -33,6 +34,7 @@ beforeEach(async () => {
       enabled: false,
       maxItems: 5,
       minImportance: 70,
+      digest: { enabled: false, hourUtc: 0, maxItems: 10, minImportance: 50 },
       telegram: {},
     },
     model: { baseUrl: "https://api.deepseek.com", name: "deepseek-chat" },

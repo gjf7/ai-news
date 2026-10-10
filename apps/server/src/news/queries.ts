@@ -84,7 +84,16 @@ export function listEvents(handle: DbHandle, query: EventQuery): EventList {
   const order =
     query.sort === "hot"
       ? [desc(events.hotScore), desc(events.effectiveTime), desc(events.id)]
-      : [desc(events.effectiveTime), desc(events.id)];
+      : query.sort === "importance"
+        ? // Model-rated importance. SQLite sorts NULL below any number, so
+          // events without an insight yet sink to the bottom.
+          [
+            desc(events.importance),
+            desc(events.hotScore),
+            desc(events.effectiveTime),
+            desc(events.id),
+          ]
+        : [desc(events.effectiveTime), desc(events.id)];
 
   const rows = handle.db
     .select()

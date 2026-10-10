@@ -9,6 +9,7 @@ const TOPICS = [
 const SORTS = [
   { value: "latest" as const, label: "最新" },
   { value: "hot" as const, label: "热点" },
+  { value: "importance" as const, label: "重要性" },
 ];
 
 const KINDS = [

@@ -46,6 +46,8 @@ export type ClusterResult = {
   newEvents: number;
   attachedToExisting: number;
   deferred: number;
+  /** Events an article was attached to (created or grown) in this run. */
+  touchedEventIds: string[];
 };
 
 type CandidateEvent = { id: string; title: string; titles: string[] };
@@ -56,7 +58,13 @@ export async function runClustering({
   signal,
   maxModelBatches = 4,
 }: ClusterDeps): Promise<ClusterResult> {
-  const result: ClusterResult = { newEvents: 0, attachedToExisting: 0, deferred: 0 };
+  const result: ClusterResult = {
+    newEvents: 0,
+    attachedToExisting: 0,
+    deferred: 0,
+    touchedEventIds: [],
+  };
+  const touched = new Set<string>();
 
   // Oldest first so an event established earlier in the run can absorb later
   // reprints, and so published order drives grouping.
@@ -95,6 +103,7 @@ export async function runClustering({
       if (ranked.length === 0) {
         const created = attachToNewEvent(handle, article.id, article.title);
         registerEvent(index, byId, created);
+        touched.add(created.id);
         result.newEvents += 1;
         continue;
       }
@@ -106,6 +115,7 @@ export async function runClustering({
       ) {
         const eventId = attachToEvent(handle, article.id, ranked[0]!.id, article.title);
         index.add({ id: eventId, titles: [article.title] });
+        touched.add(eventId);
         result.attachedToExisting += 1;
         continue;
       }
@@ -115,6 +125,7 @@ export async function runClustering({
 
     if (undecided.length === 0 || !model.available) {
       result.deferred += undecided.length;
+      result.touchedEventIds = [...touched];
       return result;
     }
 
@@ -139,11 +150,13 @@ export async function runClustering({
           if (target) {
             const eventId = attachToEvent(handle, article.id, target.id, article.title);
             index.add({ id: eventId, titles: [article.title] });
+            touched.add(eventId);
             result.attachedToExisting += 1;
           } else {
             // "new" is also the fallback for an out-of-range answer.
             const created = attachToNewEvent(handle, article.id, article.title);
             registerEvent(index, byId, created);
+            touched.add(created.id);
             result.newEvents += 1;
           }
         }
@@ -155,6 +168,7 @@ export async function runClustering({
     }
 
     result.deferred += Math.max(0, undecided.length - modelBatches * MODEL_BATCH_SIZE);
+    result.touchedEventIds = [...touched];
     return result;
   } finally {
     index.close();

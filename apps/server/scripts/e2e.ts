@@ -62,6 +62,7 @@ const config: AppConfig = {
   port: 0,
   databasePath: join(dir, "app.db"),
   backup: { keep: 14 },
+  retention: { days: 0 },
   session: {
     secret: "e2e-secret-long-enough-value",
     ttlHours: 1,
@@ -75,7 +76,13 @@ const config: AppConfig = {
     filterMaxBatches: 8,
     clusterMaxBatches: 4,
   },
-  notify: { enabled: false, maxItems: 5, minImportance: 70, telegram: {} },
+  notify: {
+    enabled: false,
+    maxItems: 5,
+    minImportance: 70,
+    digest: { enabled: false, hourUtc: 0, maxItems: 10, minImportance: 50 },
+    telegram: {},
+  },
   model: { baseUrl: "https://stub", apiKey: "stub", name: "stub" },
 };
 

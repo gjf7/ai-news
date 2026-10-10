@@ -18,6 +18,7 @@ beforeEach(async () => {
     port: 0,
     databasePath: join(dir, "app.db"),
     backup: { keep: 14 },
+    retention: { days: 0 },
     session: {
       secret: "test-secret-long-enough",
       ttlHours: 1,
@@ -31,7 +32,13 @@ beforeEach(async () => {
       filterMaxBatches: 8,
       clusterMaxBatches: 4,
     },
-    notify: { enabled: false, maxItems: 5, minImportance: 70, telegram: {} },
+    notify: {
+      enabled: false,
+      maxItems: 5,
+      minImportance: 70,
+      digest: { enabled: false, hourUtc: 0, maxItems: 10, minImportance: 50 },
+      telegram: {},
+    },
     model: { baseUrl: "https://api.example.com", name: "deepseek-chat" },
   };
   built = await buildApp({ config, startBackground: false });
@@ -106,6 +113,53 @@ test("GET /events lists seeded events with their topics", async () => {
   const body = response.json();
   expect(body.items).toHaveLength(1);
   expect(body.items[0]).toMatchObject({ id: "ev1", topics: ["ai", "semiconductor"] });
+});
+
+test("sort=importance orders by model importance with unscored events last", async () => {
+  const now = new Date();
+  const seed = (id: string, importance: number | null) =>
+    built.handle.db
+      .insert(events)
+      .values({
+        id,
+        title: `Event ${id}`,
+        topics: [],
+        kind: "news",
+        firstSeenAt: now,
+        lastArticleAt: now,
+        effectiveTime: now,
+        hotScore: 0,
+        analysisState: "ok",
+        importance,
+        notificationRevision: 0,
+        notifiedRevision: 0,
+        updatedAt: now,
+      })
+      .run();
+  seed("low", 10);
+  seed("high", 90);
+  seed("unscored", null);
+
+  const response = await built.app.inject({
+    method: "GET",
+    url: "/api/events?sort=importance",
+    ...auth(),
+  });
+  expect(response.statusCode).toBe(200);
+  expect(response.json().items.map((event: { id: string }) => event.id)).toEqual([
+    "high",
+    "low",
+    "unscored",
+  ]);
+});
+
+test("GET /events rejects an unknown sort", async () => {
+  const response = await built.app.inject({
+    method: "GET",
+    url: "/api/events?sort=trending",
+    ...auth(),
+  });
+  expect(response.statusCode).toBe(400);
 });
 
 test("GET /events/:id returns detail and 404s for an unknown id", async () => {

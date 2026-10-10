@@ -6,7 +6,7 @@ export type EventFilters = {
   topic?: string;
   source?: string;
   kind?: string;
-  sort?: "hot" | "latest";
+  sort?: "hot" | "importance" | "latest";
   page?: number;
 };
 

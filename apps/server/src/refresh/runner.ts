@@ -7,8 +7,9 @@ import type { ModelClient } from "../insights/model.ts";
 import { runAnalysis } from "./analyze.ts";
 import { runClustering } from "../news/clustering.ts";
 import { runFiltering } from "../news/filtering.ts";
-import { allEventIds, refreshEventScores } from "../news/scoring.ts";
+import { refreshEventScores } from "../news/scoring.ts";
 import { deliverDue, runNotificationFreeze, type SendFn } from "../notifications/telegram.ts";
+import { runDigestIfDue } from "../notifications/digest.ts";
 import { suppressDuplicateNotifications } from "../notifications/dedup.ts";
 import { beginSourceRuns, runIngest, syncSources } from "./ingest.ts";
 import { latestFinishedRun, pruneRuns, requestRefresh } from "./request.ts";
@@ -179,7 +180,9 @@ export function createRunner(deps: RunnerDeps): Runner {
       });
       if (!isCurrent()) return;
 
-      refreshEventScores(handle, allEventIds(handle));
+      // Only events that received an article changed; scoring the whole
+      // historical set every run would grow with the archive for no benefit.
+      refreshEventScores(handle, clustered.touchedEventIds);
 
       setProgress({
         phase: "analyzing",
@@ -281,6 +284,25 @@ export function createRunner(deps: RunnerDeps): Runner {
     }
   };
 
+  /**
+   * Digest creation followed by a delivery drain. Checked once a minute, so a
+   * scheduled digest goes out promptly even if no refresh is due, and a
+   * late-developing story still gets summarized in the same window.
+   */
+  const maintain = async () => {
+    if (!send) return;
+    try {
+      runDigestIfDue(handle, {
+        config: config.notify.digest,
+        chatId: config.notify.telegram.chatId,
+        botToken: config.notify.telegram.botToken,
+      });
+    } catch {
+      // A digest failure must never break the runner loop.
+    }
+    await drainDeliveries();
+  };
+
   return {
     wake: () => notify(),
     runOnce,
@@ -294,9 +316,9 @@ export function createRunner(deps: RunnerDeps): Runner {
       };
       scheduled = setTimeout(tick, 0);
 
-      // Delivery retries are checked once a minute, matching the schedule the
-      // design describes (the notifying stage, plus a per-minute sweep).
-      deliveryTimer = setInterval(() => void drainDeliveries(), 60_000);
+      // The digest due-check is cheap but only matters on a minute scale, so it
+      // rides the delivery sweep rather than the 2s run poll.
+      deliveryTimer = setInterval(() => void maintain(), 60_000);
       deliveryTimer.unref?.();
     },
     stop: () => {

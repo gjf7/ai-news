@@ -10,6 +10,7 @@ import { loadConfig, publicConfig, type AppConfig } from "./config/env.ts";
 import { createDb, type DbHandle } from "./db/connection.ts";
 import { migrate } from "./db/migrate.ts";
 import { scheduleBackups } from "./db/backup.ts";
+import { scheduleRetention } from "./db/retention.ts";
 import { createModelClient, type ModelClient } from "./insights/model.ts";
 import { createTelegramSender, type SendFn } from "./notifications/telegram.ts";
 import { createRunner, type Runner } from "./refresh/runner.ts";
@@ -99,6 +100,7 @@ export async function buildApp(options: BuildOptions = {}): Promise<BuiltApp> {
 
   const model = createModelClient(config, fetchImpl);
   let stopBackups: (() => void) | undefined;
+  let stopRetention: (() => void) | undefined;
   const definitions = createSourceRegistry({
     fetch: fetchImpl,
     productHuntToken: process.env.PRODUCTHUNT_API_TOKEN,
@@ -137,6 +139,10 @@ export async function buildApp(options: BuildOptions = {}): Promise<BuiltApp> {
       keep: config.backup.keep,
       onError: (error) => app.log.error({ err: error }, "backup failed"),
     });
+    stopRetention = scheduleRetention(handle, {
+      days: config.retention.days,
+      onError: (error) => app.log.error({ err: error }, "retention failed"),
+    });
   }
 
   return {
@@ -147,6 +153,7 @@ export async function buildApp(options: BuildOptions = {}): Promise<BuiltApp> {
     model,
     close: async () => {
       stopBackups?.();
+      stopRetention?.();
       scheduler.stop();
       runner.stop();
       await app.close();

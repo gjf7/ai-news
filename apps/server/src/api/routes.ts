@@ -358,6 +358,7 @@ function toDeliveryView(row: typeof deliveries.$inferSelect): DeliveryView {
   const items = Array.isArray(row.items) ? row.items : [];
   return {
     id: row.id,
+    kind: row.kind,
     state: row.state,
     attempts: row.attempts,
     createdAt: row.createdAt.toISOString(),

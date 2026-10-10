@@ -46,6 +46,7 @@ function testConfig(overrides: Partial<AppConfig["notify"]> = {}): AppConfig {
     port: 0,
     databasePath: join(dir, "app.db"),
     backup: { keep: 14 },
+    retention: { days: 0 },
     session: {
       secret: "test-secret-long-enough-value",
       ttlHours: 1,
@@ -63,6 +64,7 @@ function testConfig(overrides: Partial<AppConfig["notify"]> = {}): AppConfig {
       enabled: true,
       maxItems: 5,
       minImportance: 70,
+      digest: { enabled: false, hourUtc: 0, maxItems: 10, minImportance: 50 },
       telegram: { chatId: "1", botToken: "t" },
       ...overrides,
     },
