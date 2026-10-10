@@ -10,9 +10,9 @@ import { createRecallIndex, RECALL_MIN_RATIO } from "../src/news/recall.ts";
 import { isReprint } from "../src/news/similarity.ts";
 
 /**
- * Regression over the saved samples. These are the cases architecture.md
- * requires to stay correct: 转载 / 改写 / 同公司不同事件 / 真实进展, plus the
- * keyword rules the filtering stage relies on.
+ * Regression over the saved samples. These are the cases that must stay
+ * correct: 转载 / 改写 / 同公司不同事件 / 真实进展, plus the keyword rules the
+ * filtering stage relies on.
  *
  * Recall (which candidates reach the model) is index-based; merging still needs
  * either a near-exact reprint or the model's explicit decision.

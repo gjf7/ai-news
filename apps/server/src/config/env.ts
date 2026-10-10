@@ -3,8 +3,7 @@ import { z } from "zod";
 /**
  * All runtime configuration comes from environment variables and is validated
  * once at startup. The process exits on invalid config rather than limping
- * along with a partially applied configuration. See architecture.md
- * "运行配置".
+ * along with a partially applied configuration.
  */
 const EnvSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),

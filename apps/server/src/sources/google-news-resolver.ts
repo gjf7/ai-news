@@ -16,8 +16,6 @@
  * failure degrades to keeping the Google URL and marking the article
  * unresolved rather than failing the run. Verified against live traffic on
  * 2026-10-06: 8/8 links resolved, no rate limiting at 20 requests.
- *
- * See docs/architecture.md "URL 与来源".
  */
 
 import { fetchWithRetry } from "./http.ts";

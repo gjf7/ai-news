@@ -19,8 +19,7 @@ import { createSourceRegistry } from "../src/sources/registry.ts";
 import { deliverDue, renderMessage, runNotificationFreeze } from "../src/notifications/telegram.ts";
 
 /**
- * The three guarantees architecture.md lists under 验证 that are about
- * correctness under interruption and repetition:
+ * The three guarantees about correctness under interruption and repetition:
  *  - a checkpoint write from a superseded attempt is rejected
  *  - a resumed run skips sources that already completed
  *  - one event version can never enter two deliveries

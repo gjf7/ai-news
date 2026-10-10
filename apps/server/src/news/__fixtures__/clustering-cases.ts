@@ -1,6 +1,6 @@
 /**
- * Saved regression samples for the model-facing judgements, as architecture.md
- * requires ("用保存的真实样本做回归：转载、改写、同公司不同事件、真实进展").
+ * Saved regression samples for the model-facing judgements: 转载、改写、
+ * 同公司不同事件、真实进展.
  *
  * The headline strings are real titles observed from the live sources; the
  * expected outcome is the decision the pipeline should reach. These cases drive

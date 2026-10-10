@@ -114,7 +114,7 @@ docker compose up -d --build
 
 刷新流水线：collecting → filtering → clustering → analyzing → publishing → notifying。
 
-设计文档在 `docs/`：[需求](docs/requirements.md)、[架构与接口](docs/architecture.md)。
+设计文档在 `docs/`：[需求](docs/requirements.md)。
 
 ## 来源
 
