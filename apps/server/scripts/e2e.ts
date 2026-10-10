@@ -6,7 +6,7 @@
  * Unlike the test suite this hits the live network, so it is a manual tool.
  * It exercises the whole pipeline against real data without spending model
  * tokens: classification, adjudication and insight prompts are answered
- * locally. See todo.md for the verified results.
+ * locally.
  */
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";

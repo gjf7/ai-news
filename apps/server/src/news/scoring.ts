@@ -85,7 +85,7 @@ export function computeHotScore({
  * that source, and the best article in the event wins.
  *
  * The reference scales are tunable product parameters, like the weights above,
- * not an objective measure. See todo.md for the calibration task.
+ * not an objective measure.
  */
 export const COMMUNITY_HOT_REFERENCE: Record<string, number> = {
   "hacker-news": 300,

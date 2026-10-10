@@ -9,7 +9,7 @@
  * which is what `maxEvents` and `maxModelBatches` have to cover.
  *
  * It also reports keyword-filter outcomes so the term list can be judged
- * against real headlines. See todo.md for the parameters being calibrated.
+ * against real headlines.
  */
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
