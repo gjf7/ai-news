@@ -33,6 +33,15 @@ export const BLOGS: BlogDefinition[] = [
   { key: "css-wizardry", name: "CSS Wizardry", feed: "https://feeds.feedburner.com/csswizardry" },
   { key: "catcoding", name: "CatCoding", feed: "https://catcoding.me/atom.xml" },
   { key: "tty8", name: "tty8", feed: "https://blog.tty8.org/feeds/all.rss" },
+  { key: "joway", name: "Joway's Blog", feed: "https://blog.joway.io/index.xml" },
+  { key: "susheng", name: "素生", feed: "http://z.arlmy.me/atom.xml" },
+  { key: "demochen", name: "特立独行的异类", feed: "https://www.demochen.com/atom.xml" },
+  { key: "haikebang", name: "骇客邦", feed: "https://haikebang.com/feed.xml" },
+  { key: "tangwudi", name: "tangwudi", feed: "https://blog.tangwudi.com/feed" },
+  { key: "yuanfan", name: "袁凡", feed: "https://yuanfan.rbind.io/index.xml" },
+  { key: "sagasu", name: "Sagasu", feed: "https://www.sagasu.art/rss.xml" },
+  { key: "taoshu", name: "涛叔", feed: "https://taoshu.in/feed.xml" },
+  { key: "onevcat", name: "OneV's Den", feed: "http://onevcat.com/atom.xml" },
 ];
 
 /** Display names keyed by blog key, for joining onto stored posts. */
