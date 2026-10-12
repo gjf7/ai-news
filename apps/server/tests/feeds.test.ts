@@ -33,6 +33,42 @@ test("parses an Atom feed where text elements are wrapped objects", () => {
   expect(first.publishedAt).toBeInstanceOf(Date);
 });
 
+test("picks the article link when an Atom entry carries several links", () => {
+  // jakearchibald.com repeats <link> (article plus rel="enclosure" media).
+  // fast-xml-parser turns that into an array; treating it as a scalar dropped
+  // every entry, and picking the first link would point at an image.
+  const xml = `<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Jake's blog</title>
+  <entry>
+    <title type="html"><![CDATA[Controlling when CSS custom property values are computed]]></title>
+    <id>https://jakearchibald.com/2026/css/</id>
+    <link href="https://jakearchibald.com/2026/css/"/>
+    <link rel="enclosure" href="https://jakearchibald.com/c/img.png" type="image/png"/>
+    <updated>2026-08-26T01:00:00.000Z</updated>
+  </entry>
+</feed>`;
+
+  const entries = parseFeed(xml, { publisher: "Jake Archibald" });
+  expect(entries).toHaveLength(1);
+  // canonicalizeUrl strips the trailing slash, so compare against that form.
+  expect(entries[0]!.url).toBe("https://jakearchibald.com/2026/css");
+  expect(entries[0]!.title).toContain("CSS custom property");
+});
+
+test("picks the rel=alternate link when it is not listed first", () => {
+  const xml = `<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <entry>
+    <title>Post</title>
+    <link rel="enclosure" href="https://x.example/img.png" type="image/png"/>
+    <link rel="alternate" href="https://x.example/post"/>
+  </entry>
+</feed>`;
+
+  const entries = parseFeed(xml, { publisher: "X" });
+  expect(entries[0]!.url).toBe("https://x.example/post");
+});
 test("parses an RSS feed and extracts the excerpt", () => {
   const entries = parseFeed(read("ee-times.xml"), { publisher: "EE Times" });
   expect(entries.length).toBeGreaterThan(0);

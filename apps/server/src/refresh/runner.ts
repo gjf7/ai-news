@@ -11,6 +11,7 @@ import { refreshEventScores } from "../news/scoring.ts";
 import { deliverDue, runNotificationFreeze, type SendFn } from "../notifications/telegram.ts";
 import { runDigestIfDue } from "../notifications/digest.ts";
 import { suppressDuplicateNotifications } from "../notifications/dedup.ts";
+import { runBlogIngest } from "../blogs/ingest.ts";
 import { beginSourceRuns, runIngest, syncSources } from "./ingest.ts";
 import { latestFinishedRun, pruneRuns, requestRefresh } from "./request.ts";
 import type { SourceDefinition } from "../sources/registry.ts";
@@ -30,6 +31,8 @@ export type RunnerDeps = {
   definitions: SourceDefinition[];
   model: ModelClient;
   send?: SendFn;
+  /** Used to fetch personal blogs; blogs are skipped when omitted (tests). */
+  fetchImpl?: typeof globalThis.fetch;
   /** Overall deadline for one run. */
   timeoutMs?: number;
 };
@@ -46,7 +49,7 @@ export type Runner = {
 };
 
 export function createRunner(deps: RunnerDeps): Runner {
-  const { handle, config, definitions, model, send } = deps;
+  const { handle, config, definitions, model, send, fetchImpl } = deps;
   const timeoutMs = deps.timeoutMs ?? config.refresh.runTimeoutMinutes * 60_000;
   let running = false;
   let scheduled: NodeJS.Timeout | undefined;
@@ -143,6 +146,16 @@ export function createRunner(deps: RunnerDeps): Runner {
         isCurrent,
       });
       if (!isCurrent()) return;
+
+      // Blogs are a separate world: fetched on the same schedule, stored
+      // apart, and never allowed to fail or slow a news run.
+      if (fetchImpl) {
+        try {
+          await runBlogIngest({ handle, fetch: fetchImpl, signal: controller.signal });
+        } catch {
+          // A blog problem must not change the run's outcome.
+        }
+      }
 
       const sourcesTotal = handle.db
         .select()

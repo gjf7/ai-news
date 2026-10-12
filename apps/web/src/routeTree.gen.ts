@@ -13,6 +13,7 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedActivityRouteImport } from './routes/_authenticated/activity'
+import { Route as AuthenticatedBlogsRouteImport } from './routes/_authenticated/blogs'
 import { Route as AuthenticatedSourcesRouteImport } from './routes/_authenticated/sources'
 import { Route as AuthenticatedEventsEventIdRouteImport } from './routes/_authenticated/events/$eventId'
 
@@ -35,6 +36,11 @@ const AuthenticatedActivityRoute = AuthenticatedActivityRouteImport.update({
   path: '/activity',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedBlogsRoute = AuthenticatedBlogsRouteImport.update({
+  id: '/blogs',
+  path: '/blogs',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedSourcesRoute = AuthenticatedSourcesRouteImport.update({
   id: '/sources',
   path: '/sources',
@@ -51,12 +57,14 @@ export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/login': typeof LoginRoute
   '/activity': typeof AuthenticatedActivityRoute
+  '/blogs': typeof AuthenticatedBlogsRoute
   '/sources': typeof AuthenticatedSourcesRoute
   '/events/$eventId': typeof AuthenticatedEventsEventIdRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/activity': typeof AuthenticatedActivityRoute
+  '/blogs': typeof AuthenticatedBlogsRoute
   '/sources': typeof AuthenticatedSourcesRoute
   '/': typeof AuthenticatedIndexRoute
   '/events/$eventId': typeof AuthenticatedEventsEventIdRoute
@@ -66,20 +74,23 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/_authenticated/activity': typeof AuthenticatedActivityRoute
+  '/_authenticated/blogs': typeof AuthenticatedBlogsRoute
   '/_authenticated/sources': typeof AuthenticatedSourcesRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/events/$eventId': typeof AuthenticatedEventsEventIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/activity' | '/sources' | '/events/$eventId'
+  fullPaths:
+    '/' | '/login' | '/activity' | '/blogs' | '/sources' | '/events/$eventId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/activity' | '/sources' | '/' | '/events/$eventId'
+  to: '/login' | '/activity' | '/blogs' | '/sources' | '/' | '/events/$eventId'
   id:
     | '__root__'
     | '/_authenticated'
     | '/login'
     | '/_authenticated/activity'
+    | '/_authenticated/blogs'
     | '/_authenticated/sources'
     | '/_authenticated/'
     | '/_authenticated/events/$eventId'
@@ -120,6 +131,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedActivityRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/blogs': {
+      id: '/_authenticated/blogs'
+      path: '/blogs'
+      fullPath: '/blogs'
+      preLoaderRoute: typeof AuthenticatedBlogsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/sources': {
       id: '/_authenticated/sources'
       path: '/sources'
@@ -139,6 +157,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteChildren {
   AuthenticatedActivityRoute: typeof AuthenticatedActivityRoute
+  AuthenticatedBlogsRoute: typeof AuthenticatedBlogsRoute
   AuthenticatedSourcesRoute: typeof AuthenticatedSourcesRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedEventsEventIdRoute: typeof AuthenticatedEventsEventIdRoute
@@ -146,6 +165,7 @@ interface AuthenticatedRouteChildren {
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedActivityRoute: AuthenticatedActivityRoute,
+  AuthenticatedBlogsRoute: AuthenticatedBlogsRoute,
   AuthenticatedSourcesRoute: AuthenticatedSourcesRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedEventsEventIdRoute: AuthenticatedEventsEventIdRoute,

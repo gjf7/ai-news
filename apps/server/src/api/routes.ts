@@ -1,6 +1,9 @@
 import { desc, eq, inArray } from "drizzle-orm";
 import type { FastifyInstance, FastifyRequest } from "fastify";
 import {
+  BlogList,
+  BlogPostList,
+  BlogPostQuery,
   ConfigView,
   DeliveryList,
   EventDetail,
@@ -16,6 +19,7 @@ import {
 import type { AppConfig, PublicConfig } from "../config/env.ts";
 import type { DbHandle } from "../db/connection.ts";
 import { deliveries, refreshRuns, sources } from "../db/schema.ts";
+import { listBlogPosts, listBlogs } from "../blogs/queries.ts";
 import { feedRevision, getEventDetail, listEvents } from "../news/queries.ts";
 import { retryDelivery } from "../notifications/telegram.ts";
 import { describeSchedule } from "../refresh/scheduler.ts";
@@ -317,6 +321,17 @@ export function registerApiRoutes(app: FastifyInstance, deps: ApiDeps) {
   app.get("/api/config", async (request) => {
     requireAuth(request);
     return ConfigView.parse(deps.publicConfig);
+  });
+
+  app.get("/api/blogs", async (request) => {
+    requireAuth(request);
+    return BlogList.parse(listBlogs(handle));
+  });
+
+  app.get("/api/blog-posts", async (request) => {
+    requireAuth(request);
+    const query = BlogPostQuery.parse(request.query);
+    return BlogPostList.parse(listBlogPosts(handle, query));
   });
 }
 

@@ -231,3 +231,21 @@ export const sessions = sqliteTable(
   },
   (table) => [index("sessions_expires_at_idx").on(table.expiresAt)],
 );
+
+/**
+ * Posts from personally followed blogs. Deliberately separate from `articles`:
+ * blogs never enter the news pipeline (no relevance, clustering, insights or
+ * notifications), so nothing here can leak into the event feed.
+ */
+export const blogPosts = sqliteTable(
+  "blog_posts",
+  {
+    id: text("id").primaryKey(),
+    blogKey: text("blog_key").notNull(),
+    title: text("title").notNull(),
+    url: text("url").notNull().unique(),
+    publishedAt: timestamp("published_at"),
+    discoveredAt: timestamp("discovered_at").notNull(),
+  },
+  (table) => [index("blog_posts_blog_published_idx").on(table.blogKey, table.publishedAt)],
+);

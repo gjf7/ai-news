@@ -111,7 +111,7 @@ export async function buildApp(options: BuildOptions = {}): Promise<BuiltApp> {
       ? createTelegramSender(config.notify.telegram.botToken, fetchImpl)
       : undefined);
 
-  const runner = createRunner({ handle, config, definitions, model, send });
+  const runner = createRunner({ handle, config, definitions, model, send, fetchImpl });
   const scheduler = createScheduler({
     handle,
     intervalMinutes: config.refresh.intervalMinutes,

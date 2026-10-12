@@ -38,9 +38,15 @@ export type FeedEntry = {
 /** Atom wraps text in an object; RSS usually uses a plain string. */
 type TextValue = string | { "#text"?: string | number; "@_href"?: string } | undefined;
 
+/** An Atom `<link>` carries its URL in `@_href`, optionally with a `rel`. */
+type LinkValue =
+  | string
+  | { "#text"?: string | number; "@_href"?: string; "@_rel"?: string }
+  | undefined;
+
 type RawItem = {
   title?: TextValue;
-  link?: TextValue;
+  link?: LinkValue | LinkValue[];
   guid?: TextValue;
   id?: string;
   pubDate?: string;
@@ -57,6 +63,27 @@ function readText(value: TextValue): string | undefined {
   if (typeof value === "string") return value;
   if (value["#text"] !== undefined) return String(value["#text"]);
   return value["@_href"];
+}
+
+/**
+ * Resolves an item's link. Atom entries may carry several `<link>` elements
+ * (the article, plus `rel="enclosure"` media), which fast-xml-parser turns into
+ * an array; picking the wrong one would point at an image, and treating the
+ * array as a scalar drops the item entirely. Prefer `rel="alternate"`, then a
+ * link with no `rel`, then the first.
+ */
+function readLink(value: LinkValue | LinkValue[]): string | undefined {
+  if (Array.isArray(value)) {
+    const links = value.filter((entry): entry is Exclude<LinkValue, undefined> => entry != null);
+    const relOf = (entry: Exclude<LinkValue, undefined>) =>
+      typeof entry === "object" ? entry["@_rel"] : undefined;
+    const chosen =
+      links.find((entry) => relOf(entry) === "alternate") ??
+      links.find((entry) => relOf(entry) === undefined) ??
+      links[0];
+    return chosen === undefined ? undefined : readText(chosen as TextValue);
+  }
+  return readText(value as TextValue);
 }
 
 function readBody(item: RawItem): string | undefined {
@@ -93,7 +120,7 @@ export function parseFeed(
   return items.flatMap((raw): FeedEntry[] => {
     const item = raw as RawItem;
     const title = readText(item.title)?.replace(/\s+/g, " ").trim();
-    const rawLink = readText(item.link)?.trim();
+    const rawLink = readLink(item.link)?.trim();
     if (!title || !rawLink) return [];
 
     const url = canonicalizeUrl(rawLink);

@@ -130,6 +130,16 @@ Google News、Hacker News、Reddit、arXiv、TechCrunch、The Verge、MIT Techno
 - **arXiv** 默认只展示标题与摘要，不生成洞察。
 - 内容范围只有标题与摘要两级，**不抓取原文正文**。
 
+## 博客
+
+「博客」Tab 展示个人订阅的博客文章，与新闻信息流完全隔离：**不进**相关性过滤、聚类、洞察或推送，**不抓正文**，只存标题与链接，点击到原站阅读。支持按博客筛选。
+
+博客清单在 `apps/server/src/blogs/blogs.ts`（改配置、重新部署即生效），每个博客默认最多保留最近 50 条。博客与新闻用同一套刷新调度（复用 RSS 解析与重试），但写入独立的 `blog_posts` 表，单个博客抓取失败不影响整轮。
+
+```bash
+pnpm exec vp run server#probe-blogs   # 对全部博客 feed 做实时抓取验证
+```
+
 ## 运维
 
 - **备份**：每天 03:00 UTC 用 better-sqlite3 的在线 backup API 生成快照到 `/data/backups`，保留最近 14 份。异地备份即同步该目录。

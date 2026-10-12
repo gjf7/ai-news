@@ -26,6 +26,13 @@ export function AppLayout({ children }: { children: ReactNode }) {
             来源
           </Link>
           <Link
+            to="/blogs"
+            className="text-sm text-neutral-500 hover:text-neutral-900"
+            activeProps={{ className: "text-neutral-900" }}
+          >
+            博客
+          </Link>
+          <Link
             to="/activity"
             className="text-sm text-neutral-500 hover:text-neutral-900"
             activeProps={{ className: "text-neutral-900" }}

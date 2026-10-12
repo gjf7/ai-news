@@ -188,6 +188,59 @@ export const ConfigView = z.object({
 
 export type ConfigView = z.infer<typeof ConfigView>;
 
+/**
+ * Personal blogs: a read-only, separate world from the news feed. `postCount`
+ * and `lastPostAt` come from `blog_posts`; the name comes from configuration.
+ */
+export const BlogView = z.object({
+  key: z.string(),
+  name: z.string(),
+  postCount: z.number(),
+  lastPostAt: z.string().nullable(),
+});
+
+export type BlogView = z.infer<typeof BlogView>;
+
+export const BlogList = z.array(BlogView);
+export type BlogList = z.infer<typeof BlogList>;
+
+export const BlogPostView = z.object({
+  id: z.string(),
+  blogKey: z.string(),
+  blogName: z.string(),
+  title: z.string(),
+  url: z.string(),
+  publishedAt: z.string().nullable(),
+});
+
+export type BlogPostView = z.infer<typeof BlogPostView>;
+
+export const BlogPostList = z.object({
+  items: z.array(BlogPostView),
+  page: z.number(),
+  hasMore: z.boolean(),
+  total: z.number(),
+});
+
+export type BlogPostList = z.infer<typeof BlogPostList>;
+
+/** Query parameters accepted by GET /blog-posts. */
+export const BlogPostQuery = z.object({
+  blog: z.string().optional(),
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(30),
+});
+
+export type BlogPostQuery = z.infer<typeof BlogPostQuery>;
+
+/** The subset the web app puts in the URL for the blogs tab. */
+export const BlogSearchParams = z.object({
+  blog: z.string().optional(),
+  page: z.coerce.number().int().min(1).optional(),
+});
+
+export type BlogSearchParams = z.infer<typeof BlogSearchParams>;
+
 /** Query parameters accepted by GET /events. */
 export const EventQuery = z.object({
   topic: z.string().optional(),

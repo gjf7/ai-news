@@ -86,6 +86,8 @@ test("every new endpoint requires authentication", async () => {
     "/api/sources",
     "/api/deliveries",
     "/api/config",
+    "/api/blogs",
+    "/api/blog-posts",
   ]) {
     const response = await built.app.inject({ method: "GET", url });
     expect(response.statusCode, url).toBe(401);
@@ -285,4 +287,44 @@ test("POST /deliveries/:id/retry only accepts failed deliveries", async () => {
     ...auth(),
   });
   expect(response.statusCode).toBe(409);
+});
+
+test("GET /blogs lists configured blogs with their post counts", async () => {
+  const now = new Date();
+  built.handle.sqlite
+    .prepare(
+      `INSERT INTO blog_posts (id,blog_key,title,url,published_at,discovered_at)
+       VALUES ('bp1','julia-evans','Hi','https://jvns.ca/1',?,?)`,
+    )
+    .run(now.getTime(), now.getTime());
+
+  const response = await built.app.inject({ method: "GET", url: "/api/blogs", ...auth() });
+  expect(response.statusCode).toBe(200);
+  const body = response.json();
+  const jvns = body.find((blog: { key: string }) => blog.key === "julia-evans");
+  expect(jvns).toMatchObject({ name: "Julia Evans", postCount: 1 });
+});
+
+test("GET /blog-posts filters by blog and paginates", async () => {
+  const now = Date.now();
+  const insert = built.handle.sqlite.prepare(
+    `INSERT INTO blog_posts (id,blog_key,title,url,published_at,discovered_at) VALUES (?,?,?,?,?,?)`,
+  );
+  insert.run("b1", "julia-evans", "One", "https://jvns.ca/1", now - 1000, now);
+  insert.run("b2", "julia-evans", "Two", "https://jvns.ca/2", now, now);
+  insert.run("b3", "lethain", "Three", "https://lethain.com/1", now, now);
+
+  const filtered = await built.app.inject({
+    method: "GET",
+    url: "/api/blog-posts?blog=julia-evans",
+    ...auth(),
+  });
+  expect(filtered.statusCode).toBe(200);
+  const body = filtered.json();
+  expect(body.total).toBe(2);
+  expect(body.items.map((item: { title: string }) => item.title)).toEqual(["Two", "One"]);
+  expect(body.items[0].blogName).toBe("Julia Evans");
+
+  const all = await built.app.inject({ method: "GET", url: "/api/blog-posts", ...auth() });
+  expect(all.json().total).toBe(3);
 });
