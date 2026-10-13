@@ -60,6 +60,11 @@ export const BLOGS: BlogDefinition[] = [
     name: "Legends-killer",
     feed: "https://www.legends-killer.cq.cn/rss.xml",
   },
+  // 友链
+  { key: "teahour", name: "Teahour.fm", feed: "https://teahour.fm/rss" },
+  { key: "qfsyj", name: "不曾长大", feed: "https://qfsyj.com/feed/" },
+  { key: "ftqq", name: "方糖气球", feed: "https://ftqq.com/feed.xml" },
+  { key: "luolei", name: "罗磊", feed: "https://luolei.org/rss.xml" },
 ];
 
 /** Display names keyed by blog key, for joining onto stored posts. */
