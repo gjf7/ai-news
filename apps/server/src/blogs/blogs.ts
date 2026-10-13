@@ -55,6 +55,11 @@ export const BLOGS: BlogDefinition[] = [
   { key: "pinlyu", name: "频率", feed: "https://pinlyu.com/atom.xml" },
   { key: "yinji", name: "印记", feed: "https://yinji.org/feed.xml" },
   { key: "yipai", name: "胡一派", feed: "https://yipai.me/feed.xml" },
+  {
+    key: "legends-killer",
+    name: "Legends-killer",
+    feed: "https://www.legends-killer.cq.cn/rss.xml",
+  },
 ];
 
 /** Display names keyed by blog key, for joining onto stored posts. */
