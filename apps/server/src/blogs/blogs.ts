@@ -42,6 +42,19 @@ export const BLOGS: BlogDefinition[] = [
   { key: "sagasu", name: "Sagasu", feed: "https://www.sagasu.art/rss.xml" },
   { key: "taoshu", name: "涛叔", feed: "https://taoshu.in/feed.xml" },
   { key: "onevcat", name: "OneV's Den", feed: "http://onevcat.com/atom.xml" },
+  // Homelab / 自建
+  { key: "skywt", name: "SkyWT", feed: "https://skywt.net/rss.xml" },
+  { key: "laoda", name: "我不是咕咕鸽", feed: "https://blog.laoda.de/feed.xml" },
+  { key: "dallas", name: "Dallas", feed: "https://dallas.lu/feed/" },
+  { key: "soha", name: "海上宫殿", feed: "https://soha.moe/feed/atom/" },
+  { key: "yuanji", name: "元吉的博客", feed: "https://blog.yuanji.dev/feed/" },
+  { key: "huizhou92", name: "huizhou92", feed: "https://huizhou92.com/rss/" },
+  // Essay / 真实随笔
+  { key: "tumutanzi", name: "土木坛子", feed: "https://tumutanzi.com/feed" },
+  { key: "kaixin", name: "开心", feed: "https://kaix.in/feed/" },
+  { key: "pinlyu", name: "频率", feed: "https://pinlyu.com/atom.xml" },
+  { key: "yinji", name: "印记", feed: "https://yinji.org/feed.xml" },
+  { key: "yipai", name: "胡一派", feed: "https://yipai.me/feed.xml" },
 ];
 
 /** Display names keyed by blog key, for joining onto stored posts. */

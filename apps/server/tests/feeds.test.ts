@@ -92,6 +92,33 @@ test("parses the Bloomberg feed, which wraps every field in CDATA", () => {
   expect(first.publishedAt).toBeInstanceOf(Date);
 });
 
+test("parses an RSS item whose body is an attribute-wrapped object", () => {
+  // WordPress emits <content:encoded xml:lang="...">; the attribute makes
+  // fast-xml-parser return { "#text": ... } instead of a string. Passing that
+  // object to the excerpt (string) helper crashed the whole feed with
+  // "input.replace is not a function". The malformed sibling must be skipped.
+  const xml = `<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Example</title>
+    <item>
+      <title>Post with an attributed body</title>
+      <link>https://example.com/post</link>
+      <description>Short description</description>
+      <content:encoded xml:lang="en"><![CDATA[<p>The body is wrapped in an object, not a plain string.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Malformed, has no link</title>
+    </item>
+  </channel>
+</rss>`;
+
+  const entries = parseFeed(xml, { publisher: "Example" });
+  expect(entries).toHaveLength(1);
+  expect(entries[0]!.url).toBe("https://example.com/post");
+  expect(entries[0]!.excerpt).toContain("wrapped in an object");
+});
+
 test("caps the number of entries per feed", () => {
   const entries = parseFeed(read("the-verge.xml"), { publisher: "The Verge", limit: 2 });
   expect(entries).toHaveLength(2);

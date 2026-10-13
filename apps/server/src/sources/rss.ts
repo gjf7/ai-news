@@ -35,34 +35,59 @@ export type FeedEntry = {
   excerpt: string | null;
 };
 
-/** Atom wraps text in an object; RSS usually uses a plain string. */
-type TextValue = string | { "#text"?: string | number; "@_href"?: string } | undefined;
+/**
+ * A text field as it comes out of fast-xml-parser. RSS usually yields a plain
+ * string, but Atom wraps text (`<title type="html">`), WordPress attaches
+ * attributes (`<content:encoded xml:lang="zh-CN">`), and a repeated element
+ * (two `<title>`/`<link>`/`<guid>`) yields an array. readText normalizes any
+ * of these; none may reach a string method unguarded.
+ */
+type TextValue = string | number | { "#text"?: string | number; "@_href"?: string } | TextValue[];
 
 /** An Atom `<link>` carries its URL in `@_href`, optionally with a `rel`. */
-type LinkValue =
-  | string
-  | { "#text"?: string | number; "@_href"?: string; "@_rel"?: string }
-  | undefined;
+type LinkValue = string | { "#text"?: string | number; "@_href"?: string; "@_rel"?: string };
 
 type RawItem = {
-  title?: TextValue;
+  title?: unknown;
   link?: LinkValue | LinkValue[];
-  guid?: TextValue;
-  id?: string;
-  pubDate?: string;
-  published?: string;
-  updated?: string;
-  description?: string;
-  summary?: TextValue;
-  "content:encoded"?: string;
-  content?: TextValue;
+  guid?: unknown;
+  id?: unknown;
+  pubDate?: unknown;
+  published?: unknown;
+  updated?: unknown;
+  description?: unknown;
+  summary?: unknown;
+  "content:encoded"?: unknown;
+  content?: unknown;
 };
 
-function readText(value: TextValue): string | undefined {
+/**
+ * Coerces any parsed field to a string. fast-xml-parser's output shape varies
+ * with the feed: a plain string, a number, an attribute-wrapped object
+ * (`{ "#text": ... }`), or an array of those. Returning undefined for a shape
+ * with no text lets the caller skip the item instead of crashing.
+ */
+function readText(value: unknown): string | undefined {
   if (value === undefined || value === null) return undefined;
   if (typeof value === "string") return value;
-  if (value["#text"] !== undefined) return String(value["#text"]);
-  return value["@_href"];
+  if (typeof value === "number" || typeof value === "boolean") return String(value);
+  if (Array.isArray(value)) {
+    for (const entry of value) {
+      const text = readText(entry);
+      if (text !== undefined) return text;
+    }
+    return undefined;
+  }
+  if (typeof value === "object") {
+    const record = value as { "#text"?: string | number; "@_href"?: string };
+    if (record["#text"] !== undefined && record["#text"] !== null) {
+      return String(record["#text"]);
+    }
+    if (record["@_href"] !== undefined && record["@_href"] !== null) {
+      return record["@_href"];
+    }
+  }
+  return undefined;
 }
 
 /**
@@ -72,7 +97,7 @@ function readText(value: TextValue): string | undefined {
  * array as a scalar drops the item entirely. Prefer `rel="alternate"`, then a
  * link with no `rel`, then the first.
  */
-function readLink(value: LinkValue | LinkValue[]): string | undefined {
+function readLink(value: LinkValue | LinkValue[] | undefined): string | undefined {
   if (Array.isArray(value)) {
     const links = value.filter((entry): entry is Exclude<LinkValue, undefined> => entry != null);
     const relOf = (entry: Exclude<LinkValue, undefined>) =>
@@ -87,17 +112,17 @@ function readLink(value: LinkValue | LinkValue[]): string | undefined {
 }
 
 function readBody(item: RawItem): string | undefined {
-  const candidates = [
-    item["content:encoded"],
-    item.description,
-    readText(item.content),
-    readText(item.summary),
-  ];
-  return candidates.find((candidate) => Boolean(candidate));
+  // Every candidate goes through readText: content:encoded and description can
+  // also be attribute-wrapped objects or arrays, not just plain strings.
+  for (const candidate of [item["content:encoded"], item.description, item.content, item.summary]) {
+    const text = readText(candidate);
+    if (text) return text;
+  }
+  return undefined;
 }
 
 function readDate(item: RawItem): Date | null {
-  const raw = item.pubDate ?? item.published ?? item.updated;
+  const raw = readText(item.pubDate) ?? readText(item.published) ?? readText(item.updated);
   if (!raw) return null;
   const date = new Date(raw);
   return Number.isNaN(date.getTime()) ? null : date;
@@ -118,24 +143,29 @@ export function parseFeed(
   const items = (Array.isArray(rawItems) ? rawItems : [rawItems]).slice(0, limit);
 
   return items.flatMap((raw): FeedEntry[] => {
-    const item = raw as RawItem;
-    const title = readText(item.title)?.replace(/\s+/g, " ").trim();
-    const rawLink = readLink(item.link)?.trim();
-    if (!title || !rawLink) return [];
+    try {
+      const item = raw as RawItem;
+      const title = readText(item.title)?.replace(/\s+/g, " ").trim();
+      const rawLink = readLink(item.link)?.trim();
+      if (!title || !rawLink) return [];
 
-    const url = canonicalizeUrl(rawLink);
-    const guid = readText(item.guid) ?? item.id ?? url;
+      const url = canonicalizeUrl(rawLink);
+      const guid = readText(item.guid) ?? readText(item.id) ?? url;
 
-    return [
-      {
-        externalId: String(guid),
-        title,
-        url,
-        publisher,
-        publishedAt: readDate(item),
-        excerpt: toExcerpt(readBody(item)),
-      },
-    ];
+      return [
+        {
+          externalId: String(guid),
+          title,
+          url,
+          publisher,
+          publishedAt: readDate(item),
+          excerpt: toExcerpt(readBody(item)),
+        },
+      ];
+    } catch {
+      // One malformed item must not drop the whole feed.
+      return [];
+    }
   });
 }
 
