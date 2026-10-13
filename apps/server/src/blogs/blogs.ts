@@ -69,6 +69,7 @@ export const BLOGS: BlogDefinition[] = [
   { key: "arthals", name: "Arthals", feed: "https://arthals.ink/rss.xml" },
   { key: "zhheo", name: "张洪 Heo", feed: "https://blog.zhheo.com/rss.xml" },
   { key: "note-star", name: "笔记星球", feed: "https://note-star.cn/feed" },
+  { key: "ayu", name: "Ayu", feed: "https://ayu.land/rss.en.xml" },
   { key: "lailai", name: "lailai's Home", feed: "https://lailai.one/blog/rss.xml" },
   { key: "tanscp", name: "tanscp", feed: "https://tanscp.com/feed.xml" },
   { key: "nexmoe", name: "Nexmoe", feed: "https://nexmoe.com/atom.xml" },
