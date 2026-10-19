@@ -121,6 +121,7 @@ function ActivityPage() {
                     {labelFor(STATE_LABELS, delivery.state)}
                   </Badge>
                   {delivery.kind === "digest" ? <Badge tone="accent">每日摘要</Badge> : null}
+                  {delivery.kind === "alert" ? <Badge tone="warn">采集告警</Badge> : null}
                   <span className="text-xs text-neutral-400">
                     {formatShanghai(delivery.createdAt)} · {delivery.itemCount} 条 · 尝试{" "}
                     {delivery.attempts} 次

@@ -60,6 +60,19 @@ const EnvSchema = z.object({
    */
   RETENTION_DAYS: z.coerce.number().int().min(0).default(180),
 
+  /**
+   * Collection-outage alert. Off-switch plus a streak length; it reuses the
+   * Telegram credentials above. The default fires after three consecutive
+   * runs (90 minutes at the default interval) collected nothing, which is
+   * long enough to ignore a transient blip and short enough to notice the same
+   * day.
+   */
+  ALERT_ENABLED: z
+    .enum(["true", "false"])
+    .default("true")
+    .transform((value) => value === "true"),
+  ALERT_AFTER_FAILED_RUNS: z.coerce.number().int().positive().default(3),
+
   TELEGRAM_BOT_TOKEN: z.string().min(1).optional(),
   TELEGRAM_CHAT_ID: z.string().min(1).optional(),
 
@@ -100,6 +113,8 @@ export type AppConfig = {
       maxItems: number;
       minImportance: number;
     };
+    /** Collection-outage alert, sent when runs keep collecting nothing. */
+    alert: { enabled: boolean; afterFailedRuns: number };
     telegram: { botToken?: string; chatId?: string };
   };
   model: {
@@ -148,6 +163,10 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
         maxItems: value.DIGEST_MAX_ITEMS,
         minImportance: value.DIGEST_MIN_IMPORTANCE,
       },
+      alert: {
+        enabled: value.ALERT_ENABLED,
+        afterFailedRuns: value.ALERT_AFTER_FAILED_RUNS,
+      },
       telegram: {
         botToken: value.TELEGRAM_BOT_TOKEN,
         chatId: value.TELEGRAM_CHAT_ID,
@@ -179,6 +198,10 @@ export function publicConfig(config: AppConfig) {
         hourUtc: config.notify.digest.hourUtc,
         maxItems: config.notify.digest.maxItems,
         minImportance: config.notify.digest.minImportance,
+      },
+      alert: {
+        enabled: config.notify.alert.enabled,
+        afterFailedRuns: config.notify.alert.afterFailedRuns,
       },
     },
     model: {

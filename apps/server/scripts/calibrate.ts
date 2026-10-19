@@ -79,6 +79,7 @@ const config: AppConfig = {
     maxItems: 5,
     minImportance: 70,
     digest: { enabled: false, hourUtc: 0, maxItems: 10, minImportance: 50 },
+    alert: { enabled: false, afterFailedRuns: 3 },
     telegram: {},
   },
   model: { baseUrl: "https://stub", apiKey: "stub", name: "stub" },

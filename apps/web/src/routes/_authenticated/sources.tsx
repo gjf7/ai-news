@@ -89,6 +89,14 @@ function SourcesPage() {
               }
             />
             <Row
+              label="采集告警"
+              value={
+                config.data.notify.alert.enabled
+                  ? `连续 ${config.data.notify.alert.afterFailedRuns} 轮无采集即告警`
+                  : "已停用"
+              }
+            />
+            <Row
               label="数据保留"
               value={config.data.retentionDays > 0 ? `${config.data.retentionDays} 天` : "不清理"}
             />

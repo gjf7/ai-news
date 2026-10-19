@@ -57,6 +57,7 @@ docker compose pull && docker compose up -d
 
 - 只有一个 `app` 服务和一个数据卷，启动时自动执行迁移；数据（数据库与备份）位于 `/data`。
 - 端口绑定 `127.0.0.1:3100`，只给反向代理用，不直接暴露公网。
+- **显式指定 DNS**（`dns: [8.8.8.8, 1.1.1.1]`）：Tailscale 的 MagicDNS 会把宿主机的 `/etc/resolv.conf` 改写成 `100.100.100.100`，节点密钥过期后这个地址就不可达；Docker 的内嵌 DNS 会继续转发给它，容器内所有 `fetch` 都变成 `EAI_AGAIN`，而宿主机自己解析正常。表现是采集和推送全部静默停止。
 - **密钥通过挂载注入**（`./app.env:/app/.env:ro`），而非 compose 的 `env_file`：后者会对值做 `$` 插值，把 scrypt 哈希截断导致登录永远失败；挂载方式由应用自身的 `process.loadEnvFile` 读取，且密钥不出现在 `docker inspect` 中。
 - `NODE_ENV`/`DATABASE_PATH`/`PORT` 在 compose 的 `environment` 里显式声明，优先级高于 `app.env`。
 
@@ -147,6 +148,7 @@ pnpm exec vp run server#probe-blogs   # 对全部博客 feed 做实时抓取验�
 - **恢复**：停止 app → 用快照替换 `/data/app.db` → 启动 app。`-wal`/`-shm` 会自动重建，无需恢复。
 - **配置**：全部通过环境变量，修改后重启生效；网页只读展示非敏感配置。来源开关是唯一可在网页修改的配置。
 - **每日摘要**：`DIGEST_ENABLED=true` 后，在 `DIGEST_HOUR_UTC`（默认 0，即北京时间 08:00）汇总最近 24 小时中重要性达到 `DIGEST_MIN_IMPORTANCE`（默认 50）的事件。它与每轮推送相互独立，不读写推送版本，因此同一条重大新闻可能既被即时推送、又出现在次日摘要里。一天最多一条，重启不会重复。
+- **采集告警**：连续 `ALERT_AFTER_FAILED_RUNS`（默认 3）轮刷新都没有从任何来源抓到文章时，主动发一条 Telegram 消息。判据是「抓到的文章数为 0」而不是运行状态：所有来源都失败、只有不依赖网络的来源返回空时，运行仍是 `partial`，进程和 `/api/health` 都正常，唯一症状就是消息不再到达。一次中断只告警一条；只要有一轮抓到文章，中断即结束，下次中断会重新告警。`ALERT_ENABLED=false` 关闭。
 - **日志**：记录 requestId/runId/sourceId，不记录密钥、Cookie 或文章内容。
 
 ## 语义说明

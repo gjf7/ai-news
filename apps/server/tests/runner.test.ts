@@ -65,6 +65,7 @@ function testConfig(overrides: Partial<AppConfig["notify"]> = {}): AppConfig {
       maxItems: 5,
       minImportance: 70,
       digest: { enabled: false, hourUtc: 0, maxItems: 10, minImportance: 50 },
+      alert: { enabled: false, afterFailedRuns: 3 },
       telegram: { chatId: "1", botToken: "t" },
       ...overrides,
     },

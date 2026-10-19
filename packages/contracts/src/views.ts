@@ -181,6 +181,8 @@ export const ConfigView = z.object({
       maxItems: z.number(),
       minImportance: z.number(),
     }),
+    /** Collection-outage alert, sent when runs keep collecting nothing. */
+    alert: z.object({ enabled: z.boolean(), afterFailedRuns: z.number() }),
   }),
   model: z.object({ baseUrl: z.string(), name: z.string() }),
   configured: z.object({ modelApiKey: z.boolean(), telegram: z.boolean() }),

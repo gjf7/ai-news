@@ -10,6 +10,15 @@ services:
   app:
     image: ghcr.io/gjf7/ai-news:latest
     restart: unless-stopped
+    # Pin public resolvers instead of inheriting the host's chain. Tailscale
+    # MagicDNS rewrites the host's /etc/resolv.conf to 100.100.100.100; when the
+    # node key expires that address goes dead, Docker's embedded DNS keeps
+    # forwarding to it, and every fetch inside the container fails with
+    # EAI_AGAIN while the host itself resolves fine. That silently stops all
+    # collection and delivery until someone notices the missing messages.
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
     # Bound to loopback only: nginx terminates TLS and proxies to it.
     ports:
       - "127.0.0.1:3100:3100"

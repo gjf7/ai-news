@@ -10,6 +10,7 @@ import { runFiltering } from "../news/filtering.ts";
 import { refreshEventScores } from "../news/scoring.ts";
 import { deliverDue, runNotificationFreeze, type SendFn } from "../notifications/telegram.ts";
 import { runDigestIfDue } from "../notifications/digest.ts";
+import { runAlertIfNeeded } from "../notifications/alerts.ts";
 import { suppressDuplicateNotifications } from "../notifications/dedup.ts";
 import { runBlogIngest } from "../blogs/ingest.ts";
 import { beginSourceRuns, runIngest, syncSources } from "./ingest.ts";
@@ -312,6 +313,15 @@ export function createRunner(deps: RunnerDeps): Runner {
       });
     } catch {
       // A digest failure must never break the runner loop.
+    }
+    try {
+      runAlertIfNeeded(handle, {
+        config: config.notify.alert,
+        chatId: config.notify.telegram.chatId,
+        botToken: config.notify.telegram.botToken,
+      });
+    } catch {
+      // An alert failure must never break the runner loop.
     }
     await drainDeliveries();
   };
