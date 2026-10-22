@@ -1,10 +1,9 @@
-import type { EventRange } from "@ai-news/contracts";
+import { TAG_LIST, type EventRange } from "@ai-news/contracts";
 import type { EventFilters } from "../../api/events.ts";
 
-const TOPICS = [
+const TOPICS: { value: string | undefined; label: string }[] = [
   { value: undefined, label: "全部" },
-  { value: "ai", label: "AI" },
-  { value: "semiconductor", label: "半导体" },
+  ...TAG_LIST.map((tag) => ({ value: tag.id as string, label: tag.label })),
 ];
 
 const RANGES: { value: EventRange; label: string }[] = [
@@ -37,7 +36,7 @@ export function EventFiltersBar({
   return (
     <div className="flex flex-wrap items-center gap-x-6 gap-y-3 border-b border-neutral-200 pb-4">
       <Group
-        label="主题"
+        label="标签"
         options={TOPICS}
         value={filters.topic}
         onSelect={(topic) => onChange({ ...filters, topic, page: 1 })}
@@ -78,7 +77,7 @@ function Group<T extends string | undefined>({
   return (
     <div className="flex items-center gap-2 text-xs">
       <span className="text-neutral-400">{label}</span>
-      <div className="flex gap-1">
+      <div className="flex flex-wrap gap-1">
         {options.map((option) => {
           const active = option.value === value;
           return (

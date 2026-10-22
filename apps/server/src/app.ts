@@ -98,7 +98,11 @@ export async function buildApp(options: BuildOptions = {}): Promise<BuiltApp> {
     });
   });
 
-  const model = createModelClient(config, fetchImpl);
+  const model = createModelClient(config, fetchImpl, (usage) => {
+    console.info(
+      `[model] ${usage.label ?? "call"} model=${usage.model} prompt=${usage.promptTokens} cached=${usage.cachedTokens} completion=${usage.completionTokens} reasoning=${usage.reasoningTokens}`,
+    );
+  });
   let stopBackups: (() => void) | undefined;
   let stopRetention: (() => void) | undefined;
   const definitions = createSourceRegistry({

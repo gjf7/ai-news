@@ -240,9 +240,12 @@ async function adjudicateBatch(
     const content = await model.complete({
       signal,
       temperature: 0,
-      // The answer itself is tiny ({"index": n}), but a reasoning model spends
-      // most of the budget reasoning first; 64 truncated before any output.
+      // The answer is tiny ({"index": n}). Thinking would spend hundreds of
+      // output tokens per article deciding a same-event question that the
+      // prompt already reduces to a narrow candidate set.
       maxTokens: 1024,
+      thinking: "disabled",
+      label: "cluster",
       messages: [
         { role: "system", content: ADJUDICATE_SYSTEM },
         {

@@ -1,7 +1,8 @@
 import { eq, gte } from "drizzle-orm";
+import { TAG_IDS } from "@ai-news/contracts";
 import type { DbHandle } from "../db/connection.ts";
-import { events } from "../db/schema.ts";
-import { AI_TERMS, SEMICONDUCTOR_TERMS } from "./filtering.ts";
+import { events, insights } from "../db/schema.ts";
+import { keywordTags, normalizeTags, parseTagJson } from "./tags.ts";
 
 /**
  * Hotness and topics.
@@ -27,26 +28,6 @@ const RECENCY_HALF_LIFE_HOURS = 18;
 
 /** Events this old are already near the bottom of the decay curve. */
 export const RESCORE_WINDOW_HOURS = 7 * 24;
-
-export type Topic = "ai" | "semiconductor";
-
-export function topicsFor(title: string, excerpt: string | null): Topic[] {
-  const text = `${title} ${excerpt ?? ""}`.toLowerCase();
-  const topics: Topic[] = [];
-
-  const has = (terms: string[]) =>
-    terms.some((term) => {
-      if (term.includes(" ") || term.includes("-")) return text.includes(term);
-      return new RegExp(
-        `(^|[^a-z0-9])${term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([^a-z0-9]|$)`,
-        "i",
-      ).test(text);
-    });
-
-  if (has(AI_TERMS)) topics.push("ai");
-  if (has(SEMICONDUCTOR_TERMS)) topics.push("semiconductor");
-  return topics;
-}
 
 export type HotScoreInput = {
   effectiveTime: Date;
@@ -135,7 +116,8 @@ export function refreshEventScores(handle: DbHandle, eventIds: string[], now = n
 
     const rows = handle.sqlite
       .prepare(
-        `SELECT a.title AS title, a.excerpt AS excerpt, a.publisher AS publisher,
+        `SELECT a.title AS title, a.excerpt AS excerpt, a.topics AS topics,
+                a.publisher AS publisher,
                 a.community_score AS communityScore, s.key AS sourceKey
          FROM articles a
          LEFT JOIN article_sources asrc ON asrc.article_id = a.id
@@ -145,6 +127,7 @@ export function refreshEventScores(handle: DbHandle, eventIds: string[], now = n
       .all(eventId) as {
       title: string;
       excerpt: string | null;
+      topics: string | null;
       publisher: string;
       communityScore: number | null;
       sourceKey: string | null;
@@ -154,7 +137,28 @@ export function refreshEventScores(handle: DbHandle, eventIds: string[], now = n
 
     const topics = new Set<string>();
     for (const row of rows) {
-      for (const topic of topicsFor(row.title, row.excerpt)) topics.add(topic);
+      // Articles classified before article-level tagging existed have no tags;
+      // fall back to the title so a rescore does not regress them to nothing.
+      const articleTags = parseTagJson(row.topics);
+      for (const tag of articleTags.length > 0
+        ? articleTags
+        : keywordTags(row.title, row.excerpt)) {
+        topics.add(tag);
+      }
+    }
+
+    // The insight sees the whole event, so its tags refine the per-article
+    // keyword tags. They live in the insight output and are unioned here;
+    // nothing has to be backfilled into the article rows.
+    const insight = event.latestInsightId
+      ? handle.db
+          .select({ output: insights.output })
+          .from(insights)
+          .where(eq(insights.id, event.latestInsightId))
+          .get()
+      : undefined;
+    for (const tag of normalizeTags((insight?.output as { tags?: unknown } | null)?.tags)) {
+      topics.add(tag);
     }
 
     const publishers = new Set(rows.map((row) => row.publisher));
@@ -173,7 +177,8 @@ export function refreshEventScores(handle: DbHandle, eventIds: string[], now = n
 
     handle.db
       .update(events)
-      .set({ topics: [...topics], hotScore })
+      // Registry order keeps badges stable and puts the broad beat first.
+      .set({ topics: TAG_IDS.filter((id) => topics.has(id)), hotScore })
       .where(eq(events.id, eventId))
       .run();
   }

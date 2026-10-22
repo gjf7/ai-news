@@ -38,6 +38,8 @@ export const EventSummary = z.object({
   topics: z.array(z.string()),
   kind: EventKind,
   importance: z.number().nullable(),
+  /** One-line model justification; null until the event has an insight. */
+  importanceReason: z.string().nullable(),
   hotScore: z.number(),
   effectiveTime: z.string(),
   updatedAt: z.string(),
@@ -77,6 +79,26 @@ export const EventList = z.object({
 });
 
 export type EventList = z.infer<typeof EventList>;
+
+/**
+ * "Focus" is a read-time view of what deserves attention now, not a second
+ * score and not a stored flag. The window matches the daily digest's 24h
+ * recap, which is the same "entered the world recently" notion.
+ *
+ * The threshold is calibrated to what the model actually emits, not to the
+ * prompt's 80-100 anchor: over 35 stored insights the observed range was
+ * 25-65, so 80 would make the block permanently empty. Re-check it when the
+ * model or the prompt changes.
+ */
+export const FOCUS_WINDOW_HOURS = 24;
+export const FOCUS_MIN_IMPORTANCE = 60;
+export const FOCUS_MAX_ITEMS = 3;
+
+export const FocusList = z.object({
+  items: z.array(EventSummary),
+});
+
+export type FocusList = z.infer<typeof FocusList>;
 
 export const FeedStatus = z.object({
   feedRevision: z.string().nullable(),

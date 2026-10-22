@@ -2,9 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { EventSearchParams } from "@ai-news/contracts";
-import { eventsQueryOptions, type EventFilters } from "../../api/events.ts";
+import { eventsQueryOptions, focusQueryOptions, type EventFilters } from "../../api/events.ts";
 import { EventCard } from "../../components/news/EventCard.tsx";
 import { EventFiltersBar } from "../../components/news/EventFiltersBar.tsx";
+import { FocusBlock } from "../../components/news/FocusBlock.tsx";
 import { Button, EmptyState, ErrorNotice, Spinner } from "../../components/ui/primitives.tsx";
 import { useFeedSync } from "../../hooks/useFeedSync.ts";
 import { useRefresh } from "../../hooks/useRefresh.ts";
@@ -32,6 +33,7 @@ function NewsPage() {
   };
 
   const events = useQuery(eventsQueryOptions(filters));
+  const focus = useQuery(focusQueryOptions());
   const { refresh, status, activeRun } = useRefresh();
 
   // Auto-reload only while the reader is at the top of the first page; paging
@@ -50,6 +52,12 @@ function NewsPage() {
       return true;
     });
   }, [events.data]);
+
+  const focusItems = focus.data?.items ?? [];
+  const focusIds = useMemo(() => new Set(focusItems.map((event) => event.id)), [focusItems]);
+  // The block is a first-page, unfiltered view: once the reader narrows the
+  // feed they are already steering, and repeating the block would be noise.
+  const showFocus = filters.page === 1 && !filters.topic && !filters.kind;
 
   // Page changes reset the reading position, so the next update can auto-reload.
   useEffect(() => {
@@ -75,6 +83,7 @@ function NewsPage() {
   const reload = () => {
     acknowledge();
     setAtTop(true);
+    void focus.refetch();
     // "New content" always returns to the first page.
     if (filters.page !== 1) {
       applyFilters({ ...filters, page: 1 });
@@ -108,6 +117,8 @@ function NewsPage() {
 
       {refresh.error ? <ErrorNotice message="刷新请求失败，请稍后再试" /> : null}
 
+      {showFocus ? <FocusBlock items={focusItems} /> : null}
+
       <EventFiltersBar filters={filters} onChange={applyFilters} />
 
       {hasNewContent ? (
@@ -139,7 +150,12 @@ function NewsPage() {
       {items.length > 0 ? (
         <div className="rounded-lg border border-neutral-200 bg-white px-5 py-2">
           {items.map((event) => (
-            <EventCard key={event.id} event={event} sort={filters.sort} />
+            <EventCard
+              key={event.id}
+              event={event}
+              sort={filters.sort}
+              focus={focusIds.has(event.id)}
+            />
           ))}
         </div>
       ) : null}

@@ -2,7 +2,8 @@ import { expect, test } from "vite-plus/test";
 import { trigramSimilarity } from "../src/news/similarity.ts";
 import { createRecallIndex, RECALL_MIN_RATIO } from "../src/news/recall.ts";
 import { classifyByKeywords, parseClassification } from "../src/news/filtering.ts";
-import { computeHotScore, normalizeCommunity, topicsFor } from "../src/news/scoring.ts";
+import { computeHotScore, normalizeCommunity } from "../src/news/scoring.ts";
+import { keywordTags, mergeTags, normalizeTags } from "../src/news/tags.ts";
 import {
   computeInputHash,
   parseInsightOutput,
@@ -78,20 +79,53 @@ test("classification parsing ignores out-of-range and malformed entries", () => 
     '{"results":[{"index":0,"relevant":true},{"index":9,"relevant":true},{"index":1,"relevant":"yes"}]}',
     2,
   );
-  expect(parsed.get(0)).toBe(true);
+  expect(parsed.get(0)).toEqual({ relevant: true, tags: [] });
   expect(parsed.has(9)).toBe(false);
   expect(parsed.has(1)).toBe(false);
 });
 
 test("classification parsing survives a fenced JSON block", () => {
   const parsed = parseClassification('```json\n{"results":[{"index":0,"relevant":false}]}\n```', 1);
-  expect(parsed.get(0)).toBe(false);
+  expect(parsed.get(0)?.relevant).toBe(false);
 });
 
-test("topics are detected independently for AI and semiconductors", () => {
-  expect(topicsFor("OpenAI releases a new model", null)).toEqual(["ai"]);
-  expect(topicsFor("TSMC 2nm wafer capacity", null)).toEqual(["semiconductor"]);
-  expect(topicsFor("Nvidia GPU for AI training", null)).toEqual(["ai", "semiconductor"]);
+test("classification parsing keeps known tags and drops invented ones", () => {
+  const parsed = parseClassification(
+    '{"results":[{"index":0,"relevant":true,"tags":["ai","model","not-a-tag","ai"]}]}',
+    1,
+  );
+  expect(parsed.get(0)).toEqual({ relevant: true, tags: ["ai", "model"] });
+});
+
+test("keyword tags distinguish the beats from the finer categories", () => {
+  expect(keywordTags("OpenAI releases a new model")).toEqual(["ai", "model"]);
+  expect(keywordTags("TSMC 2nm wafer capacity")).toEqual(["semiconductor", "manufacturing"]);
+  expect(keywordTags("Nvidia GPU for AI training")).toEqual(["ai", "semiconductor", "infra"]);
+});
+
+test("fine tags come from the title, but the broad beat may need the excerpt", () => {
+  expect(keywordTags("A quiet day in open source")).toEqual([]);
+  expect(keywordTags("A quiet day in open source", "The project ships an LLM feature")).toEqual([
+    "ai",
+  ]);
+  // A passing funding mention in the excerpt must not add the fine capital tag.
+  expect(keywordTags("A quiet day in open source", "The startup raised a round")).toEqual([]);
+});
+
+test("tag merging keeps registry order and drops unknown ids", () => {
+  expect(mergeTags(["model", "ai", "invented"], ["semiconductor"])).toEqual([
+    "ai",
+    "semiconductor",
+    "model",
+  ]);
+  expect(normalizeTags(["ai", "model", "policy", "safety", "capital"])).toEqual([
+    "ai",
+    "model",
+    "capital",
+    "policy",
+  ]);
+  expect(normalizeTags(["model"])).toEqual(["model"]);
+  expect(normalizeTags("not-an-array")).toEqual([]);
 });
 
 test("hot score favours recency and corroboration", () => {
@@ -216,6 +250,20 @@ test("valid insight output parses", () => {
     scope: "excerpt",
   });
   expect(result.ok).toBe(true);
+  if (result.ok) expect(result.output.tags).toEqual([]);
+});
+
+test("insight tags are sanitized against the shared vocabulary", () => {
+  const tagged = JSON.stringify({
+    ...JSON.parse(validOutput),
+    tags: ["ai", "model", "not-a-tag", "ai"],
+  });
+  const result = parseInsightOutput(tagged, {
+    articles: [article({ id: "1" })],
+    scope: "excerpt",
+  });
+  expect(result.ok).toBe(true);
+  if (result.ok) expect(result.output.tags).toEqual(["ai", "model"]);
 });
 
 test("a citation outside the evidence is rejected", () => {

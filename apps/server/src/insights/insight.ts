@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { z } from "zod";
+import { normalizeTags, TAG_GUIDE } from "../news/tags.ts";
 
 /**
  * Insight generation: evidence selection, prompt building, output validation
@@ -9,7 +10,7 @@ import { z } from "zod";
  * the article body is never fetched.
  */
 
-export const PROMPT_VERSION = "insight-v1";
+export const PROMPT_VERSION = "insight-v2";
 
 export const MAX_EVIDENCE_ARTICLES = 8;
 
@@ -30,6 +31,8 @@ export const InsightOutput = z.object({
   /** Omitted when every piece of evidence is headline-only. */
   impact: z.string().min(1).nullable(),
   watch: z.string().min(1).nullable(),
+  /** Tag ids from the shared taxonomy; sanitized before they reach the DB. */
+  tags: z.array(z.string()).max(8).default([]),
   material_update: z.object({
     is: z.boolean(),
     reason: z.string(),
@@ -112,8 +115,13 @@ const SYSTEM_PROMPT = `你是 AI 与半导体行业新闻分析师。你会收�
   "importance": {"score": 0-100 的整数, "reason": "为什么重要"},
   "impact": "可能影响，或 null",
   "watch": "后续观察点，或 null",
+  "tags": ["标签 id"],
   "material_update": {"is": true/false, "reason": "判定理由"}
 }
+
+标签只能使用以下 id，选 1 到 3 个最相关的，优先具体的标签而不是广义标签：
+${TAG_GUIDE}
+若事件属于 AI 或半导体，必须包含对应的广义标签（ai / semiconductor）。
 
 要求：
 - facts 每条都要引用支撑它的文章编号，编号必须来自本次材料。
@@ -184,7 +192,9 @@ export function parseInsightOutput(
     return { ok: false, reason: "impact must be null when evidence is headline-only" };
   }
 
-  return { ok: true, output: result.data };
+  // The model may return labels or invented ids; keep only the shared
+  // vocabulary so a bad tag cannot poison the feed filters.
+  return { ok: true, output: { ...result.data, tags: normalizeTags(result.data.tags) } };
 }
 
 function extractJson(content: string): string | null {

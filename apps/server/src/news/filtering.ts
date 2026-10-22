@@ -1,7 +1,16 @@
 import { and, eq, isNull } from "drizzle-orm";
+import type { TagId } from "@ai-news/contracts";
 import type { DbHandle } from "../db/connection.ts";
 import { articles } from "../db/schema.ts";
 import type { ModelClient } from "../insights/model.ts";
+import {
+  keywordTags,
+  matchesTag,
+  mergeTags,
+  normalizeTags,
+  TAG_GUIDE,
+  termPattern,
+} from "./tags.ts";
 
 /**
  * Relevance filtering. Generic sources (Hacker News, Reddit, Lobsters,
@@ -11,81 +20,11 @@ import type { ModelClient } from "../insights/model.ts";
  * Order: keyword rules first, then a batched model classification for what the
  * rules cannot decide. Irrelevant articles are kept in the database (marked)
  * so they are never classified twice.
+ *
+ * The same pass assigns each relevant article its tags. Keyword-matched items
+ * get keyword tags; items the model classifies also get the model's tags. The
+ * event then takes the union of its articles' tags.
  */
-
-export const AI_TERMS = [
-  "ai",
-  "a.i.",
-  "artificial intelligence",
-  "machine learning",
-  "deep learning",
-  "neural",
-  "llm",
-  "large language model",
-  "gpt",
-  "chatgpt",
-  "openai",
-  "anthropic",
-  "claude",
-  "gemini",
-  "deepseek",
-  "mistral",
-  "llama",
-  "transformer",
-  "diffusion",
-  "agent",
-  "inference",
-  "fine-tun",
-  "prompt",
-  "embedding",
-  "rag",
-  "gpu",
-  "nvidia",
-  "tpu",
-  "cuda",
-  "copilot",
-  "hugging face",
-  "foundation model",
-];
-
-export const SEMICONDUCTOR_TERMS = [
-  "semiconductor",
-  "chip",
-  "wafer",
-  "foundry",
-  "fab",
-  "tsmc",
-  "intel",
-  "asml",
-  "euv",
-  "lithography",
-  "nanometer",
-  "3nm",
-  "2nm",
-  "hbm",
-  "dram",
-  "nand",
-  "risc-v",
-  "asic",
-  "fpga",
-  "chiplet",
-  "silicon",
-  "microprocessor",
-  "amd",
-  "qualcomm",
-  "broadcom",
-  "micron",
-  "sk hynix",
-  "onsemi",
-  "infineon",
-  "samsung electronics",
-  // GPU vendors and packaging also belong to the chip beat; AI and
-  // semiconductors overlap heavily, and an event can be about both.
-  "nvidia",
-  "gpu",
-  "tpu",
-  "cuda",
-];
 
 /** Terms that almost always mean the article is off-topic for this tool. */
 export const NEGATIVE_TERMS = [
@@ -100,32 +39,16 @@ export const NEGATIVE_TERMS = [
   "weather forecast",
 ];
 
-const ALL_TERMS = [...AI_TERMS, ...SEMICONDUCTOR_TERMS];
+const NEGATIVE_PATTERNS = NEGATIVE_TERMS.map(termPattern);
 
 export type KeywordVerdict = "relevant" | "irrelevant" | "unknown";
-
-function escapeRegExp(input: string): string {
-  return input.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-/**
- * Matches a term at a word boundary, allowing a plural/verb suffix.
- *
- * Without the optional suffix, real headlines were missed constantly:
- * "semiconductors", "chips", "LLMs" and "GPUs" all failed to match their own
- * terms, which pushed 41% of articles into the model path. The suffix is
- * limited to `s`/`es` so "ai" still does not match "said" or "air".
- */
-function termPattern(term: string): RegExp {
-  return new RegExp(`(^|[^a-z0-9])${escapeRegExp(term)}(s|es)?([^a-z0-9]|$)`, "i");
-}
 
 export function classifyByKeywords(title: string, excerpt: string | null): KeywordVerdict {
   const text = `${title} ${excerpt ?? ""}`.toLowerCase();
 
-  if (NEGATIVE_TERMS.some((term) => termPattern(term).test(text))) return "irrelevant";
+  if (NEGATIVE_PATTERNS.some((pattern) => pattern.test(text))) return "irrelevant";
 
-  const matched = ALL_TERMS.some((term) => termPattern(term).test(text));
+  const matched = matchesTag("ai", text) || matchesTag("semiconductor", text);
 
   return matched ? "relevant" : "unknown";
 }
@@ -136,7 +59,10 @@ const CLASSIFY_SYSTEM = `You classify news items for a personal AI-and-semicondu
 For each item decide whether it is about artificial intelligence or the semiconductor/chip industry.
 Include: AI models and products, AI companies and research, chips, fabs, EDA, memory, GPUs, chip supply chains.
 Exclude: general business, general politics, sports, entertainment, health, and anything unrelated.
-Respond with JSON only: {"results":[{"index":0,"relevant":true}]}`;
+For each relevant item, also choose the tags that best describe it. Use only these ids:
+${TAG_GUIDE}
+Prefer a specific tag over the broad beat when it fits, and include "ai" or "semiconductor" when the item belongs to that domain.
+Respond with JSON only: {"results":[{"index":0,"relevant":true,"tags":["ai","model"]}]}`;
 
 export type FilterDeps = {
   handle: DbHandle;
@@ -207,17 +133,25 @@ export async function runFiltering({
   for (const article of pending) {
     // Source default topic: directly relevant, no keyword or model call needed.
     if (article.sourceTopic) {
-      setRelevance(handle, article.id, "relevant");
+      setClassification(handle, article.id, "relevant", [
+        article.sourceTopic,
+        ...keywordTags(article.title, article.excerpt),
+      ]);
       result.relevant += 1;
       continue;
     }
 
     const verdict = classifyByKeywords(article.title, article.excerpt);
     if (verdict === "relevant") {
-      setRelevance(handle, article.id, "relevant");
+      setClassification(
+        handle,
+        article.id,
+        "relevant",
+        keywordTags(article.title, article.excerpt),
+      );
       result.relevant += 1;
     } else if (verdict === "irrelevant") {
-      setRelevance(handle, article.id, "irrelevant");
+      setClassification(handle, article.id, "irrelevant", []);
       result.irrelevant += 1;
     } else {
       undecided.push(article);
@@ -240,13 +174,21 @@ export async function runFiltering({
     try {
       const verdicts = await classifyBatch(model, batch, signal);
       for (const [index, article] of batch.entries()) {
-        const relevant = verdicts.get(index);
-        if (relevant === undefined) {
+        const classification = verdicts.get(index);
+        if (classification === undefined) {
           result.deferred += 1;
           continue;
         }
-        setRelevance(handle, article.id, relevant ? "relevant" : "irrelevant");
-        if (relevant) result.relevant += 1;
+        const tags = classification.relevant
+          ? mergeTags(classification.tags, keywordTags(article.title, article.excerpt))
+          : [];
+        setClassification(
+          handle,
+          article.id,
+          classification.relevant ? "relevant" : "irrelevant",
+          tags,
+        );
+        if (classification.relevant) result.relevant += 1;
         else result.irrelevant += 1;
       }
     } catch {
@@ -261,11 +203,16 @@ export async function runFiltering({
   return result;
 }
 
+export type ArticleClassification = {
+  relevant: boolean;
+  tags: TagId[];
+};
+
 async function classifyBatch(
   model: ModelClient,
   batch: PendingArticle[],
   signal: AbortSignal,
-): Promise<Map<number, boolean>> {
+): Promise<Map<number, ArticleClassification>> {
   const listing = batch
     .map(
       (article, index) =>
@@ -276,9 +223,13 @@ async function classifyBatch(
   const content = await model.complete({
     signal,
     temperature: 0,
-    // 50 items with per-item JSON already need ~1.5k, and a reasoning model
-    // adds its reasoning tokens on top of that.
+    // 50 items with per-item JSON already need ~1.5k, plus headroom for a
+    // provider that enforces JSON without truncating a long batch.
     maxTokens: 4096,
+    // Relevance and tags are a mechanical classification; thinking only spends
+    // output tokens without improving the answer.
+    thinking: "disabled",
+    label: "filter",
     messages: [
       { role: "system", content: CLASSIFY_SYSTEM },
       { role: "user", content: listing },
@@ -289,17 +240,25 @@ async function classifyBatch(
 }
 
 /** Tolerant parse: a malformed response leaves items undecided rather than guessing. */
-export function parseClassification(content: string, size: number): Map<number, boolean> {
-  const result = new Map<number, boolean>();
+export function parseClassification(
+  content: string,
+  size: number,
+): Map<number, ArticleClassification> {
+  const result = new Map<number, ArticleClassification>();
   const json = extractJson(content);
   if (!json) return result;
 
   try {
-    const parsed = JSON.parse(json) as { results?: { index?: number; relevant?: boolean }[] };
+    const parsed = JSON.parse(json) as {
+      results?: { index?: number; relevant?: boolean; tags?: unknown }[];
+    };
     for (const entry of parsed.results ?? []) {
       if (typeof entry.index !== "number" || entry.index < 0 || entry.index >= size) continue;
       if (typeof entry.relevant !== "boolean") continue;
-      result.set(entry.index, entry.relevant);
+      result.set(entry.index, {
+        relevant: entry.relevant,
+        tags: entry.relevant ? normalizeTags(entry.tags) : [],
+      });
     }
   } catch {
     return result;
@@ -314,8 +273,17 @@ function extractJson(content: string): string | null {
   return content.slice(start, end + 1);
 }
 
-function setRelevance(handle: DbHandle, id: string, relevance: "relevant" | "irrelevant"): void {
-  handle.db.update(articles).set({ relevance }).where(eq(articles.id, id)).run();
+function setClassification(
+  handle: DbHandle,
+  id: string,
+  relevance: "relevant" | "irrelevant",
+  tags: unknown[],
+): void {
+  handle.db
+    .update(articles)
+    .set({ relevance, topics: mergeTags(tags) })
+    .where(eq(articles.id, id))
+    .run();
 }
 
 function parseTopics(raw: string | null): string[] {

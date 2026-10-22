@@ -10,6 +10,8 @@ import type { AppConfig } from "../config/env.ts";
 
 export type ChatMessage = { role: "system" | "user"; content: string };
 
+export type ThinkingMode = "enabled" | "disabled";
+
 export type CompleteOptions = {
   messages: ChatMessage[];
   maxTokens?: number;
@@ -17,6 +19,26 @@ export type CompleteOptions = {
   signal: AbortSignal;
   /** Overrides the configured model, e.g. for a cheaper classification call. */
   model?: string;
+  /**
+   * DeepSeek's unified models think by default and bill reasoning tokens at the
+   * output rate. Classification and clustering are mechanical, so they ask for
+   * non-thinking; the insight call keeps thinking for synthesis quality.
+   */
+  thinking?: ThinkingMode;
+  /** Short tag for usage logs, e.g. "cluster". */
+  label?: string;
+};
+
+/** Token counts billed for one completion, as reported by the provider. */
+export type ModelUsage = {
+  label: string | undefined;
+  model: string;
+  promptTokens: number;
+  completionTokens: number;
+  /** Input tokens served from the provider's prefix cache (billed ~50x cheaper). */
+  cachedTokens: number;
+  /** Output tokens spent thinking; included in completionTokens. */
+  reasoningTokens: number;
 };
 
 export type ModelClient = {
@@ -61,27 +83,70 @@ export function chatCompletionsUrl(baseUrl: string): string {
   return /\/v\d+$/.test(trimmed) ? `${trimmed}/chat/completions` : `${trimmed}/v1/chat/completions`;
 }
 
+/**
+ * `thinking` is a DeepSeek extension. Sending it to another OpenAI-compatible
+ * provider is a 400, so `auto` (the default) only forwards the per-call
+ * preference when the endpoint is DeepSeek's own host. An explicit setting in
+ * the environment overrides that and is sent as-is (e.g. through a proxy).
+ */
+function resolveThinking(
+  configured: "auto" | ThinkingMode | undefined,
+  requested: ThinkingMode | undefined,
+  deepSeekEndpoint: boolean,
+): ThinkingMode | undefined {
+  if (configured === "enabled" || configured === "disabled") return configured;
+  return deepSeekEndpoint ? requested : undefined;
+}
+
+function isDeepSeekEndpoint(baseUrl: string): boolean {
+  try {
+    return /(^|\.)deepseek\.com$/i.test(new URL(baseUrl).hostname);
+  } catch {
+    return false;
+  }
+}
+
+type UsagePayload = {
+  prompt_tokens?: number;
+  completion_tokens?: number;
+  prompt_cache_hit_tokens?: number;
+  prompt_tokens_details?: { cached_tokens?: number };
+  completion_tokens_details?: { reasoning_tokens?: number };
+};
+
 export function createModelClient(
   config: AppConfig,
   fetchImpl: typeof globalThis.fetch,
+  onUsage?: (usage: ModelUsage) => void,
 ): ModelClient {
-  const { baseUrl, apiKey, name } = config.model;
+  const { baseUrl, apiKey, name, thinking: configuredThinking } = config.model;
   const endpoint = chatCompletionsUrl(baseUrl);
+  const deepSeekEndpoint = isDeepSeekEndpoint(baseUrl);
 
   return {
     name,
     available: Boolean(apiKey),
 
-    async complete({ messages, maxTokens = 1024, temperature = 0.2, signal, model }) {
+    async complete({
+      messages,
+      maxTokens = 1024,
+      temperature = 0.2,
+      signal,
+      model,
+      thinking: requestedThinking,
+      label,
+    }) {
       if (!apiKey) {
         throw new ModelRequestError({ kind: "http", message: "no API key configured" });
       }
 
+      const thinking = resolveThinking(configuredThinking, requestedThinking, deepSeekEndpoint);
       const body = JSON.stringify({
         model: model ?? name,
         messages,
         max_tokens: maxTokens,
         temperature,
+        ...(thinking ? { thinking: { type: thinking } } : {}),
       });
 
       for (let attempt = 0; ; attempt += 1) {
@@ -118,8 +183,25 @@ export function createModelClient(
 
         const payload = (await response.json()) as {
           choices?: { message?: { content?: string }; finish_reason?: string }[];
+          usage?: UsagePayload;
         };
         const choice = payload.choices?.[0];
+
+        // Report usage before the content checks: a truncated or empty answer
+        // was still billed, and hiding that would make cost regressions look
+        // like free failures.
+        if (payload.usage && onUsage) {
+          const usage = payload.usage;
+          onUsage({
+            label,
+            model: model ?? name,
+            promptTokens: usage.prompt_tokens ?? 0,
+            completionTokens: usage.completion_tokens ?? 0,
+            cachedTokens:
+              usage.prompt_cache_hit_tokens ?? usage.prompt_tokens_details?.cached_tokens ?? 0,
+            reasoningTokens: usage.completion_tokens_details?.reasoning_tokens ?? 0,
+          });
+        }
 
         // Reasoning models bill their reasoning tokens against max_tokens, so a
         // budget that is too small truncates the answer: finish_reason is

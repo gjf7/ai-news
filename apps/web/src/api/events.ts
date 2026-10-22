@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import { EventDetail, EventList, EventQuery, type EventRange } from "@ai-news/contracts";
+import { EventDetail, EventList, EventQuery, FocusList, type EventRange } from "@ai-news/contracts";
 import { request } from "../lib/http.ts";
 
 export type EventFilters = {
@@ -34,5 +34,16 @@ export function eventQueryOptions(id: string) {
   return queryOptions({
     queryKey: ["event", id],
     queryFn: async () => EventDetail.parse(await request(`/api/events/${id}`)),
+  });
+}
+
+/**
+ * Today's focus list. A separate query, not a filter on the feed: the window is
+ * fixed server-side and its items are not necessarily on the current page.
+ */
+export function focusQueryOptions() {
+  return queryOptions({
+    queryKey: ["events", "focus"],
+    queryFn: async () => FocusList.parse(await request("/api/events/focus")),
   });
 }

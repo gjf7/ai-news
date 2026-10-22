@@ -1,19 +1,17 @@
 import { Link } from "@tanstack/react-router";
-import type { EventSummary } from "@ai-news/contracts";
+import { isTagId, TAG_LABELS, type EventSummary } from "@ai-news/contracts";
 import { Badge } from "../ui/primitives.tsx";
 import { relativeTime } from "../../lib/format.ts";
-
-const TOPIC_LABELS: Record<string, string> = {
-  ai: "AI",
-  semiconductor: "半导体",
-};
 
 export function EventCard({
   event,
   sort,
+  focus = false,
 }: {
   event: EventSummary;
   sort?: "hot" | "importance" | "latest";
+  /** True when this event is in today's focus list. */
+  focus?: boolean;
 }) {
   return (
     <article className="border-b border-neutral-200 py-4 first:pt-0 last:border-b-0">
@@ -51,9 +49,10 @@ export function EventCard({
         ) : null}
 
         <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-neutral-400">
+          {focus ? <Badge tone="accent">重点</Badge> : null}
           {event.topics.map((topic) => (
             <Badge key={topic} tone="accent">
-              {TOPIC_LABELS[topic] ?? topic}
+              {isTagId(topic) ? TAG_LABELS[topic] : topic}
             </Badge>
           ))}
           {event.analysisState === "pending" ? <Badge tone="muted">待分析</Badge> : null}

@@ -150,6 +150,9 @@ async function isDuplicate(
       signal,
       temperature: 0,
       maxTokens: 1500,
+      // Duplicate detection is a narrow yes/no over already-recalled
+      // references; keep the default thinking mode, the call count is small.
+      label: "dedup",
       messages: [
         { role: "system", content: DEDUP_SYSTEM },
         {

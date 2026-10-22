@@ -10,6 +10,7 @@ import {
   EventList,
   EventQuery,
   FeedStatus,
+  FocusList,
   RunDetail,
   RunList,
   SourceView,
@@ -20,7 +21,7 @@ import type { AppConfig, PublicConfig } from "../config/env.ts";
 import type { DbHandle } from "../db/connection.ts";
 import { deliveries, refreshRuns, sources } from "../db/schema.ts";
 import { listBlogPosts, listBlogs } from "../blogs/queries.ts";
-import { feedRevision, getEventDetail, listEvents } from "../news/queries.ts";
+import { feedRevision, focusEvents, getEventDetail, listEvents } from "../news/queries.ts";
 import { retryDelivery } from "../notifications/telegram.ts";
 import { describeSchedule } from "../refresh/scheduler.ts";
 import { findActiveRun, requestRefresh } from "../refresh/request.ts";
@@ -68,6 +69,11 @@ export function registerApiRoutes(app: FastifyInstance, deps: ApiDeps) {
     requireAuth(request);
     const query = EventQuery.parse(request.query);
     return EventList.parse(listEvents(handle, query));
+  });
+
+  app.get("/api/events/focus", async (request) => {
+    requireAuth(request);
+    return FocusList.parse({ items: focusEvents(handle) });
   });
 
   app.get("/api/events/:id", async (request, reply) => {

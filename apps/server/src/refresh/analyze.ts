@@ -3,6 +3,7 @@ import type { DbHandle } from "../db/connection.ts";
 import { newId } from "../db/ids.ts";
 import { articleSources, articles, events, insights, sources } from "../db/schema.ts";
 import type { ModelClient } from "../insights/model.ts";
+import { refreshEventScores } from "../news/scoring.ts";
 import {
   buildPrompt,
   computeInputHash,
@@ -128,6 +129,9 @@ export async function runAnalysis({
         .set({ analysisState: "ok", analysisRunId: runId })
         .where(eq(events.id, event.id))
         .run();
+      // The insight may carry tags from before the event's article set last
+      // changed; rescoring is what merges them into the event.
+      refreshEventScores(handle, [event.id]);
       result.reused += 1;
       continue;
     }
@@ -145,9 +149,12 @@ export async function runAnalysis({
       const content = await model.complete({
         signal,
         temperature: 0.2,
-        // Generous headroom: a reasoning model spends part of this budget on its
-        // reasoning tokens before writing the JSON answer.
+        // The one call whose answer the reader actually reads: keep thinking on
+        // for synthesis quality. Generous headroom because reasoning tokens
+        // count against max_tokens.
         maxTokens: 8000,
+        thinking: "enabled",
+        label: "insight",
         messages: [
           { role: "system", content: prompt.system },
           { role: "user", content: prompt.user },
@@ -179,6 +186,8 @@ export async function runAnalysis({
         output: parsed.output,
         bump,
       });
+      // Publishing changed latest_insight_id; pick up the insight's tags.
+      refreshEventScores(handle, [event.id]);
 
       if (bump) result.bumped.push(event.id);
       result.analyzed += 1;

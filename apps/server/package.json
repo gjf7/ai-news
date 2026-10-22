@@ -11,6 +11,7 @@
     "preview-digest": "tsx scripts/preview-digest.ts",
     "e2e": "tsx scripts/e2e.ts",
     "calibrate": "tsx scripts/calibrate.ts",
+    "backfill-tags": "tsx scripts/backfill-tags.ts",
     "stub-model": "tsx scripts/stub-model.ts",
     "hash-password": "tsx scripts/hash-password.ts",
     "test": "vp test",

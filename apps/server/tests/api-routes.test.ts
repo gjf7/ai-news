@@ -1,3 +1,4 @@
+import { eq } from "drizzle-orm";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -5,7 +6,7 @@ import { afterEach, beforeEach, expect, test } from "vite-plus/test";
 import { buildApp, type BuiltApp } from "../src/app.ts";
 import { hashPassword } from "../src/api/auth/password.ts";
 import type { AppConfig } from "../src/config/env.ts";
-import { events } from "../src/db/schema.ts";
+import { events, insights } from "../src/db/schema.ts";
 
 let dir: string;
 let built: BuiltApp;
@@ -83,6 +84,7 @@ function seedEvent(overrides: Partial<typeof events.$inferInsert> = {}) {
 test("every new endpoint requires authentication", async () => {
   for (const url of [
     "/api/events",
+    "/api/events/focus",
     "/api/status",
     "/api/refresh-runs",
     "/api/sources",
@@ -215,6 +217,94 @@ test("range=today starts at Shanghai midnight", async () => {
     ...auth(),
   });
   expect(response.json().items.map((event: { id: string }) => event.id)).toEqual(["today"]);
+});
+
+test("focus lists only recent, analyzed, above-threshold events, most important first", async () => {
+  const now = Date.now();
+  const hour = 3_600_000;
+  seedEvent({
+    id: "important",
+    effectiveTime: new Date(now - hour),
+    importance: 90,
+    analysisState: "ok",
+  });
+  seedEvent({
+    id: "second",
+    effectiveTime: new Date(now - 2 * hour),
+    importance: 70,
+    analysisState: "ok",
+  });
+  seedEvent({
+    id: "below",
+    effectiveTime: new Date(now - hour),
+    importance: 40,
+    analysisState: "ok",
+  });
+  seedEvent({
+    id: "stale",
+    effectiveTime: new Date(now - 30 * hour),
+    importance: 95,
+    analysisState: "ok",
+  });
+  seedEvent({
+    id: "failed",
+    effectiveTime: new Date(now - hour),
+    importance: 99,
+    analysisState: "failed",
+  });
+
+  const response = await built.app.inject({ method: "GET", url: "/api/events/focus", ...auth() });
+  expect(response.statusCode).toBe(200);
+  expect(response.json().items.map((event: { id: string }) => event.id)).toEqual([
+    "important",
+    "second",
+  ]);
+});
+
+test("focus caps at three and carries the insight's importance reason", async () => {
+  const now = Date.now();
+  const hour = 3_600_000;
+  for (const [id, importance] of [
+    ["e1", 90],
+    ["e2", 80],
+    ["e3", 70],
+    ["e4", 65],
+  ] as const) {
+    seedEvent({
+      id,
+      effectiveTime: new Date(now - hour),
+      importance,
+      analysisState: "ok",
+    });
+  }
+
+  // The event points at its insight through a composite foreign key, so the
+  // insight has to exist before the pointer is set.
+  built.handle.db
+    .insert(insights)
+    .values({
+      id: "ins1",
+      eventId: "e1",
+      inputHash: "hash1",
+      model: "stub",
+      promptVersion: "insight-v1",
+      scope: "excerpt",
+      output: {
+        title: "重点标题",
+        facts: [{ text: "事实", citations: ["0"] }],
+        importance: { score: 90, reason: "出口管制升级" },
+      },
+      evidence: [],
+      revision: 1,
+      createdAt: new Date(now - hour),
+    })
+    .run();
+  built.handle.db.update(events).set({ latestInsightId: "ins1" }).where(eq(events.id, "e1")).run();
+
+  const response = await built.app.inject({ method: "GET", url: "/api/events/focus", ...auth() });
+  const { items } = response.json();
+  expect(items.map((event: { id: string }) => event.id)).toEqual(["e1", "e2", "e3"]);
+  expect(items[0].importanceReason).toBe("出口管制升级");
 });
 
 test("GET /events/:id returns detail and 404s for an unknown id", async () => {

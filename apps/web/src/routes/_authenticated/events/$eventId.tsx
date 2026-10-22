@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { FOCUS_MIN_IMPORTANCE, isTagId, TAG_LABELS } from "@ai-news/contracts";
 import { eventQueryOptions } from "../../../api/events.ts";
 import { Badge, Card, ErrorNotice, Spinner } from "../../../components/ui/primitives.tsx";
 import { formatShanghai, relativeTime } from "../../../lib/format.ts";
@@ -30,7 +31,7 @@ function EventDetailPage() {
         <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-neutral-400">
           {detail.topics.map((topic) => (
             <Badge key={topic} tone="accent">
-              {topic === "ai" ? "AI" : "半导体"}
+              {isTagId(topic) ? TAG_LABELS[topic] : topic}
             </Badge>
           ))}
           <span>{detail.articleCount} 篇报道</span>
@@ -48,7 +49,15 @@ function EventDetailPage() {
             </span>
           </div>
 
-          <p className="mt-2 text-xs text-neutral-500">{detail.insight.importanceReason}</p>
+          <p
+            className={
+              detail.insight.importanceScore >= FOCUS_MIN_IMPORTANCE
+                ? "mt-2 text-sm text-neutral-800"
+                : "mt-2 text-xs text-neutral-500"
+            }
+          >
+            {detail.insight.importanceReason}
+          </p>
 
           <h3 className="mt-4 text-xs font-medium text-neutral-500">事实</h3>
           <ul className="mt-1.5 space-y-1.5">

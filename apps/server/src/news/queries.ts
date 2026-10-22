@@ -1,13 +1,16 @@
 import { and, desc, eq, gte, lte, sql } from "drizzle-orm";
 import type { DbHandle } from "../db/connection.ts";
 import { articles, events, insights } from "../db/schema.ts";
-import type {
-  EventDetail,
-  EventList,
-  EventQuery,
-  EventRange,
-  EventSummary,
-  InsightView,
+import {
+  FOCUS_MAX_ITEMS,
+  FOCUS_MIN_IMPORTANCE,
+  FOCUS_WINDOW_HOURS,
+  type EventDetail,
+  type EventList,
+  type EventQuery,
+  type EventRange,
+  type EventSummary,
+  type InsightView,
 } from "@ai-news/contracts";
 
 /**
@@ -44,10 +47,19 @@ function toInsightView(row: InsightRow): InsightView {
 function insightSummary(row: InsightRow | undefined): {
   title: string | null;
   summary: string | null;
+  reason: string | null;
 } {
-  if (!row) return { title: null, summary: null };
-  const output = row.output as { title?: string; facts?: { text: string }[] };
-  return { title: output.title ?? null, summary: output.facts?.[0]?.text ?? null };
+  if (!row) return { title: null, summary: null, reason: null };
+  const output = row.output as {
+    title?: string;
+    facts?: { text: string }[];
+    importance?: { reason?: string };
+  };
+  return {
+    title: output.title ?? null,
+    summary: output.facts?.[0]?.text ?? null,
+    reason: output.importance?.reason ?? null,
+  };
 }
 
 const SHANGHAI_OFFSET_MS = 8 * 3_600_000;
@@ -142,6 +154,49 @@ export function listEvents(handle: DbHandle, query: EventQuery): EventList {
   };
 }
 
+/**
+ * The events that deserve attention right now: recent, analyzed, and above the
+ * model's importance threshold, most important first. Empty is a valid answer
+ * and the UI hides the block; padding it with lower scores would make it a
+ * second copy of the feed.
+ */
+export function focusEvents(
+  handle: DbHandle,
+  {
+    now = new Date(),
+    windowHours = FOCUS_WINDOW_HOURS,
+    minImportance = FOCUS_MIN_IMPORTANCE,
+    limit = FOCUS_MAX_ITEMS,
+  }: {
+    now?: Date;
+    windowHours?: number;
+    minImportance?: number;
+    limit?: number;
+  } = {},
+): EventSummary[] {
+  const since = new Date(now.getTime() - windowHours * 3_600_000);
+
+  return handle.db
+    .select()
+    .from(events)
+    .where(
+      and(
+        eq(events.analysisState, "ok"),
+        gte(events.importance, minImportance),
+        gte(events.effectiveTime, since),
+      ),
+    )
+    .orderBy(
+      desc(events.importance),
+      desc(events.hotScore),
+      desc(events.effectiveTime),
+      desc(events.id),
+    )
+    .limit(limit)
+    .all()
+    .map((event) => toSummary(handle, event));
+}
+
 type EventStats = { articleCount: number; publisherCount: number; sources: string[] };
 
 function eventStats(handle: DbHandle, eventId: string): EventStats {
@@ -164,7 +219,7 @@ function toSummary(handle: DbHandle, event: EventRow): EventSummary {
   const insight = event.latestInsightId
     ? handle.db.select().from(insights).where(eq(insights.id, event.latestInsightId)).get()
     : undefined;
-  const { title, summary } = insightSummary(insight);
+  const { title, summary, reason } = insightSummary(insight);
   const stats = eventStats(handle, event.id);
 
   return {
@@ -175,6 +230,7 @@ function toSummary(handle: DbHandle, event: EventRow): EventSummary {
     topics: event.topics,
     kind: event.kind as EventSummary["kind"],
     importance: event.importance,
+    importanceReason: reason,
     hotScore: event.hotScore,
     effectiveTime: event.effectiveTime.toISOString(),
     updatedAt: event.updatedAt.toISOString(),

@@ -78,7 +78,14 @@ const EnvSchema = z.object({
 
   OPENAI_BASE_URL: z.string().url().default("https://api.deepseek.com"),
   OPENAI_API_KEY: z.string().min(1).optional(),
-  MODEL_NAME: z.string().min(1).default("deepseek-chat"),
+  MODEL_NAME: z.string().min(1).default("deepseek-flash"),
+  /**
+   * DeepSeek's unified models think by default and bill reasoning tokens at the
+   * output rate. `auto` lets each call site decide (mechanical calls turn it
+   * off) and only sends the field to DeepSeek; `enabled`/`disabled` force it
+   * everywhere, e.g. when the same API is reached through a proxy.
+   */
+  MODEL_THINKING: z.enum(["auto", "enabled", "disabled"]).default("auto"),
 });
 
 export type Env = z.infer<typeof EnvSchema>;
@@ -121,6 +128,8 @@ export type AppConfig = {
     baseUrl: string;
     apiKey?: string;
     name: string;
+    /** Undefined is treated as "auto". */
+    thinking?: "auto" | "enabled" | "disabled";
   };
 };
 
@@ -176,6 +185,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
       baseUrl: value.OPENAI_BASE_URL,
       apiKey: value.OPENAI_API_KEY,
       name: value.MODEL_NAME,
+      thinking: value.MODEL_THINKING,
     },
   };
 }
