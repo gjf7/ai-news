@@ -58,7 +58,7 @@ afterEach(async () => {
 
 const auth = () => ({ cookies: { ai_news_session: cookie } });
 
-function seedEvent() {
+function seedEvent(overrides: Partial<typeof events.$inferInsert> = {}) {
   const now = new Date();
   built.handle.db
     .insert(events)
@@ -75,6 +75,7 @@ function seedEvent() {
       notificationRevision: 0,
       notifiedRevision: 0,
       updatedAt: now,
+      ...overrides,
     })
     .run();
 }
@@ -163,6 +164,57 @@ test("GET /events rejects an unknown sort", async () => {
     ...auth(),
   });
   expect(response.statusCode).toBe(400);
+});
+
+test("range=24h drops older events before sorting, so importance stays recent", async () => {
+  const now = Date.now();
+  seedEvent({ id: "recent", effectiveTime: new Date(now), importance: 40, analysisState: "ok" });
+  seedEvent({
+    id: "old-but-important",
+    effectiveTime: new Date(now - 2 * 24 * 3_600_000),
+    importance: 95,
+    analysisState: "ok",
+  });
+
+  const day = await built.app.inject({
+    method: "GET",
+    url: "/api/events?sort=importance&range=24h",
+    ...auth(),
+  });
+  expect(day.json().items.map((event: { id: string }) => event.id)).toEqual(["recent"]);
+
+  const week = await built.app.inject({
+    method: "GET",
+    url: "/api/events?sort=importance&range=7d",
+    ...auth(),
+  });
+  expect(week.json().items.map((event: { id: string }) => event.id)).toEqual([
+    "old-but-important",
+    "recent",
+  ]);
+
+  const all = await built.app.inject({
+    method: "GET",
+    url: "/api/events?sort=importance&range=all",
+    ...auth(),
+  });
+  expect(all.json().items.map((event: { id: string }) => event.id)).toEqual([
+    "old-but-important",
+    "recent",
+  ]);
+});
+
+test("range=today starts at Shanghai midnight", async () => {
+  const now = Date.now();
+  seedEvent({ id: "today", effectiveTime: new Date(now) });
+  seedEvent({ id: "before-today", effectiveTime: new Date(now - 26 * 3_600_000) });
+
+  const response = await built.app.inject({
+    method: "GET",
+    url: "/api/events?range=today",
+    ...auth(),
+  });
+  expect(response.json().items.map((event: { id: string }) => event.id)).toEqual(["today"]);
 });
 
 test("GET /events/:id returns detail and 404s for an unknown id", async () => {

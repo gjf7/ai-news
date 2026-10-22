@@ -1,11 +1,12 @@
 import { queryOptions } from "@tanstack/react-query";
-import { EventDetail, EventList, EventQuery } from "@ai-news/contracts";
+import { EventDetail, EventList, EventQuery, type EventRange } from "@ai-news/contracts";
 import { request } from "../lib/http.ts";
 
 export type EventFilters = {
   topic?: string;
   source?: string;
   kind?: string;
+  range?: EventRange;
   sort?: "hot" | "importance" | "latest";
   page?: number;
 };

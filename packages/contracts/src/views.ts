@@ -8,6 +8,13 @@ import { z } from "zod";
 export const EventKind = z.enum(["news", "paper", "discussion"]);
 export const AnalysisState = z.enum(["pending", "ok", "failed", "skipped"]);
 
+/**
+ * Feed time window. `today` is the Asia/Shanghai calendar day, matching the
+ * timezone the UI already uses for timestamps. `all` means no lower bound.
+ */
+export const EventRange = z.enum(["today", "24h", "7d", "all"]);
+export type EventRange = z.infer<typeof EventRange>;
+
 export const InsightView = z.object({
   id: z.string(),
   title: z.string(),
@@ -248,6 +255,7 @@ export const EventQuery = z.object({
   topic: z.string().optional(),
   source: z.string().optional(),
   kind: EventKind.optional(),
+  range: EventRange.default("all"),
   sort: z.enum(["hot", "importance", "latest"]).default("latest"),
   from: z.string().optional(),
   to: z.string().optional(),
@@ -264,6 +272,7 @@ export type EventQuery = z.infer<typeof EventQuery>;
 export const EventSearchParams = z.object({
   topic: z.string().optional(),
   kind: EventKind.optional(),
+  range: EventRange.optional(),
   sort: z.enum(["hot", "importance", "latest"]).optional(),
   page: z.coerce.number().int().min(1).optional(),
 });

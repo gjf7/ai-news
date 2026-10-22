@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, gte } from "drizzle-orm";
 import type { DbHandle } from "../db/connection.ts";
 import { events } from "../db/schema.ts";
 import { AI_TERMS, SEMICONDUCTOR_TERMS } from "./filtering.ts";
@@ -6,20 +6,27 @@ import { AI_TERMS, SEMICONDUCTOR_TERMS } from "./filtering.ts";
 /**
  * Hotness and topics.
  *
- * The weights are product parameters, not an objective measure of importance:
- * recency 40%, topic relevance 30%, distinct publishers 20%, normalized
- * community score 10%. `importance` (from the model) is a separate signal used
- * for notification selection.
+ * Hotness answers "what is being discussed right now". The weights are product
+ * parameters, not an objective measure: recency 30%, distinct publishers 25%,
+ * normalized community score 45%. Topic match is not part of the score because
+ * the feed is already filtered to AI and semiconductors, so it would add a
+ * nearly constant 30% to every event. `importance` (from the model) is the
+ * separate "does this matter" signal.
+ *
+ * Recency decays with time, so a stored score goes stale even when nothing
+ * about the event changes. `refreshEventScores` is therefore run for the recent
+ * window on every refresh, not only for events that received a new article.
  */
-
 export const HOT_SCORE_WEIGHTS = {
-  recency: 0.4,
-  topic: 0.3,
-  publishers: 0.2,
-  community: 0.1,
+  recency: 0.3,
+  publishers: 0.25,
+  community: 0.45,
 } as const;
 
 const RECENCY_HALF_LIFE_HOURS = 18;
+
+/** Events this old are already near the bottom of the decay curve. */
+export const RESCORE_WINDOW_HOURS = 7 * 24;
 
 export type Topic = "ai" | "semiconductor";
 
@@ -43,7 +50,6 @@ export function topicsFor(title: string, excerpt: string | null): Topic[] {
 
 export type HotScoreInput = {
   effectiveTime: Date;
-  topics: string[];
   publisherCount: number;
   /** Raw community scores paired with the source they came from. */
   communityScores: { source: string; score: number }[];
@@ -52,15 +58,12 @@ export type HotScoreInput = {
 
 export function computeHotScore({
   effectiveTime,
-  topics,
   publisherCount,
   communityScores,
   now = new Date(),
 }: HotScoreInput): number {
   const ageHours = Math.max(0, (now.getTime() - effectiveTime.getTime()) / 3_600_000);
   const recency = Math.pow(0.5, ageHours / RECENCY_HALF_LIFE_HOURS);
-
-  const topic = topics.length > 0 ? 1 : 0;
 
   // Three or more independent outlets is treated as fully corroborated.
   const publishers = Math.min(1, publisherCount / 3);
@@ -69,7 +72,6 @@ export function computeHotScore({
 
   const score =
     recency * HOT_SCORE_WEIGHTS.recency +
-    topic * HOT_SCORE_WEIGHTS.topic +
     publishers * HOT_SCORE_WEIGHTS.publishers +
     community * HOT_SCORE_WEIGHTS.community;
 
@@ -110,8 +112,23 @@ export function normalizeCommunity(scores: { source: string; score: number }[]):
   return best;
 }
 
+/**
+ * Events that still have meaningful recency: everything inside the rescore
+ * window. The runner unions this with the events it touched, because an older
+ * event can receive a new article and must be scored too.
+ */
+export function recentEventIds(handle: DbHandle, now = new Date()): string[] {
+  const since = new Date(now.getTime() - RESCORE_WINDOW_HOURS * 3_600_000);
+  return handle.db
+    .select({ id: events.id })
+    .from(events)
+    .where(gte(events.effectiveTime, since))
+    .all()
+    .map((row) => row.id);
+}
+
 /** Recomputes topics and hot score for the given events. */
-export function refreshEventScores(handle: DbHandle, eventIds: string[]): void {
+export function refreshEventScores(handle: DbHandle, eventIds: string[], now = new Date()): void {
   for (const eventId of eventIds) {
     const event = handle.db.select().from(events).where(eq(events.id, eventId)).get();
     if (!event) continue;
@@ -143,7 +160,6 @@ export function refreshEventScores(handle: DbHandle, eventIds: string[]): void {
     const publishers = new Set(rows.map((row) => row.publisher));
     const hotScore = computeHotScore({
       effectiveTime: event.effectiveTime,
-      topics: [...topics],
       publisherCount: publishers.size,
       // Keep the originating source so community heat can be normalized
       // within each channel rather than across incomparable scales.
@@ -152,6 +168,7 @@ export function refreshEventScores(handle: DbHandle, eventIds: string[]): void {
           ? []
           : [{ source: row.sourceKey ?? row.publisher, score: row.communityScore }],
       ),
+      now,
     });
 
     handle.db

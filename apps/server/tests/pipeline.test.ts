@@ -98,19 +98,36 @@ test("hot score favours recency and corroboration", () => {
   const now = new Date("2026-10-06T12:00:00Z");
   const fresh = computeHotScore({
     effectiveTime: new Date("2026-10-06T11:55:00Z"),
-    topics: ["ai"],
     publisherCount: 3,
     communityScores: [{ source: "hacker-news", score: 500 }],
     now,
   });
   const stale = computeHotScore({
     effectiveTime: new Date("2026-10-04T12:00:00Z"),
-    topics: [],
     publisherCount: 1,
     communityScores: [],
     now,
   });
   expect(fresh).toBeGreaterThan(stale);
+});
+
+test("community buzz keeps an older story above a newer quiet one", () => {
+  // This is the difference between "hot" and "latest": six hours of decay is
+  // not enough to erase a story the community is actively discussing.
+  const now = new Date("2026-10-06T12:00:00Z");
+  const discussed = computeHotScore({
+    effectiveTime: new Date("2026-10-06T06:00:00Z"),
+    publisherCount: 1,
+    communityScores: [{ source: "hacker-news", score: 300 }],
+    now,
+  });
+  const quiet = computeHotScore({
+    effectiveTime: new Date("2026-10-06T11:50:00Z"),
+    publisherCount: 1,
+    communityScores: [],
+    now,
+  });
+  expect(discussed).toBeGreaterThan(quiet);
 });
 
 test("community heat is normalized within each source", () => {

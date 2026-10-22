@@ -1,9 +1,17 @@
+import type { EventRange } from "@ai-news/contracts";
 import type { EventFilters } from "../../api/events.ts";
 
 const TOPICS = [
   { value: undefined, label: "全部" },
   { value: "ai", label: "AI" },
   { value: "semiconductor", label: "半导体" },
+];
+
+const RANGES: { value: EventRange; label: string }[] = [
+  { value: "today", label: "今天" },
+  { value: "24h", label: "24 小时" },
+  { value: "7d", label: "7 天" },
+  { value: "all", label: "全部" },
 ];
 
 const SORTS = [
@@ -39,6 +47,12 @@ export function EventFiltersBar({
         options={KINDS}
         value={filters.kind}
         onSelect={(kind) => onChange({ ...filters, kind, page: 1 })}
+      />
+      <Group
+        label="时间"
+        options={RANGES}
+        value={filters.range ?? "24h"}
+        onSelect={(range) => onChange({ ...filters, range, page: 1 })}
       />
       <Group
         label="排序"

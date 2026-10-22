@@ -7,7 +7,7 @@ import type { ModelClient } from "../insights/model.ts";
 import { runAnalysis } from "./analyze.ts";
 import { runClustering } from "../news/clustering.ts";
 import { runFiltering } from "../news/filtering.ts";
-import { refreshEventScores } from "../news/scoring.ts";
+import { refreshEventScores, recentEventIds } from "../news/scoring.ts";
 import { deliverDue, runNotificationFreeze, type SendFn } from "../notifications/telegram.ts";
 import { runDigestIfDue } from "../notifications/digest.ts";
 import { runAlertIfNeeded } from "../notifications/alerts.ts";
@@ -194,9 +194,12 @@ export function createRunner(deps: RunnerDeps): Runner {
       });
       if (!isCurrent()) return;
 
-      // Only events that received an article changed; scoring the whole
-      // historical set every run would grow with the archive for no benefit.
-      refreshEventScores(handle, clustered.touchedEventIds);
+      // Recency decay keeps changing after an event is stored, so the recent
+      // window is rescored every run. Older events are outside the window and
+      // already sit at the bottom of the decay curve.
+      const scoredAt = new Date();
+      const toScore = new Set([...clustered.touchedEventIds, ...recentEventIds(handle, scoredAt)]);
+      refreshEventScores(handle, [...toScore], scoredAt);
 
       setProgress({
         phase: "analyzing",

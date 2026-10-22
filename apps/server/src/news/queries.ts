@@ -5,6 +5,7 @@ import type {
   EventDetail,
   EventList,
   EventQuery,
+  EventRange,
   EventSummary,
   InsightView,
 } from "@ai-news/contracts";
@@ -49,10 +50,37 @@ function insightSummary(row: InsightRow | undefined): {
   return { title: output.title ?? null, summary: output.facts?.[0]?.text ?? null };
 }
 
+const SHANGHAI_OFFSET_MS = 8 * 3_600_000;
+
+/** Start of the Asia/Shanghai calendar day containing `now`. */
+export function startOfShanghaiDay(now: Date): Date {
+  const shifted = new Date(now.getTime() + SHANGHAI_OFFSET_MS);
+  return new Date(
+    Date.UTC(shifted.getUTCFullYear(), shifted.getUTCMonth(), shifted.getUTCDate()) -
+      SHANGHAI_OFFSET_MS,
+  );
+}
+
+/** Lower bound for a feed range, or null when the range has no lower bound. */
+export function resolveRangeStart(range: EventRange, now = new Date()): Date | null {
+  switch (range) {
+    case "today":
+      return startOfShanghaiDay(now);
+    case "24h":
+      return new Date(now.getTime() - 24 * 3_600_000);
+    case "7d":
+      return new Date(now.getTime() - 7 * 24 * 3_600_000);
+    case "all":
+      return null;
+  }
+}
+
 export function listEvents(handle: DbHandle, query: EventQuery): EventList {
   const conditions = [];
 
   if (query.kind) conditions.push(eq(events.kind, query.kind));
+  const rangeFrom = resolveRangeStart(query.range);
+  if (rangeFrom) conditions.push(gte(events.effectiveTime, rangeFrom));
   if (query.from) conditions.push(gte(events.effectiveTime, new Date(query.from)));
   if (query.to) conditions.push(lte(events.effectiveTime, new Date(query.to)));
   // Topic and source are SQL filters, not post-page filters: filtering after

@@ -8,7 +8,13 @@ const TOPIC_LABELS: Record<string, string> = {
   semiconductor: "半导体",
 };
 
-export function EventCard({ event }: { event: EventSummary }) {
+export function EventCard({
+  event,
+  sort,
+}: {
+  event: EventSummary;
+  sort?: "hot" | "importance" | "latest";
+}) {
   return (
     <article className="border-b border-neutral-200 py-4 first:pt-0 last:border-b-0">
       <Link
@@ -20,11 +26,24 @@ export function EventCard({ event }: { event: EventSummary }) {
           <h2 className="text-sm font-medium leading-snug text-neutral-900">
             {event.insightTitle ?? event.title}
           </h2>
-          {event.importance !== null ? (
-            <span className="shrink-0 text-xs tabular-nums text-neutral-400">
-              {event.importance}
-            </span>
-          ) : null}
+          <div className="shrink-0 text-right text-xs leading-5 tabular-nums">
+            <div
+              className={sort === "hot" ? "font-medium text-neutral-900" : "text-neutral-400"}
+              title="讨论与多来源报道的热度，随时间衰减"
+            >
+              热度 {Math.round(event.hotScore / 10)}
+            </div>
+            {event.importance !== null ? (
+              <div
+                className={
+                  sort === "importance" ? "font-medium text-neutral-900" : "text-neutral-400"
+                }
+                title="模型判断的事件重要性"
+              >
+                重要性 {event.importance}
+              </div>
+            ) : null}
+          </div>
         </div>
 
         {event.insightSummary ? (

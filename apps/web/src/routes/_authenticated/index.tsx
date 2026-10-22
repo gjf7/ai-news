@@ -26,6 +26,7 @@ function NewsPage() {
   const filters: EventFilters = {
     topic: search.topic,
     kind: search.kind,
+    range: search.range ?? "24h",
     sort: search.sort ?? "latest",
     page: search.page ?? 1,
   };
@@ -64,6 +65,7 @@ function NewsPage() {
       search: {
         topic: next.topic,
         kind: next.kind as EventSearchParams["kind"],
+        range: next.range,
         sort: next.sort,
         page: next.page,
       },
@@ -126,7 +128,9 @@ function NewsPage() {
           title="还没有内容"
           hint={
             status.data?.lastSuccessAt
-              ? "最近一轮没有新的相关新闻。"
+              ? filters.range === "all"
+                ? "最近一轮没有新的相关新闻。"
+                : "这个时间范围内没有内容，可以切换到「全部」看看。"
               : "点「刷新」立即采集一轮，或等待下一次自动刷新。"
           }
         />
@@ -135,7 +139,7 @@ function NewsPage() {
       {items.length > 0 ? (
         <div className="rounded-lg border border-neutral-200 bg-white px-5 py-2">
           {items.map((event) => (
-            <EventCard key={event.id} event={event} />
+            <EventCard key={event.id} event={event} sort={filters.sort} />
           ))}
         </div>
       ) : null}
