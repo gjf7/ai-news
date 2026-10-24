@@ -38,12 +38,13 @@ const EnvSchema = z.object({
     .transform((value) => value === "true"),
   NOTIFY_MAX_ITEMS: z.coerce.number().int().positive().default(5),
   /**
-   * Push threshold. Measured against a week of live data: 70 sends ~24 pushes a
-   * day, 78 sends ~13, and 80 sends ~10. 78 is the point where the volume
-   * becomes readable without dropping the export-control, earnings and
-   * capacity stories that the model scores in the high 70s.
+   * Push threshold. Left at 70 on purpose: the model compresses a wide range of
+   * significance into 70-79, so every higher cut drops real stories along with
+   * the noise. Live data at 70 is ~24 pushes a day and 78 is ~13, but the 70-77
+   * band contains financing, export-control and capacity news indistinguishable
+   * from the 78+ band. Raising this is a deliberate trade, not a free win.
    */
-  NOTIFY_MIN_IMPORTANCE: z.coerce.number().int().min(0).max(100).default(78),
+  NOTIFY_MIN_IMPORTANCE: z.coerce.number().int().min(0).max(100).default(70),
 
   /**
    * Daily digest: one summary of the last 24 hours at a fixed UTC hour. Off by
