@@ -21,6 +21,8 @@ function config(model: Partial<AppConfig["model"]>): AppConfig {
       enabled: false,
       maxItems: 1,
       minImportance: 70,
+      coalesceMinutes: 0,
+      urgentImportance: 100,
       digest: { enabled: false, hourUtc: 0, maxItems: 1, minImportance: 50 },
       alert: { enabled: false, afterFailedRuns: 1 },
       telegram: {},

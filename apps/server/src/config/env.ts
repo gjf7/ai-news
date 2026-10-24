@@ -38,6 +38,18 @@ const EnvSchema = z.object({
     .transform((value) => value === "true"),
   NOTIFY_MAX_ITEMS: z.coerce.number().int().positive().default(5),
   NOTIFY_MIN_IMPORTANCE: z.coerce.number().int().min(0).max(100).default(70),
+  /**
+   * Coalescing: the minimum gap between pushes. A run that has news but lands
+   * inside the window leaves it queued, so several runs arrive as one message.
+   * This is what keeps a 30-minute refresh from producing a dozen messages a
+   * day. 0 restores one message per run.
+   */
+  NOTIFY_COALESCE_MINUTES: z.coerce.number().int().min(0).default(120),
+  /**
+   * Importance at or above which the window is ignored. A genuinely major
+   * story should not wait up to two hours to be batched.
+   */
+  NOTIFY_URGENT_IMPORTANCE: z.coerce.number().int().min(0).max(100).default(88),
 
   /**
    * Daily digest: one summary of the last 24 hours at a fixed UTC hour. Off by
@@ -121,6 +133,10 @@ export type AppConfig = {
     enabled: boolean;
     maxItems: number;
     minImportance: number;
+    /** Minimum gap between pushes; 0 means one message per run. */
+    coalesceMinutes: number;
+    /** At or above this, send immediately instead of waiting for the window. */
+    urgentImportance: number;
     digest: {
       enabled: boolean;
       hourUtc: number;
@@ -175,6 +191,8 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
       enabled: value.NOTIFY_ENABLED,
       maxItems: value.NOTIFY_MAX_ITEMS,
       minImportance: value.NOTIFY_MIN_IMPORTANCE,
+      coalesceMinutes: value.NOTIFY_COALESCE_MINUTES,
+      urgentImportance: value.NOTIFY_URGENT_IMPORTANCE,
       digest: {
         enabled: value.DIGEST_ENABLED,
         hourUtc: value.DIGEST_HOUR_UTC,
@@ -213,6 +231,8 @@ export function publicConfig(config: AppConfig) {
       enabled: config.notify.enabled,
       maxItems: config.notify.maxItems,
       minImportance: config.notify.minImportance,
+      coalesceMinutes: config.notify.coalesceMinutes,
+      urgentImportance: config.notify.urgentImportance,
       digest: {
         enabled: config.notify.digest.enabled,
         hourUtc: config.notify.digest.hourUtc,

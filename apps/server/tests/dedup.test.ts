@@ -45,6 +45,10 @@ const config = {
   enabled: true,
   maxItems: 5,
   minImportance: 70,
+  // These tests cover per-run selection, so coalescing is off; the batching
+  // behaviour has its own tests.
+  coalesceMinutes: 0,
+  urgentImportance: 100,
   chatId: "chat-1",
   botToken: "token",
 };

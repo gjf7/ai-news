@@ -12,6 +12,12 @@ import { articles, deliveries, events, insights } from "../db/schema.ts";
  * including ones that did not make the cut — so nothing accumulates and the
  * same version can never enter two deliveries.
  *
+ * Coalescing sits on top: a push is only built when the coalescing window has
+ * elapsed since the previous one, so several runs' news arrives as a single
+ * message. Events held back keep `notification_revision > notified_revision`,
+ * which is what makes them visible to the next run and to the periodic flush.
+ * An urgent event bypasses the window.
+ *
  * Semantics are at-least-once: a crash after sending but before recording the
  * message can repeat one message, which is harmless in a personal chat.
  */
@@ -20,6 +26,14 @@ export type NotifyConfig = {
   enabled: boolean;
   maxItems: number;
   minImportance: number;
+  /**
+   * Minimum gap between pushes. A run that has content but lands inside the
+   * window leaves it queued instead of sending, so several runs' worth of news
+   * arrives as one message. 0 disables coalescing (one message per run).
+   */
+  coalesceMinutes: number;
+  /** At or above this importance, the window is ignored and the item goes out now. */
+  urgentImportance: number;
   chatId?: string;
   botToken?: string;
 };
@@ -55,6 +69,15 @@ export type Candidate = {
   hotScore: number;
 };
 
+/** Every event with an unreported version: candidates for the next push. */
+export function unnotifiedCandidates(handle: DbHandle): Candidate[] {
+  return handle.db
+    .select()
+    .from(events)
+    .where(gt(events.notificationRevision, events.notifiedRevision))
+    .all() as Candidate[];
+}
+
 /** Every event whose version increased in this run and is still unsent. */
 export function bumpedNotificationCandidates(handle: DbHandle, runId: string): Candidate[] {
   return handle.db
@@ -69,6 +92,39 @@ export function bumpedNotificationCandidates(handle: DbHandle, runId: string): C
     .all() as Candidate[];
 }
 
+/**
+ * Last instant a push was sent to this chat, or null when none ever was.
+ * Coalescing is measured against this rather than against the previous run, so
+ * the window holds across restarts and manual refreshes.
+ */
+export function lastPushAt(handle: DbHandle, chatId: string): Date | null {
+  const row = handle.db
+    .select({ sentAt: deliveries.sentAt, createdAt: deliveries.createdAt })
+    .from(deliveries)
+    .where(and(eq(deliveries.chatId, chatId), eq(deliveries.kind, "refresh")))
+    .orderBy(desc(deliveries.createdAt))
+    .limit(1)
+    .get();
+  if (!row) return null;
+  return row.sentAt ?? row.createdAt;
+}
+
+export type FreezeOptions = {
+  /** When set, sends immediately regardless of the coalescing window. */
+  urgent?: boolean;
+};
+
+/**
+ * Decides what to send now and records it.
+ *
+ * With coalescing on, a run whose window has not elapsed leaves its events
+ * unreported: `notified_revision` is not advanced, so they are picked up by the
+ * next run that does send. That is what turns 17-21 single-item messages a day
+ * into a handful of multi-item ones without dropping anything.
+ *
+ * An urgent item (importance at or above `urgentImportance`) opens a window
+ * early, so a major story is never held back by the batching.
+ */
 export function runNotificationFreeze({
   handle,
   runId,
@@ -76,39 +132,20 @@ export function runNotificationFreeze({
   firstRun,
   now = new Date(),
   suppressed,
-}: NotifyDeps): NotifyResult {
+  options = {},
+}: NotifyDeps & { options?: FreezeOptions }): NotifyResult {
   // Every event whose version increased in this run.
   const bumped = bumpedNotificationCandidates(handle, runId);
-
-  if (bumped.length === 0) {
-    return { created: 0, frozen: 0 };
-  }
 
   if (firstRun) {
     // First deployment: advance the pointers without sending, so historical
     // content does not arrive as a flood.
-    handle.sqlite.transaction(() => {
-      for (const event of bumped) {
-        handle.db
-          .update(events)
-          .set({ notifiedRevision: event.notificationRevision })
-          .where(eq(events.id, event.id))
-          .run();
-      }
-    })();
+    markNotified(handle, bumped);
     return { created: 0, frozen: bumped.length, reason: "first run is silent" };
   }
 
   if (!config.enabled) {
-    handle.sqlite.transaction(() => {
-      for (const event of bumped) {
-        handle.db
-          .update(events)
-          .set({ notifiedRevision: event.notificationRevision })
-          .where(eq(events.id, event.id))
-          .run();
-      }
-    })();
+    markNotified(handle, bumped);
     return { created: 0, frozen: bumped.length, reason: "notifications disabled" };
   }
 
@@ -116,23 +153,103 @@ export function runNotificationFreeze({
     return { created: 0, frozen: 0, reason: "telegram credentials not configured" };
   }
 
-  const selected = bumped
-    .filter(
-      (event) => (event.importance ?? 0) >= config.minImportance && !suppressed?.has(event.id),
-    )
+  if (bumped.length === 0) {
+    // Nothing new, but an earlier run may have left events queued while the
+    // window was closed. A quiet period must still flush them, otherwise a
+    // queued story waits for the next busy run, which could be hours away.
+    return flushNotificationQueue({ handle, runId, config, now, suppressed, options });
+  }
+
+  const passing = bumped.filter(
+    (event) => (event.importance ?? 0) >= config.minImportance && !suppressed?.has(event.id),
+  );
+
+  // Below the threshold: drop them (advance the pointer) so they do not
+  // accumulate and get re-evaluated forever.
+  if (passing.length === 0) {
+    markNotified(handle, bumped);
+    return { created: 0, frozen: bumped.length };
+  }
+
+  // Everything unreported, not just this run's, is what a coalesced message
+  // contains. Bumped-but-suppressed events stay out.
+  const queued = unnotifiedCandidates(handle).filter(
+    (event) => (event.importance ?? 0) >= config.minImportance && !suppressed?.has(event.id),
+  );
+
+  const urgent = queued.some((event) => (event.importance ?? 0) >= config.urgentImportance);
+
+  if (!options.urgent && !urgent && !windowElapsed(handle, config, now)) {
+    // Hold: leave these events unreported so the next run includes them.
+    return { created: 0, frozen: 0, reason: "waiting for the coalescing window" };
+  }
+
+  return sendQueued({ handle, runId, config, now, queued, alsoFreeze: bumped });
+}
+
+/**
+ * Flushes events an earlier run queued while the window was closed. Returns
+ * without sending when the window is still closed or nothing qualifies.
+ */
+export function flushNotificationQueue({
+  handle,
+  runId,
+  config,
+  now = new Date(),
+  suppressed,
+  options = {},
+}: {
+  handle: DbHandle;
+  runId: string;
+  config: NotifyConfig;
+  now?: Date;
+  suppressed?: ReadonlySet<string>;
+  options?: FreezeOptions;
+}): NotifyResult {
+  const queued = unnotifiedCandidates(handle).filter(
+    (event) => (event.importance ?? 0) >= config.minImportance && !suppressed?.has(event.id),
+  );
+
+  if (queued.length === 0) return { created: 0, frozen: 0 };
+
+  const urgent = queued.some((event) => (event.importance ?? 0) >= config.urgentImportance);
+  if (!options.urgent && !urgent && !windowElapsed(handle, config, now)) {
+    return { created: 0, frozen: 0, reason: "waiting for the coalescing window" };
+  }
+
+  return sendQueued({ handle, runId, config, now, queued, alsoFreeze: [] });
+}
+
+/** Builds and records the delivery for a set of queued events. */
+function sendQueued({
+  handle,
+  runId,
+  config,
+  now,
+  queued,
+  alsoFreeze,
+}: {
+  handle: DbHandle;
+  runId: string;
+  config: NotifyConfig;
+  now: Date;
+  queued: Candidate[];
+  /** Events to mark notified even if they fall outside the selected set. */
+  alsoFreeze: Candidate[];
+}): NotifyResult {
+  const selected = queued
     .sort((a, b) => (b.importance ?? 0) - (a.importance ?? 0) || b.hotScore - a.hotScore)
     .slice(0, config.maxItems);
 
   let created = 0;
   handle.sqlite.transaction(() => {
-    // Freeze every bumped event, whether or not it was selected.
-    for (const event of bumped) {
-      handle.db
-        .update(events)
-        .set({ notifiedRevision: event.notificationRevision })
-        .where(eq(events.id, event.id))
-        .run();
-    }
+    // Freeze every event this decision covers: this run's bumped events, plus
+    // the queued ones the message was built from. Marking the queued overflow
+    // too matches the previous behaviour — maxItems is a cap, and a capped item
+    // is superseded by more important ones rather than re-sent later — and it
+    // keeps `notification_revision > notified_revision` from leaking a growing
+    // backlog.
+    markNotified(handle, [...alsoFreeze, ...queued]);
 
     if (selected.length === 0) return;
 
@@ -159,7 +276,25 @@ export function runNotificationFreeze({
     created += 1;
   })();
 
-  return { created, frozen: bumped.length };
+  return { created, frozen: alsoFreeze.length + queued.length };
+}
+
+/** True when no push has gone out within the configured window. */
+function windowElapsed(handle: DbHandle, config: NotifyConfig, now: Date): boolean {
+  if (config.coalesceMinutes <= 0) return true;
+  const last = lastPushAt(handle, config.chatId!);
+  if (!last) return true;
+  return now.getTime() - last.getTime() >= config.coalesceMinutes * 60_000;
+}
+
+function markNotified(handle: DbHandle, eventsToMark: Candidate[]): void {
+  for (const event of eventsToMark) {
+    handle.db
+      .update(events)
+      .set({ notifiedRevision: event.notificationRevision })
+      .where(eq(events.id, event.id))
+      .run();
+  }
 }
 
 /** Renders the message text from the selected events and their insights. */
