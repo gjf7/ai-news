@@ -86,6 +86,13 @@ const EnvSchema = z.object({
    * everywhere, e.g. when the same API is reached through a proxy.
    */
   MODEL_THINKING: z.enum(["auto", "enabled", "disabled"]).default("auto"),
+  /**
+   * Thinking budget for the calls that keep thinking on (currently only the
+   * insight). DeepSeek defaults to `high`; `low` is enough for summarising a
+   * handful of headlines and scoring importance, and reasoning tokens are
+   * billed at the output rate.
+   */
+  MODEL_REASONING_EFFORT: z.enum(["low", "high", "max"]).default("low"),
 });
 
 export type Env = z.infer<typeof EnvSchema>;
@@ -130,6 +137,8 @@ export type AppConfig = {
     name: string;
     /** Undefined is treated as "auto". */
     thinking?: "auto" | "enabled" | "disabled";
+    /** Thinking budget for calls that keep thinking on; undefined means the provider default. */
+    reasoningEffort?: "low" | "high" | "max";
   };
 };
 
@@ -186,6 +195,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
       apiKey: value.OPENAI_API_KEY,
       name: value.MODEL_NAME,
       thinking: value.MODEL_THINKING,
+      reasoningEffort: value.MODEL_REASONING_EFFORT,
     },
   };
 }

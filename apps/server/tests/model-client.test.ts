@@ -114,3 +114,60 @@ test("usage reports prompt, cached, completion and reasoning tokens", async () =
     },
   ]);
 });
+
+test("the configured effort reaches a thinking call", async () => {
+  const { bodies, fetchImpl } = captureFetch();
+  const model = createModelClient(config({ reasoningEffort: "low" }), fetchImpl);
+
+  await model.complete({
+    messages,
+    thinking: "enabled",
+    signal: AbortSignal.timeout(1000),
+  });
+
+  expect(bodies[0]?.reasoning_effort).toBe("low");
+});
+
+test("effort is never sent with thinking disabled", async () => {
+  // Sending both is a contradictory request; DeepSeek rejects the pair.
+  const { bodies, fetchImpl } = captureFetch();
+  const model = createModelClient(config({ reasoningEffort: "low" }), fetchImpl);
+
+  await model.complete({
+    messages,
+    thinking: "disabled",
+    signal: AbortSignal.timeout(1000),
+  });
+
+  expect(bodies[0]).not.toHaveProperty("reasoning_effort");
+});
+
+test("a call site can override the configured effort", async () => {
+  const { bodies, fetchImpl } = captureFetch();
+  const model = createModelClient(config({ reasoningEffort: "low" }), fetchImpl);
+
+  await model.complete({
+    messages,
+    thinking: "enabled",
+    reasoningEffort: "high",
+    signal: AbortSignal.timeout(1000),
+  });
+
+  expect(bodies[0]?.reasoning_effort).toBe("high");
+});
+
+test("effort is omitted for a non-DeepSeek endpoint", async () => {
+  const { bodies, fetchImpl } = captureFetch();
+  const model = createModelClient(
+    config({ baseUrl: "https://api.example.com", reasoningEffort: "low" }),
+    fetchImpl,
+  );
+
+  await model.complete({
+    messages,
+    thinking: "enabled",
+    signal: AbortSignal.timeout(1000),
+  });
+
+  expect(bodies[0]).not.toHaveProperty("reasoning_effort");
+});

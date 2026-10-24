@@ -12,6 +12,14 @@ export type ChatMessage = { role: "system" | "user"; content: string };
 
 export type ThinkingMode = "enabled" | "disabled";
 
+/**
+ * How much thinking the model may spend before answering. `low` is the useful
+ * middle: DeepSeek's default is `high`, and on this pipeline the task is a
+ * bounded summarise-and-score, so most of the extra reasoning was not changing
+ * the answer.
+ */
+export type ReasoningEffort = "low" | "high" | "max";
+
 export type CompleteOptions = {
   messages: ChatMessage[];
   maxTokens?: number;
@@ -25,6 +33,11 @@ export type CompleteOptions = {
    * non-thinking; the insight call keeps thinking for synthesis quality.
    */
   thinking?: ThinkingMode;
+  /**
+   * Only meaningful while thinking is on. Ignored (and not sent) otherwise,
+   * since DeepSeek rejects the pair when they disagree.
+   */
+  reasoningEffort?: ReasoningEffort;
   /** Short tag for usage logs, e.g. "cluster". */
   label?: string;
 };
@@ -106,6 +119,22 @@ function isDeepSeekEndpoint(baseUrl: string): boolean {
   }
 }
 
+/**
+ * Effort only applies to a thinking call, and only reaches a provider that
+ * understands it. A call site may override; otherwise the configured default
+ * applies, which is how `low` reaches the insight call without every caller
+ * having to know about it.
+ */
+function resolveEffort(
+  configured: ReasoningEffort | undefined,
+  requested: ReasoningEffort | undefined,
+  thinking: ThinkingMode | undefined,
+  deepSeekEndpoint: boolean,
+): ReasoningEffort | undefined {
+  if (thinking !== "enabled" || !deepSeekEndpoint) return undefined;
+  return requested ?? configured;
+}
+
 type UsagePayload = {
   prompt_tokens?: number;
   completion_tokens?: number;
@@ -122,6 +151,7 @@ export function createModelClient(
   const { baseUrl, apiKey, name, thinking: configuredThinking } = config.model;
   const endpoint = chatCompletionsUrl(baseUrl);
   const deepSeekEndpoint = isDeepSeekEndpoint(baseUrl);
+  const configuredEffort = config.model.reasoningEffort;
 
   return {
     name,
@@ -134,6 +164,7 @@ export function createModelClient(
       signal,
       model,
       thinking: requestedThinking,
+      reasoningEffort,
       label,
     }) {
       if (!apiKey) {
@@ -141,12 +172,14 @@ export function createModelClient(
       }
 
       const thinking = resolveThinking(configuredThinking, requestedThinking, deepSeekEndpoint);
+      const effort = resolveEffort(configuredEffort, reasoningEffort, thinking, deepSeekEndpoint);
       const body = JSON.stringify({
         model: model ?? name,
         messages,
         max_tokens: maxTokens,
         temperature,
         ...(thinking ? { thinking: { type: thinking } } : {}),
+        ...(effort ? { reasoning_effort: effort } : {}),
       });
 
       for (let attempt = 0; ; attempt += 1) {

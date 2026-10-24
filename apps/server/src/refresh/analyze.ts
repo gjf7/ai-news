@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray } from "drizzle-orm";
+import { and, desc, eq, isNull, lt, lte, or } from "drizzle-orm";
 import type { DbHandle } from "../db/connection.ts";
 import { newId } from "../db/ids.ts";
 import { articleSources, articles, events, insights, sources } from "../db/schema.ts";
@@ -25,12 +25,24 @@ import {
 
 const DEFAULT_MAX_EVENTS = 40;
 
+/**
+ * Retry policy for an event whose analysis failed. Without a cap and a delay a
+ * single event that reliably breaks the model was re-billed on every run
+ * forever (48 times a day at the default interval). Backoff is 1h, 4h, then
+ * give up; a new article resets the counter, because the failure may have been
+ * about the old evidence.
+ */
+export const ANALYSIS_MAX_ATTEMPTS = 3;
+const RETRY_BACKOFF_HOURS = [1, 4];
+
 export type AnalyzeDeps = {
   handle: DbHandle;
   model: ModelClient;
   runId: string;
   signal: AbortSignal;
   maxEvents?: number;
+  /** Injected clock, so tests can exercise the retry backoff. */
+  now?: Date;
 };
 
 export type AnalyzeResult = {
@@ -49,6 +61,7 @@ export async function runAnalysis({
   runId,
   signal,
   maxEvents = DEFAULT_MAX_EVENTS,
+  now = new Date(),
 }: AnalyzeDeps): Promise<AnalyzeResult> {
   const result: AnalyzeResult = {
     analyzed: 0,
@@ -62,7 +75,21 @@ export async function runAnalysis({
   const candidates = handle.db
     .select()
     .from(events)
-    .where(inArray(events.analysisState, ["pending", "failed"]))
+    .where(
+      and(
+        // Pending work, plus failed events that still have attempts left and
+        // have waited out their backoff. Without the attempt bound a poison
+        // event is re-billed on every run forever.
+        or(
+          eq(events.analysisState, "pending"),
+          and(
+            eq(events.analysisState, "failed"),
+            lt(events.analysisAttempts, ANALYSIS_MAX_ATTEMPTS),
+            or(isNull(events.analysisNextAttemptAt), lte(events.analysisNextAttemptAt, now)),
+          ),
+        ),
+      ),
+    )
     .orderBy(desc(events.hotScore), desc(events.updatedAt))
     .all();
 
@@ -163,7 +190,7 @@ export async function runAnalysis({
 
       const parsed = parseInsightOutput(content, evidence);
       if (!parsed.ok) {
-        markFailed(handle, event.id, runId, parsed.reason);
+        markFailed(handle, event.id, runId, parsed.reason, event.analysisAttempts, now);
         result.failed += 1;
         continue;
       }
@@ -194,7 +221,7 @@ export async function runAnalysis({
     } catch (error) {
       // The model is an external dependency: a failure marks this event failed
       // and the run continues with the remaining events.
-      markFailed(handle, event.id, runId, String(error));
+      markFailed(handle, event.id, runId, String(error), event.analysisAttempts, now);
       result.failed += 1;
     }
   }
@@ -358,10 +385,35 @@ function publishPointer(
     .run();
 }
 
-function markFailed(handle: DbHandle, eventId: string, runId: string, error: string): void {
+/**
+ * Records a failure and schedules the next attempt.
+ *
+ * The attempt counter is what bounds cost: an event whose evidence reliably
+ * produces unparseable output would otherwise be re-billed on every run
+ * forever. After ANALYSIS_MAX_ATTEMPTS the event stays failed and is not
+ * picked up again until a new article arrives, which resets the counter.
+ */
+function markFailed(
+  handle: DbHandle,
+  eventId: string,
+  runId: string,
+  error: string,
+  attempts: number,
+  now: Date,
+): void {
+  const spent = attempts + 1;
+  const exhausted = spent >= ANALYSIS_MAX_ATTEMPTS;
+  const backoffHours = RETRY_BACKOFF_HOURS[Math.min(spent - 1, RETRY_BACKOFF_HOURS.length - 1)];
+
   handle.db
     .update(events)
-    .set({ analysisState: "failed", analysisError: error.slice(0, 500), analysisRunId: runId })
+    .set({
+      analysisState: "failed",
+      analysisError: error.slice(0, 500),
+      analysisRunId: runId,
+      analysisAttempts: spent,
+      analysisNextAttemptAt: exhausted ? null : new Date(now.getTime() + backoffHours * 3_600_000),
+    })
     .where(eq(events.id, eventId))
     .run();
 }

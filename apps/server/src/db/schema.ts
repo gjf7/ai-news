@@ -44,6 +44,10 @@ export const events = sqliteTable(
     analysisState: text("analysis_state").notNull().default("pending"),
     analysisError: text("analysis_error"),
     analysisRunId: text("analysis_run_id"),
+    /** Model calls spent on this event; bounded so a poison event stops billing. */
+    analysisAttempts: integer("analysis_attempts").notNull().default(0),
+    /** Earliest time a failed event may be retried; null means immediately. */
+    analysisNextAttemptAt: timestamp("analysis_next_attempt_at"),
     importance: integer("importance"),
     notificationRevision: integer("notification_revision").notNull().default(0),
     revisionBumpedRunId: text("revision_bumped_run_id"),
@@ -53,6 +57,7 @@ export const events = sqliteTable(
   (table) => [
     index("events_effective_time_idx").on(table.effectiveTime, table.id),
     index("events_updated_at_idx").on(table.updatedAt),
+    index("events_analysis_retry_idx").on(table.analysisState, table.analysisNextAttemptAt),
     check(
       "events_notified_revision_check",
       sql`${table.notifiedRevision} <= ${table.notificationRevision}`,

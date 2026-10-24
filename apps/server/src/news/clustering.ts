@@ -346,7 +346,11 @@ function attachToEvent(
       // Evidence changed, so any existing insight is stale. A skipped event
       // (arXiv-only) becomes pending as soon as an analyzable article joins;
       // analysis re-decides skip vs. analyze from the current evidence.
+      // The retry counter resets too: a failure was about the old evidence, and
+      // a new article is a fresh reason to try once more.
       analysisState: "pending",
+      analysisAttempts: 0,
+      analysisNextAttemptAt: null,
       updatedAt: now,
     })
     .where(eq(events.id, eventId))
