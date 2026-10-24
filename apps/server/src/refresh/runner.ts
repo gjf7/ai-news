@@ -8,12 +8,7 @@ import { runAnalysis } from "./analyze.ts";
 import { runClustering } from "../news/clustering.ts";
 import { runFiltering } from "../news/filtering.ts";
 import { refreshEventScores, recentEventIds } from "../news/scoring.ts";
-import {
-  deliverDue,
-  flushNotificationQueue,
-  runNotificationFreeze,
-  type SendFn,
-} from "../notifications/telegram.ts";
+import { deliverDue, runNotificationFreeze, type SendFn } from "../notifications/telegram.ts";
 import { runDigestIfDue } from "../notifications/digest.ts";
 import { runAlertIfNeeded } from "../notifications/alerts.ts";
 import { suppressDuplicateNotifications } from "../notifications/dedup.ts";
@@ -261,6 +256,7 @@ export function createRunner(deps: RunnerDeps): Runner {
         suppressed,
       });
       if (send) await deliverDue(handle, send);
+
       const failed = handle.db
         .select()
         .from(sourceRuns)
@@ -289,28 +285,6 @@ export function createRunner(deps: RunnerDeps): Runner {
     } finally {
       clearTimeout(timer);
     }
-  };
-
-  /**
-   * Sends a coalesced push whose window has elapsed. Queued events are the ones
-   * a run deliberately left unreported; `runNotificationFreeze` handles them on
-   * the next run, but a quiet period needs its own trigger.
-   */
-  const flushPendingNotifications = () => {
-    const notifyConfig = {
-      ...config.notify,
-      chatId: config.notify.telegram.chatId,
-      botToken: config.notify.telegram.botToken,
-    };
-    if (!notifyConfig.enabled || !notifyConfig.chatId || !notifyConfig.botToken) return;
-
-    // A delivery row references a refresh run, so attribute the flush to the
-    // most recent finished one.
-    const run = latestFinishedRun(handle);
-    if (!run) return;
-
-    const result = flushNotificationQueue({ handle, runId: run.id, config: notifyConfig });
-    if (result.created > 0) void drainDeliveries();
   };
 
   /**
@@ -351,14 +325,6 @@ export function createRunner(deps: RunnerDeps): Runner {
       });
     } catch {
       // An alert failure must never break the runner loop.
-    }
-    // Flush anything a run queued while the coalescing window was closed. This
-    // is what makes batching deliver on time: without it, a queued story would
-    // wait for the next run that happens to have content, which can be hours.
-    try {
-      flushPendingNotifications();
-    } catch {
-      // Same rule as above: delivery must not break the runner loop.
     }
     await drainDeliveries();
   };

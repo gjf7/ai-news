@@ -197,16 +197,7 @@ function seedBumpedEvent() {
     .run();
 }
 
-const notifyConfig = {
-  enabled: true,
-  maxItems: 5,
-  minImportance: 70,
-  // One message per run here; coalescing is exercised in its own test file.
-  coalesceMinutes: 0,
-  urgentImportance: 100,
-  chatId: "1",
-  botToken: "t",
-};
+const notifyConfig = { enabled: true, maxItems: 5, minImportance: 70, chatId: "1", botToken: "t" };
 
 test("one event version cannot enter two deliveries", () => {
   // The delivery row references its run, so the run must exist.

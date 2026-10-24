@@ -78,8 +78,6 @@ const config: AppConfig = {
     enabled: false,
     maxItems: 5,
     minImportance: 70,
-    coalesceMinutes: 0,
-    urgentImportance: 100,
     digest: { enabled: false, hourUtc: 0, maxItems: 10, minImportance: 50 },
     alert: { enabled: false, afterFailedRuns: 3 },
     telegram: {},

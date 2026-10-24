@@ -37,19 +37,13 @@ const EnvSchema = z.object({
     .default("true")
     .transform((value) => value === "true"),
   NOTIFY_MAX_ITEMS: z.coerce.number().int().positive().default(5),
-  NOTIFY_MIN_IMPORTANCE: z.coerce.number().int().min(0).max(100).default(70),
   /**
-   * Coalescing: the minimum gap between pushes. A run that has news but lands
-   * inside the window leaves it queued, so several runs arrive as one message.
-   * This is what keeps a 30-minute refresh from producing a dozen messages a
-   * day. 0 restores one message per run.
+   * Push threshold. Measured against a week of live data: 70 sends ~24 pushes a
+   * day, 78 sends ~13, and 80 sends ~10. 78 is the point where the volume
+   * becomes readable without dropping the export-control, earnings and
+   * capacity stories that the model scores in the high 70s.
    */
-  NOTIFY_COALESCE_MINUTES: z.coerce.number().int().min(0).default(120),
-  /**
-   * Importance at or above which the window is ignored. A genuinely major
-   * story should not wait up to two hours to be batched.
-   */
-  NOTIFY_URGENT_IMPORTANCE: z.coerce.number().int().min(0).max(100).default(88),
+  NOTIFY_MIN_IMPORTANCE: z.coerce.number().int().min(0).max(100).default(78),
 
   /**
    * Daily digest: one summary of the last 24 hours at a fixed UTC hour. Off by
@@ -133,10 +127,6 @@ export type AppConfig = {
     enabled: boolean;
     maxItems: number;
     minImportance: number;
-    /** Minimum gap between pushes; 0 means one message per run. */
-    coalesceMinutes: number;
-    /** At or above this, send immediately instead of waiting for the window. */
-    urgentImportance: number;
     digest: {
       enabled: boolean;
       hourUtc: number;
@@ -191,8 +181,6 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
       enabled: value.NOTIFY_ENABLED,
       maxItems: value.NOTIFY_MAX_ITEMS,
       minImportance: value.NOTIFY_MIN_IMPORTANCE,
-      coalesceMinutes: value.NOTIFY_COALESCE_MINUTES,
-      urgentImportance: value.NOTIFY_URGENT_IMPORTANCE,
       digest: {
         enabled: value.DIGEST_ENABLED,
         hourUtc: value.DIGEST_HOUR_UTC,
@@ -231,8 +219,6 @@ export function publicConfig(config: AppConfig) {
       enabled: config.notify.enabled,
       maxItems: config.notify.maxItems,
       minImportance: config.notify.minImportance,
-      coalesceMinutes: config.notify.coalesceMinutes,
-      urgentImportance: config.notify.urgentImportance,
       digest: {
         enabled: config.notify.digest.enabled,
         hourUtc: config.notify.digest.hourUtc,
